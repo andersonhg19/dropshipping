@@ -1,0 +1,90 @@
+# ============================================================
+# Etapa Backend: Microservicios (requiere infra levantada primero)
+# Uso: docker-compose -f docker-compose.infra.yml -f docker-compose.services.yml --env-file ./backend/.env up --build -d
+# ============================================================
+
+services:
+  auth-service:
+    image: vn-auth
+    build:
+      context: ./backend/auth-service
+    ports:
+      - "8821:8821"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/auth_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
+      SECRET: ${SECRET:-visnex@secret.key}
+      EXP_TIME: ${EXP_TIME:-864000000}
+    networks:
+      - visnex-network
+
+  language-service:
+    image: vn-language
+    build:
+      context: ./backend/language-service
+    ports:
+      - "8822:8822"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/lang_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
+      SECRET: ${SECRET:-visnex@secret.key}
+      EXP_TIME: ${EXP_TIME:-864000000}
+    networks:
+      - visnex-network
+
+  administration-service:
+    image: vn-administration
+    build:
+      context: ./backend/administration-service
+    ports:
+      - "8823:8823"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/admin_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
+      SECRET: ${SECRET:-visnex@secret.key}
+      EXP_TIME: ${EXP_TIME:-864000000}
+    networks:
+      - visnex-network
+
+  audit-service:
+    image: vn-audit
+    build:
+      context: ./backend/audit-service
+    ports:
+      - "8827:8827"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/audit_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
+      SECRET: ${SECRET:-visnex@secret.key}
+      EXP_TIME: ${EXP_TIME:-864000000}
+    networks:
+      - visnex-network
+
+networks:
+  visnex-network:
+    external: true
+    name: dropshipping_visnex-network

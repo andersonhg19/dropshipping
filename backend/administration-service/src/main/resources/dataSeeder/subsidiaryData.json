@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "name": "Principal",
+    "idCompany": "1",
+    "nit": "000000000-0",
+    "address": "Colombia",
+    "contactPerson": "Admin",
+    "phone": "+570000000000",
+    "mail": "admin@visnex.co",
+    "state": true,
+    "decimalsNumber": 2,
+    "roundingType": "STANDARD"
+  }
+]

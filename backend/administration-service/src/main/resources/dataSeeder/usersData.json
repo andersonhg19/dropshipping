@@ -1,0 +1,17 @@
+[
+  {
+    "id":"1",
+    "idCompany":"1",
+    "idSubsidiary":1,
+    "name":"Admin",
+    "lastName":"Systems",
+    "dni": "0000000000",
+    "email":"admin@visnex.co",
+    "cellphone":"+570000000000",
+    "password":"1233f25699ed6b5171c9e3f013d35043.41281b1f65553902df58c1568c568aa2",
+    "idTypeUser":"1",
+    "isAdmin":true,
+    "isActive":true,
+    "creation": "1900-01-01T00:00:00"
+  }
+]

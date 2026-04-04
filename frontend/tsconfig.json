@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Next.js",
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": [
+      "DOM",
+      "ES2022"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "noUncheckedIndexedAccess": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    // "types": ["node", "jest", "@testing-library/jest-dom"],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": [
+        "src/app/*"
+      ],
+      "@dashboard/*": [
+        "./src/app/dashboard/*"
+      ],
+      "@core/*": [
+        "./src/core/*"
+      ],
+      "@api/*": [
+        "src/core/api/*"
+      ],
+      "@components/*": [
+        "src/core/components/*"
+      ],
+      "@config/*": [
+        "src/core/config/*"
+      ],
+      "@interfaces/*": [
+        "src/core/interfaces/*"
+      ],
+      "@hooks/*": [
+        "src/core/hooks/*"
+      ],
+      "@states/*": [
+        "./src/core/states/*"
+      ],
+      "@styles/*": [
+        "src/core/styles/*"
+      ],
+      "@utils/*": [
+        "src/core/utils/*"
+      ],
+      "@validations/*": [
+        "src/core/validations/*"
+      ],
+      "@layouts/*": [
+        "./src/layouts/*"
+      ],
+      "@public/*": [
+        "./public/*"
+      ],
+      "@modules": [
+        "/src/modules/*"
+      ]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.mjs",
+    "jest.config.js",
+    ".next/types/**/*.ts",
+    "src/core/config/api/fetch-data.tsx",
+    "src/theme/page.ejemplo"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

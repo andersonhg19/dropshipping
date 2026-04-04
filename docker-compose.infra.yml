@@ -1,0 +1,56 @@
+# ============================================================
+# Etapa 1: Solo infraestructura (bases de datos + discovery + gateway)
+# Uso: docker-compose -f docker-compose.infra.yml --env-file ./backend/.env up --build -d
+# ============================================================
+
+networks:
+  visnex-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./backend/init-db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - visnex-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  discovery-service:
+    image: vn-discovery
+    build:
+      context: ./backend/discovery-service
+    ports:
+      - "8760:8760"
+    networks:
+      - visnex-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8760/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  gateway-service:
+    image: vn-gateway
+    build:
+      context: ./backend/gateway-service
+    ports:
+      - "8820:8820"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    networks:
+      - visnex-network

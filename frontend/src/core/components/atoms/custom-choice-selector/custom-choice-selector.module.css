@@ -1,0 +1,121 @@
+/* Ocultar el checkbox original */
+.checkbox {
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Contenedor del checkbox personalizado */
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+/* Estilo del label que contiene el checkbox personalizado */
+.checkboxLabel {
+  width: 30px;
+  height: 30px;
+  background-color: #f72414;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  transition:
+    0.2s ease background-color,
+    0.2s ease transform;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkboxLabel:before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  transition:
+    0.2s ease width,
+    0.2s ease height;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkboxLabel:hover:before {
+  transform: scale(1.1);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.checkboxLabel:active {
+  transform: scale(0.9);
+}
+
+/* Estilo para el tick (marca de verificación) */
+.tickMark {
+  position: absolute;
+  top: 0;
+  left: 0.3;
+  width: 18px;
+  height: 18px;
+  transform: rotate(-40deg);
+  transition: 0.2s ease transform;
+}
+
+.tickMark:before,
+.tickMark:after {
+  content: '';
+  position: absolute;
+  background-color: #fff;
+  border-radius: 2px;
+  opacity: 0;
+  transition:
+    0.2s ease transform,
+    0.2s ease opacity;
+}
+
+.tickMark:before {
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  height: 10px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.23);
+  transform: translateY(-68px);
+}
+
+.tickMark:after {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 4px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.23);
+  transform: translateX(78px);
+}
+
+/* Cambiar el color y mostrar la marca de verificación cuando está seleccionado */
+.checkbox:checked + .checkboxLabel {
+  background-color: #07d410;
+}
+
+.checkbox:checked + .checkboxLabel:before {
+  width: 0;
+  height: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.checkbox:checked + .checkboxLabel .tickMark:before,
+.checkbox:checked + .checkboxLabel .tickMark:after {
+  transform: translate(0);
+  opacity: 1;
+}
+
+/* Estilo para el texto de la opción */
+.optionLabel {
+  font-size: 1rem;
+  color: #333;
+  text-transform: uppercase; /* Texto en mayúsculas */
+}

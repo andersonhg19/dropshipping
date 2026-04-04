@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "npage": "dashboard",
+    "name": "Tablero",
+    "icon": "HomeOutline",
+    "idModifiedBy": 1,
+    "idModule": 1,
+    "active": true
+  },
+  {
+    "id": 2,
+    "npage": "user",
+    "name": "Usuarios",
+    "icon": "AccountCogOutline",
+    "idModifiedBy": 1,
+    "idModule": 1,
+    "active": true
+  },
+  {
+    "id": 3,
+    "npage": "pages_by_user_type",
+    "name": "Permisos por tipo de usuario",
+    "icon": "AccountCogOutline",
+    "idModule": 1,
+    "idModifiedBy": 1,
+    "active": true
+  },
+  {
+    "id": 4,
+    "npage": "subsidiary",
+    "name": "Filiales",
+    "icon": "AccountCogOutline",
+    "idModule": 1,
+    "idModifiedBy": 1,
+    "active": true
+  },
+  {
+    "id": 5,
+    "npage": "roles",
+    "name": "Roles",
+    "icon": "Store",
+    "idModule": 1,
+    "idModifiedBy": 1,
+    "active": true
+  },
+  {
+    "id": 6,
+    "npage": "company",
+    "icon": "CubeOutline",
+    "name": "Empresas",
+    "idModule": 1,
+    "idModifiedBy": 1,
+    "active": true
+  },
+  {
+    "id": 7,
+    "npage": "logs",
+    "icon": "CubeOutline",
+    "name": "Registros de auditoria",
+    "idModule": 2,
+    "idModifiedBy": 1,
+    "active": true
+  }
+]

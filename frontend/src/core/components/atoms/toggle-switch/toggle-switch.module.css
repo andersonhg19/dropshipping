@@ -1,0 +1,51 @@
+/* styles/toggle-switch.module.css */
+
+.checkbox {
+  -webkit-appearance: none;
+  display: none;
+  visibility: hidden;
+}
+
+.bar {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  width: 50px; /* Tamaño predeterminado */
+  height: 40px; /* Tamaño predeterminado */
+}
+
+.bar span {
+  position: absolute;
+  width: 30px; /* Tamaño predeterminado */
+  height: 7px;
+  background: #f1faee;
+  border-radius: 100px;
+  display: inline-block;
+  transition: 0.3s ease;
+  left: 0;
+}
+
+.bar .top {
+  top: 0;
+}
+
+.bar .middle {
+  top: 17px;
+}
+
+.bar .bottom {
+  bottom: 0;
+}
+
+/* Estilos para pantallas pequeñas */
+@media (max-width: 600px) {
+  .bar {
+    width: 30px; /* Tamaño reducido */
+    height: 24px;
+  }
+
+  .bar span {
+    width: 20px; /* Tamaño reducido */
+    height: 5px;
+  }
+}

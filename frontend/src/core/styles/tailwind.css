@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.full-size-button {
+  width: 100%;
+  height: 60px;
+  font-size: 14px;
+}
+.full-width-button {
+  width: 100%;
+  height: 60px;
+  font-size: 16px;
+  font-weight: bold;
+}
+.ToolpadDrawer-toggleButton {
+  position: absolute !important;
+  top: 8px;  /* Ajusta según la altura de tu Navbar */
+  left: 60px; /* Ajusta según el logo */
+  z-index: 9999;
+}
+.ToolpadDrawer-toggleButton button {
+  background-color: transparent !important;
+  color: white !important;
+}
+/* .sidebar-hidden .MuiDrawer-root {
+  display: none !important;
+} */
+/* [data-testid="ToolpadDrawer-toggleButton"] {
+  display: none !important;
+} */
+
+/* ===== Estilos SOLO para el tema OSCURO - Sidebar ===== */
+
+/* Texto e íconos del elemento seleccionado - color CLARO para tema oscuro */
+[data-toolpad-color-scheme="dark"] .MuiListItemButton-root.Mui-selected .MuiListItemText-primary,
+.dark .MuiListItemButton-root.Mui-selected .MuiListItemText-primary {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+[data-toolpad-color-scheme="dark"] .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root,
+[data-toolpad-color-scheme="dark"] .MuiListItemButton-root.Mui-selected .MuiSvgIcon-root,
+.dark .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root,
+.dark .MuiListItemButton-root.Mui-selected .MuiSvgIcon-root {
+  color: #ffffff !important;
+}
+
+/* Fondo más oscuro para el elemento seleccionado en tema oscuro */
+[data-toolpad-color-scheme="dark"] .MuiListItemButton-root.Mui-selected,
+.dark .MuiListItemButton-root.Mui-selected {
+  background-color: rgba(0, 60, 100, 0.8) !important;
+}
+
+/* Estilos para nextjs-portal - eliminar left y top */
+nextjs-portal,
+nextjs-portal[data-cursor-element-id],
+script > nextjs-portal {
+  left: unset !important;
+  top: unset !important;
+  position: static !important;
+}

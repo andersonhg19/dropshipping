@@ -1,0 +1,13 @@
+[
+  {
+    "id": "1",
+    "idCompany": "1",
+    "idSubsidiary": 1,
+    "name": "test",
+    "value": "testValue",
+    "type": "Style",
+    "typeValue": "t",
+    "idUser": "1",
+    "active": true
+  }
+]

@@ -1,0 +1,43 @@
+# ==================== Java / Maven ====================
+backend/*/target/
+backend/*/.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+*.ear
+
+# ==================== Node / Frontend ====================
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/tsconfig.tsbuildinfo
+frontend/graph.svg
+
+# ==================== Docker ====================
+wordpress/db-data/
+wordpress/wp-content/uploads/
+wordpress/wp-content/cache/
+
+# ==================== IDE ====================
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# ==================== OS ====================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==================== Environment ====================
+.env.local
+.env.*.local
+*.log
+
+# ==================== Build ====================
+dist/
+build/
+*.tgz

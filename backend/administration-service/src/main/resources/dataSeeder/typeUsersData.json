@@ -1,0 +1,9 @@
+[
+  {
+    "id":1,
+    "name":"Administrator",
+    "active": true,
+    "idCompany": 1,
+    "idSubsidiary": 1
+  }
+]

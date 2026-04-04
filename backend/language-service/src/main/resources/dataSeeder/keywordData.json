@@ -1,0 +1,594 @@
+[
+  {
+    "id": "1",
+    "key": "wellcome"
+  },
+  {
+    "id": "2",
+    "key": "loaddatasuccess"
+  },
+  {
+    "id": "3",
+    "key": "return_exist"
+  },
+  {
+    "id": "4",
+    "key": "return_update"
+  },
+  {
+    "id": "5",
+    "key": "return_successful"
+  },
+  {
+    "id": "6",
+    "key": "return_error"
+  },
+  {
+    "id": "7",
+    "key": "return_successful_query"
+  },
+  {
+    "id": "8",
+    "key": "return_error_query"
+  },
+  {
+    "id": "9",
+    "key": "return_field_is_required"
+  },
+  {
+    "id": "10",
+    "key": "return_not_exist_the_entity_with_id"
+  },
+  {
+    "id": "11",
+    "key": "return_instruction_is_not_recognized"
+  },
+  {
+    "id": "12",
+    "key": "return_the_request_is_not_recognized"
+  },
+  {
+    "id": "13",
+    "key": "return_the_x_sent_as_a_parameter_in_the_x_field_is_not_recognized"
+  },
+  {
+    "id": "14",
+    "key": "return_the_request_can_no_longer_be_modified"
+  },
+  {
+    "id": "15",
+    "key": "return_process_error"
+  },
+  {
+    "id": "16",
+    "key": "return_please_set_a_unique_state"
+  },
+  {
+    "id": "17",
+    "key": "return_the_gift_card_is_not_recognized"
+  },
+  {
+    "id": "18",
+    "key": "return_there_are_no_cards_to_validate"
+  },
+  {
+    "id": "19",
+    "key": "return_there_are_cards_that_cannot_be_processed"
+  },
+  {
+    "id": "20",
+    "key": "return_card_not_available"
+  },
+  {
+    "id": "21",
+    "key": "return_invalid_card_amount_x"
+  },
+  {
+    "id": "22",
+    "key": "return_the_Expiration_Date_x_of_the_Card_is_not_valid_minimum_validity_of_x_days"
+  },
+  {
+    "id": "23",
+    "key": "return_you_have_cards_that_cannot_be_activated_cannot_be_processed"
+  },
+  {
+    "id": "24",
+    "key": "return_card_not_suitable_for_purchase"
+  },
+  {
+    "id": "25",
+    "key": "return_expired_card"
+  },
+  {
+    "id": "26",
+    "key": "return_the_card_no_longer_has_a_balance"
+  },
+  {
+    "id": "27",
+    "key": "return_the_Card_balance_is_insufficient_for_the_purchase"
+  },
+  {
+    "id": "28",
+    "key": "return_the_amount_of_the_products_is_different_from_the_purchase_amount_it_cannot_be_processed"
+  },
+  {
+    "id": "29",
+    "key": "return_the_gift_card_is_not_recognized"
+  },
+  {
+    "id": "30",
+    "key": "return_the_Branch_is_not_valid"
+  },
+  {
+    "id": "31",
+    "key": "return_the_entity_with_Id_x_does_not_exist"
+  },
+  {
+    "id": "32",
+    "key": "return_a_valid_comment_of_at_least_x_characters_is_required"
+  },
+  {
+    "id": "33",
+    "key": "entityNotFound"
+  },
+  {
+    "id": "34",
+    "key": "passwordIsIncorrect"
+  },
+  {
+    "id": "35",
+    "key": "subsidiaryNotFount"
+  },
+  {
+    "id": "36",
+    "key": "userNotFount"
+  },
+  {
+    "id": "37",
+    "key": "countryNotFount"
+  },
+  {
+    "id": "38",
+    "key": "entityNotFount"
+  },
+  {
+    "id": "39",
+    "key": "entityExists"
+  },
+  {
+    "id": "40",
+    "key": "noResults"
+  },
+  {
+    "id": "41",
+    "key": "pageNotFound"
+  },
+  {
+    "id": "42",
+    "key": "thisNitExists"
+  },
+  {
+    "id": "43",
+    "key": "fatherIsInvalid"
+  },
+  {
+    "id": "44",
+    "key": "giftcard"
+  },
+  {
+    "id": "45",
+    "key": "administration"
+  },
+  {
+    "id": "46",
+    "key": "noReversedMovement"
+  },
+  {
+    "id": "47",
+    "key": "sale"
+  },
+  {
+    "id": "48",
+    "key": "departmentGroupNotFount"
+  },
+  {
+    "id": "49",
+    "key": "familyGroupNotFount"
+  },
+  {
+    "id": "50",
+    "key": "skuInUse"
+  },
+  {
+    "id": "51",
+    "key": "productStatusNotFount"
+  },
+  {
+    "id": "52",
+    "key": "taxNotFound"
+  },
+  {
+    "id": "53",
+    "key": "productNotFound"
+  },
+  {
+    "id": "54",
+    "key": "companyNotFound"
+  },
+  {
+    "id": "55",
+    "key": "subsidiaryNotFound"
+  },
+  {
+    "id": "56",
+    "key": "productForSubsidiaryExist"
+  },
+  {
+    "id": "57",
+    "key": "NoneProductsExist"
+  },
+  {
+    "id": "58",
+    "key": "existAProductWithThisTaxAssigned"
+  },
+  {
+    "id": "59",
+    "key": "productExist"
+  },
+  {
+    "id": "60",
+    "key": "customerGenderNotFound"
+  },
+  {
+    "id": "61",
+    "key": "wrongValidation"
+  },
+  {
+    "id": "62",
+    "key": "customerTypeNotFound"
+  },
+  {
+    "id": "63",
+    "key": "customerNotFound"
+  },
+  {
+    "id": "64",
+    "key": "groupProcessError"
+  },
+  {
+    "id": "65",
+    "key": "dataNotFound"
+  },
+  {
+    "id": "66",
+    "key": "typeDNINotFound"
+  },
+  {
+    "id": "67",
+    "key": "storeNotFount"
+  },
+  {
+    "id": "68",
+    "key": "giffCardTypeNotFount"
+  },
+  {
+    "id": "69",
+    "key": "countryNotEnabled"
+  },
+  {
+    "id": "70",
+    "key": "giftCardSameState"
+  },
+  {
+    "id": "71",
+    "key": "startCardExist"
+  },
+  {
+    "id": "72",
+    "key": "giftCardNotFount"
+  },
+  {
+    "id": "73",
+    "key": "giftCardRepeated"
+  },
+  {
+    "id": "74",
+    "key": "dateMaxNoFount"
+  },
+  {
+    "id": "75",
+    "key": "typePromotionNotFound"
+  },
+  {
+    "id": "76",
+    "key": "storeNotFound"
+  },
+  {
+    "id": "77",
+    "key": "validPromotionNotFound"
+  },
+  {
+    "id": "78",
+    "key": "promotionNotFound"
+  },
+  {
+    "id": "79",
+    "key": "listProductNotFound"
+  },
+  {
+    "id": "80",
+    "key": "saleNotFound"
+  },
+  {
+    "id": "81",
+    "key": "invoicesDataNotFound"
+  },
+  {
+    "id": "82",
+    "key": "posNotFound"
+  },
+  {
+    "id": "83",
+    "key": "numberStoreNotFound"
+  },
+  {
+    "id": "84",
+    "key": "transactionNoFinalized"
+  },
+  {
+    "id": "85",
+    "key": "transactionFinalized"
+  },
+  {
+    "id": "86",
+    "key": "transactionCancelled"
+  },
+  {
+    "id": "87",
+    "key": "transactionNoModify"
+  },
+  {
+    "id": "88",
+    "key": "theEntityNotFound"
+  },
+  {
+    "id": "89",
+    "key": "typePaymentNotFound"
+  },
+  {
+    "id": "90",
+    "key": "paymentHasDifference"
+  },
+  {
+    "id": "91",
+    "key": "transactionIsFinalized"
+  },
+  {
+    "id": "92",
+    "key": "groupNotFound"
+  },
+  {
+    "id": "93",
+    "key": "notHaveCreationPermissions"
+  },
+  {
+    "id": "94",
+    "key": "emailAlreadyInUse"
+  },
+  {
+    "id": "95",
+    "key": "usernameAlreadyInUse"
+  },
+  {
+    "id": "96",
+    "key": "customerRetrievalFailed"
+  },
+  {
+    "id": "97",
+    "key": "idNotRecognized"
+  },
+  {
+    "id": "98",
+    "key": "companyNotRecognized"
+  },
+  {
+    "id": "99",
+    "key": "subsidiaryNotRecognized"
+  },
+  {
+    "id": "100",
+    "key": "tlogTypeNotRecognized"
+  },
+  {
+    "id": "101",
+    "key": "storeConfigAndTlogTypeNotRecognized"
+  },
+  {
+    "id": "102",
+    "key": "posConfigNotRecognized"
+  },
+  {
+    "id": "103",
+    "key": "notExistTheEntityWithParameters"
+  },
+  {
+    "id": "104",
+    "key": "userNotFound"
+  },
+  {
+    "id": "105",
+    "key": "moduleNotFound"
+  },
+  {
+    "id": "106",
+    "key": "fileNotFound"
+  },
+  {
+    "id": "107",
+    "key": "return_not_found"
+  },
+  {
+    "id": "108",
+    "key": "bodyRequired"
+  },
+  {
+    "id": "109",
+    "key": "please_verify_data"
+  },
+  {
+    "id": "110",
+    "key": "please_verify_id"
+  },
+  {
+    "id": "111",
+    "key": "please_verify_filters"
+  },
+  {
+    "id": "112",
+    "key": "thisNameExists"
+  },
+  {
+    "id": "113",
+    "key": "field_required_name"
+  },
+  {
+    "id": "114",
+    "key": "field_invalid_payment_term_days"
+  },
+  {
+    "id": "115",
+    "key": "field_percentage_exceeds_100"
+  },
+  {
+    "id": "116",
+    "key": "field_amount_must_be_positive"
+  },
+  {
+    "id": "117",
+    "key": "field_sum_payments_exceeds_total"
+  },
+  {
+    "id": "118",
+    "key": "field_patient_payment_negative"
+  },
+  {
+    "id": "119",
+    "key": "field_contractor_payment_negative"
+  },
+  {
+    "id": "120",
+    "key": "duplicate_invoice_for_contractor"
+  },
+  {
+    "id": "121",
+    "key": "duplicate_supply_name"
+  },
+  {
+    "id": "122",
+    "key": "supply_percentage_sum_exceeds_100"
+  },
+  {
+    "id": "123",
+    "key": "excel_field_invalid_field_name"
+  },
+  {
+    "id": "124",
+    "key": "excel_field_invalid_column"
+  },
+  {
+    "id": "125",
+    "key": "excel_field_duplicate_field"
+  },
+  {
+    "id": "126",
+    "key": "invalid_income_type"
+  },
+  {
+    "id": "127",
+    "key": "skipped_annulled_invoice"
+  },
+  {
+    "id": "128",
+    "key": "skipped_credit_note"
+  },
+  {
+    "id": "129",
+    "key": "skipped_honorarium"
+  },
+  {
+    "id": "130",
+    "key": "skipped_equal_compartido"
+  },
+  {
+    "id": "131",
+    "key": "skipped_zero_value"
+  },
+  {
+    "id": "132",
+    "key": "transaction_created_successfully"
+  },
+  {
+    "id": "133",
+    "key": "transaction_updated_duplicate"
+  },
+  {
+    "id": "134",
+    "key": "processed_successfully"
+  },
+  {
+    "id": "135",
+    "key": "transaction_type_required"
+  },
+  {
+    "id": "136",
+    "key": "doctor_required_for_doctor_type"
+  },
+  {
+    "id": "137",
+    "key": "procedure_not_same_tenant"
+  },
+  {
+    "id": "138",
+    "key": "cost_center_required_for_paid"
+  },
+  {
+    "id": "139",
+    "key": "invalid_payment_status_value"
+  },
+  {
+    "id": "140",
+    "key": "contractor_duplicate_nit"
+  },
+  {
+    "id": "141",
+    "key": "contractor_duplicate_name"
+  },
+  {
+    "id": "142",
+    "key": "doctor_duplicate_document"
+  },
+  {
+    "id": "143",
+    "key": "doctor_duplicate_name"
+  },
+  {
+    "id": "144",
+    "key": "medical_procedure_duplicate_code"
+  },
+  {
+    "id": "145",
+    "key": "this_Services_exist"
+  },
+  {
+    "id": "146",
+    "key": "contractor_procedure_duplicate"
+  },
+  {
+    "id": "147",
+    "key": "field_invalid_invoice_amount"
+  },
+  {
+    "id": "148",
+    "key": "field_invalid_value_non_negative"
+  }
+]

@@ -1,0 +1,43 @@
+.formControl {
+  position: relative;
+  margin: 20px 0 40px;
+  width: 190px;
+}
+
+.input {
+  background-color: transparent;
+  border: 0;
+  border-bottom: 2px #fff solid;
+  display: block;
+  width: 100%;
+  padding: 15px 0;
+  font-size: 18px;
+  color: #000;
+}
+
+.input:focus,
+.input:valid {
+  outline: 0;
+  border-bottom-color: lightblue;
+}
+
+.label {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  pointer-events: none;
+}
+
+.labelSpan {
+  display: inline-block;
+  font-size: 18px;
+  min-width: 5px;
+  color: #fff;
+  transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.input:focus + .label .labelSpan,
+.input:valid + .label .labelSpan {
+  color: lightblue;
+  transform: translate(-30px);
+}

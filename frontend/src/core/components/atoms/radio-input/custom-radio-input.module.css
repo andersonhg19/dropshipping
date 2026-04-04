@@ -1,0 +1,42 @@
+.radioInputs {
+  position: relative;
+  display: flex;
+  border-radius: 10px;
+  background-color: #e8e8e8;
+  box-sizing: border-box;
+  font-size: 14px;
+  width: 100%; /* Ocupa todo el ancho disponible */
+  padding: 1rem;
+}
+
+.radioInputs .radio {
+  flex: 1; /* Hace que cada opción ocupe el mismo espacio */
+  margin: 0 4px;
+}
+
+.radioInputs .radio input {
+  display: none;
+}
+
+.radioInputs .radio .name {
+  cursor: pointer;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.15s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.radioInputs .radio input:checked + .name {
+  background-color: #d1d1d1;
+  box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+}
+
+.radioInputs .radio input + .name:hover {
+  background-color: #ccc;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  color: #fff;
+}

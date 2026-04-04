@@ -1,0 +1,14 @@
+[
+  {
+    "id":1,
+    "name":"VISNEX",
+    "nit":"000000000-0",
+    "address":"Colombia",
+    "contactPerson":"Anderson Herrera",
+    "phone":"+570000000000",
+    "mail":"admin@visnex.co",
+    "idUser": "1",
+    "state":true,
+    "creation": "1900-01-01T00:00:00"
+  }
+]

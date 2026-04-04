@@ -1,0 +1,48 @@
+/* From Uiverse.io by vinodjangid07 */
+.clearButton {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: rgb(20, 20, 20); /* Fondo inicial oscuro */
+  border: none;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+  cursor: pointer;
+  transition-duration: 0.3s;
+  overflow: hidden;
+  position: relative;
+  gap: 2px;
+}
+
+.svgIcon {
+  width: 12px;
+  transition-duration: 0.3s;
+}
+
+.svgIcon path {
+  fill: white; /* Relleno de las partes SVG */
+}
+
+.clearButton:hover {
+  transition-duration: 0.3s;
+  background-color: rgb(255, 69, 69); /* Color al hacer hover */
+  align-items: center;
+  gap: 0;
+  box-shadow:
+    9px 9px 10px #000,
+    5px 5px 4px #5e5757;
+  transform: translateY(-5px);
+}
+
+.binTop {
+  transform-origin: bottom right;
+}
+
+.clearButton:hover .binTop {
+  transition-duration: 0.5s;
+  transform: rotate(160deg); /* Rotación de la parte superior del ícono en hover */
+}

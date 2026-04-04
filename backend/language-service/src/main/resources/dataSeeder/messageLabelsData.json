@@ -1,0 +1,1360 @@
+[
+  {
+    "id": "1",
+    "idlanguage": "es",
+    "idkey": "1",
+    "label": "Hola mundo. "
+  },
+  {
+    "id": "2",
+    "idlanguage": "en",
+    "idkey": "1",
+    "label": "Hello world. "
+  },
+  {
+    "id": "3",
+    "idlanguage": "es",
+    "idkey": "2",
+    "label": "Datos del mensaje cargados en la base de datos."
+  },
+  {
+    "id": "4",
+    "idlanguage": "en",
+    "idkey": "2",
+    "label": "Message data loaded into the database."
+  },
+  {
+    "id": "5",
+    "idlanguage": "es",
+    "idkey": "3",
+    "label": "La entidad ya existe."
+  },
+  {
+    "id": "6",
+    "idlanguage": "en",
+    "idkey": "3",
+    "label": "The entity already exists."
+  },
+  {
+    "id": "7",
+    "idlanguage": "es",
+    "idkey": "4",
+    "label": "La entidad fue actualizada."
+  },
+  {
+    "id": "8",
+    "idlanguage": "en",
+    "idkey": "4",
+    "label": "The entity was updated."
+  },
+  {
+    "id": "9",
+    "idlanguage": "es",
+    "idkey": "5",
+    "label": "La entidad se guardo exitosamente."
+  },
+  {
+    "id": "10",
+    "idlanguage": "en",
+    "idkey": "5",
+    "label": "The entity was saved successfully."
+  },
+  {
+    "id": "11",
+    "idlanguage": "es",
+    "idkey": "6",
+    "label": "Ocurrio un error."
+  },
+  {
+    "id": "12",
+    "idlanguage": "en",
+    "idkey": "6",
+    "label": "An error occurred."
+  },
+  {
+    "id": "13",
+    "idlanguage": "es",
+    "idkey": "7",
+    "label": "Consulta exitosa."
+  },
+  {
+    "id": "14",
+    "idlanguage": "en",
+    "idkey": "7",
+    "label": "Successful query."
+  },
+  {
+    "id": "15",
+    "idlanguage": "es",
+    "idkey": "8",
+    "label": "Ocurrió un error en la consulta."
+  },
+  {
+    "id": "16",
+    "idlanguage": "en",
+    "idkey": "8",
+    "label": "An error occurred in the query."
+  },
+  {
+    "id": "17",
+    "idlanguage": "es",
+    "idkey": "9",
+    "label": "Es requerido el campo: "
+  },
+  {
+    "id": "18",
+    "idlanguage": "en",
+    "idkey": "9",
+    "label": "The field is required: "
+  },
+  {
+    "id": "19",
+    "idlanguage": "es",
+    "idkey": "10",
+    "label": "No existe la entidad con Id: %s"
+  },
+  {
+    "id": "20",
+    "idlanguage": "en",
+    "idkey": "10",
+    "label": "It not exist the entity with id: %s"
+  },
+  {
+    "id": "21",
+    "idlanguage": "es",
+    "idkey": "11",
+    "label": "No se reconoce la instrucción"
+  },
+  {
+    "id": "22",
+    "idlanguage": "en",
+    "idkey": "11",
+    "label": "Instruction is not recognized"
+  },
+  {
+    "id": "23",
+    "idlanguage": "es",
+    "idkey": "12",
+    "label": "No se reconoce la Solicitud"
+  },
+  {
+    "id": "24",
+    "idlanguage": "en",
+    "idkey": "12",
+    "label": "The request is not recognized"
+  },
+  {
+    "id": "25",
+    "idlanguage": "es",
+    "idkey": "13",
+    "label": "No se reconoce el %s enviado como parámetro en el campo %s"
+  },
+  {
+    "id": "26",
+    "idlanguage": "en",
+    "idkey": "13",
+    "label": "The %s sent as a parameter in the %s field is not recognized"
+  },
+  {
+    "id": "27",
+    "idlanguage": "es",
+    "idkey": "14",
+    "label": "Ya no se puede modificar la solicitud"
+  },
+  {
+    "id": "28",
+    "idlanguage": "en",
+    "idkey": "14",
+    "label": "The request can no longer be modified."
+  },
+  {
+    "id": "29",
+    "idlanguage": "es",
+    "idkey": "15",
+    "label": "Error al Procesar"
+  },
+  {
+    "id": "30",
+    "idlanguage": "en",
+    "idkey": "15",
+    "label": "Process error"
+  },
+  {
+    "id": "31",
+    "idlanguage": "es",
+    "idkey": "16",
+    "label": "Por favor establecer un estado único"
+  },
+  {
+    "id": "32",
+    "idlanguage": "en",
+    "idkey": "16",
+    "label": "Please set a unique state"
+  },
+  {
+    "id": "33",
+    "idlanguage": "es",
+    "idkey": "17",
+    "label": "No se reconoce la GiftCard"
+  },
+  {
+    "id": "34",
+    "idlanguage": "en",
+    "idkey": "17",
+    "label": "The gift card is not recognized"
+  },
+  {
+    "id": "35",
+    "idlanguage": "es",
+    "idkey": "18",
+    "label": "No se posee tarjetas a Validar"
+  },
+  {
+    "id": "36",
+    "idlanguage": "en",
+    "idkey": "18",
+    "label": "There are no cards to validate"
+  },
+  {
+    "id": "37",
+    "idlanguage": "es",
+    "idkey": "19",
+    "label": "Existen tarjetas que no se pueden procesar."
+  },
+  {
+    "id": "38",
+    "idlanguage": "en",
+    "idkey": "19",
+    "label": "There are cards that cannot be processed."
+  },
+  {
+    "id": "39",
+    "idlanguage": "es",
+    "idkey": "20",
+    "label": "Tarjeta no disponible"
+  },
+  {
+    "id": "40",
+    "idlanguage": "en",
+    "idkey": "20",
+    "label": "Card not available"
+  },
+  {
+    "id": "41",
+    "idlanguage": "es",
+    "idkey": "21",
+    "label": "Monto %s de la tarjeta no válido"
+  },
+  {
+    "id": "42",
+    "idlanguage": "en",
+    "idkey": "21",
+    "label": "Invalid card amount %s"
+  },
+  {
+    "id": "43",
+    "idlanguage": "es",
+    "idkey": "22",
+    "label": "La fecha de Expiración (%s) de la Tarjeta no es válida, vigencia mínima de %s días"
+  },
+  {
+    "id": "44",
+    "idlanguage": "en",
+    "idkey": "22",
+    "label": "The Expiration Date (%s) of the Card is not valid, minimum validity of %s days"
+  },
+  {
+    "id": "45",
+    "idlanguage": "es",
+    "idkey": "23",
+    "label": "Posee tarjetas que no se pueden Activar, no se puede procesar"
+  },
+  {
+    "id": "46",
+    "idlanguage": "en",
+    "idkey": "23",
+    "label": "You have cards that cannot be activated, cannot be processed."
+  },
+  {
+    "id": "47",
+    "idlanguage": "es",
+    "idkey": "24",
+    "label": "Tarjeta no apta para compra"
+  },
+  {
+    "id": "48",
+    "idlanguage": "en",
+    "idkey": "24",
+    "label": "Card not suitable for purchase"
+  },
+  {
+    "id": "49",
+    "idlanguage": "es",
+    "idkey": "25",
+    "label": "Tarjeta Expirada"
+  },
+  {
+    "id": "50",
+    "idlanguage": "en",
+    "idkey": "25",
+    "label": "Expired card"
+  },
+  {
+    "id": "51",
+    "idlanguage": "es",
+    "idkey": "26",
+    "label": "Tarjeta ya no posee Saldo"
+  },
+  {
+    "id": "52",
+    "idlanguage": "en",
+    "idkey": "26",
+    "label": "The card no longer has a balance"
+  },
+  {
+    "id": "53",
+    "idlanguage": "es",
+    "idkey": "27",
+    "label": "El saldo de la Tarjeta es insuficiente para la compra"
+  },
+  {
+    "id": "54",
+    "idlanguage": "en",
+    "idkey": "27",
+    "label": "The Card balance is insufficient for the purchase."
+  },
+  {
+    "id": "55",
+    "idlanguage": "es",
+    "idkey": "28",
+    "label": "El monto de los productos es diferente al monto de compra, no se puede procesar"
+  },
+  {
+    "id": "56",
+    "idlanguage": "en",
+    "idkey": "28",
+    "label": "The amount of the products is different from the purchase amount, it cannot be processed"
+  },
+  {
+    "id": "57",
+    "idlanguage": "es",
+    "idkey": "29",
+    "label": "No se reconoce la GiftCard"
+  },
+  {
+    "id": "58",
+    "idlanguage": "en",
+    "idkey": "29",
+    "label": "The gift card is not recognized"
+  },
+  {
+    "id": "59",
+    "idlanguage": "es",
+    "idkey": "30",
+    "label": "La Sucursal no es válida"
+  },
+  {
+    "id": "60",
+    "idlanguage": "en",
+    "idkey": "30",
+    "label": "The Branch is not valid"
+  },
+  {
+    "id": "61",
+    "idlanguage": "es",
+    "idkey": "31",
+    "label": "La entidad con Id %s no existe"
+  },
+  {
+    "id": "62",
+    "idlanguage": "en",
+    "idkey": "31",
+    "label": "The entity with Id %s does not exist"
+  },
+  {
+    "id": "63",
+    "idlanguage": "es",
+    "idkey": "32",
+    "label": "Se requiere un comentario válido de al menos %s caracteres"
+  },
+  {
+    "id": "64",
+    "idlanguage": "en",
+    "idkey": "32",
+    "label": "A valid comment of at least %s characters is required"
+  },
+  {
+    "id": "65",
+    "idlanguage": "es",
+    "idkey": "33",
+    "label": "El %s en la entidad no se encuentra."
+  },
+  {
+    "id": "66",
+    "idlanguage": "en",
+    "idkey": "33",
+    "label": "The %s in the entity is not found."
+  },
+  {
+    "id": "67",
+    "idlanguage": "es",
+    "idkey": "34",
+    "label": "La clave es incorrecta."
+  },
+  {
+    "id": "68",
+    "idlanguage": "en",
+    "idkey": "34",
+    "label": "The password is incorrect."
+  },
+  {
+    "id": "69",
+    "idlanguage": "es",
+    "idkey": "35",
+    "label": "La filial no Existe"
+  },
+  {
+    "id": "70",
+    "idlanguage": "en",
+    "idkey": "35",
+    "label": "The subsidiary does not exist"
+  },
+  {
+    "id": "71",
+    "idlanguage": "es",
+    "idkey": "36",
+    "label": "El nombre de usuario no existe"
+  },
+  {
+    "id": "72",
+    "idlanguage": "en",
+    "idkey": "36",
+    "label": "Username does not exist"
+  },
+  {
+    "id": "73",
+    "idlanguage": "es",
+    "idkey": "37",
+    "label": "El País no Existe"
+  },
+  {
+    "id": "74",
+    "idlanguage": "en",
+    "idkey": "37",
+    "label": "The Country Does Not Exist"
+  },
+  {
+    "id": "75",
+    "idlanguage": "es",
+    "idkey": "38",
+    "label": "La entidad no Existe"
+  },
+  {
+    "id": "76",
+    "idlanguage": "en",
+    "idkey": "38",
+    "label": "The entity does not exist"
+  },
+  {
+    "id": "77",
+    "idlanguage": "es",
+    "idkey": "39",
+    "label": "La entidad ya existe"
+  },
+  {
+    "id": "78",
+    "idlanguage": "en",
+    "idkey": "39",
+    "label": "The entity already exists"
+  },
+  {
+    "id": "79",
+    "idlanguage": "es",
+    "idkey": "40",
+    "label": "La consulta no posee datos para mostrar"
+  },
+  {
+    "id": "80",
+    "idlanguage": "en",
+    "idkey": "40",
+    "label": "The query does not have data to display"
+  },
+  {
+    "id": "81",
+    "idlanguage": "es",
+    "idkey": "41",
+    "label": "La Page no Existe"
+  },
+  {
+    "id": "82",
+    "idlanguage": "en",
+    "idkey": "41",
+    "label": "The Page does not exist"
+  },
+  {
+    "id": "83",
+    "idlanguage": "es",
+    "idkey": "42",
+    "label": "Este NIT/RUT/RUC ya esta siendo utilizado."
+  },
+  {
+    "id": "84",
+    "idlanguage": "en",
+    "idkey": "42",
+    "label": "This NIT/RUT/RUC is already being used."
+  },
+  {
+    "id": "85",
+    "idlanguage": "es",
+    "idkey": "43",
+    "label": "El padre no es valido."
+  },
+  {
+    "id": "86",
+    "idlanguage": "en",
+    "idkey": "43",
+    "label": "Father is invalid."
+  },
+  {
+    "id": "87",
+    "idlanguage": "es",
+    "idkey": "44",
+    "label": "Tarjeta de regalo"
+  },
+  {
+    "id": "88",
+    "idlanguage": "en",
+    "idkey": "44",
+    "label": "Gift Card"
+  },
+  {
+    "id": "89",
+    "idlanguage": "es",
+    "idkey": "45",
+    "label": "Administración"
+  },
+  {
+    "id": "90",
+    "idlanguage": "en",
+    "idkey": "45",
+    "label": "Administration"
+  },
+  {
+    "id": "91",
+    "idlanguage": "es",
+    "idkey": "46",
+    "label": "Posee Movimientos que no se pueden Reversar."
+  },
+  {
+    "id": "92",
+    "idlanguage": "en",
+    "idkey": "46",
+    "label": "It has Movements that cannot be Reversed."
+  },
+  {
+    "id": "93",
+    "idlanguage": "es",
+    "idkey": "47",
+    "label": "Ventas"
+  },
+  {
+    "id": "94",
+    "idlanguage": "en",
+    "idkey": "47",
+    "label": "Sales"
+  },
+  {
+    "id": "95",
+    "idlanguage": "es",
+    "idkey": "48",
+    "label": "Grupo de departamento no encontrado"
+  },
+  {
+    "id": "96",
+    "idlanguage": "en",
+    "idkey": "48",
+    "label": "Department group not found"
+  },
+  {
+    "id": "97",
+    "idlanguage": "es",
+    "idkey": "49",
+    "label": "Grupo de familia no encontrado"
+  },
+  {
+    "id": "98",
+    "idlanguage": "en",
+    "idkey": "49",
+    "label": "Family group not found"
+  },
+  {
+    "id": "99",
+    "idlanguage": "es",
+    "idkey": "50",
+    "label": "Este Sku ya esta en uso."
+  },
+  {
+    "id": "100",
+    "idlanguage": "en",
+    "idkey": "50",
+    "label": "This Sku is in use"
+  },
+  {
+    "id": "101",
+    "idlanguage": "es",
+    "idkey": "51",
+    "label": "Estado de producto no encontrado"
+  },
+  {
+    "id": "102",
+    "idlanguage": "en",
+    "idkey": "51",
+    "label": "Product state not found"
+  },
+  {
+    "id": "103",
+    "idlanguage": "es",
+    "idkey": "52",
+    "label": "Impuesto no encontrado"
+  },
+  {
+    "id": "104",
+    "idlanguage": "en",
+    "idkey": "52",
+    "label": "Tax not found"
+  },
+  {
+    "id": "105",
+    "idlanguage": "es",
+    "idkey": "53",
+    "label": "Producto no encontrado"
+  },
+  {
+    "id": "106",
+    "idlanguage": "en",
+    "idkey": "53",
+    "label": "Product not found"
+  },
+  {
+    "id": "107",
+    "idlanguage": "es",
+    "idkey": "54",
+    "label": "Empresa no encontrada"
+  },
+  {
+    "id": "108",
+    "idlanguage": "en",
+    "idkey": "54",
+    "label": "Company not found"
+  },
+  {
+    "id": "109",
+    "idlanguage": "es",
+    "idkey": "55",
+    "label": "Filial no encontrada"
+  },
+  {
+    "id": "110",
+    "idlanguage": "en",
+    "idkey": "55",
+    "label": "Subsidiary not found"
+  },
+  {
+    "id": "111",
+    "idlanguage": "es",
+    "idkey": "56",
+    "label": "Ya existe este producto con un precio en la filial."
+  },
+  {
+    "id": "112",
+    "idlanguage": "en",
+    "idkey": "56",
+    "label": "This product already exists with a price in the subsidiary."
+  },
+  {
+    "id": "113",
+    "idlanguage": "es",
+    "idkey": "57",
+    "label": "Ninguno de los productos enviados existe."
+  },
+  {
+    "id": "114",
+    "idlanguage": "en",
+    "idkey": "57",
+    "label": "None of the products sent exist.."
+  },
+  {
+    "id": "115",
+    "idlanguage": "es",
+    "idkey": "58",
+    "label": "Ya existe un producto que tiene ese impuesto asignado."
+  },
+  {
+    "id": "116",
+    "idlanguage": "en",
+    "idkey": "58",
+    "label": "There is already a product that has that tax assigned."
+  },
+  {
+    "id": "117",
+    "idlanguage": "es",
+    "idkey": "59",
+    "label": "Ya existe un producto con este nombre asignado a esta empresa."
+  },
+  {
+    "id": "118",
+    "idlanguage": "en",
+    "idkey": "59",
+    "label": "There is already a product assigned at this company."
+  },
+
+  {
+    "id": "119",
+    "idlanguage": "es",
+    "idkey": "60",
+    "label": "Género del cliente no encontrado"
+  },
+  {
+    "id": "120",
+    "idlanguage": "en",
+    "idkey": "60",
+    "label": "Customer gender not found"
+  },
+  {
+    "id": "121",
+    "idlanguage": "es",
+    "idkey": "61",
+    "label": "Validación incorrecta"
+  },
+  {
+    "id": "122",
+    "idlanguage": "en",
+    "idkey": "61",
+    "label": "Wrong validation"
+  },
+  {
+    "id": "123",
+    "idlanguage": "es",
+    "idkey": "62",
+    "label": "Tipo de cliente no encontrado"
+  },
+  {
+    "id": "124",
+    "idlanguage": "en",
+    "idkey": "62",
+    "label": "Customer type not found"
+  },
+  {
+    "id": "125",
+    "idlanguage": "es",
+    "idkey": "63",
+    "label": "Cliente no encontrado"
+  },
+  {
+    "id": "126",
+    "idlanguage": "en",
+    "idkey": "63",
+    "label": "Customer not found"
+  },
+  {
+    "id": "127",
+    "idlanguage": "es",
+    "idkey": "64",
+    "label": "Se han cargado %s grupos con %s errores"
+  },
+  {
+    "id": "128",
+    "idlanguage": "en",
+    "idkey": "64",
+    "label": "%s groups loaded with %s errors"
+  },
+  {
+    "id": "129",
+    "idlanguage": "es",
+    "idkey": "65",
+    "label": "Datos no válidos"
+  },
+  {
+    "id": "130",
+    "idlanguage": "en",
+    "idkey": "65",
+    "label": "Invalid data"
+  },
+  {
+    "id": "131",
+    "idlanguage": "es",
+    "idkey": "66",
+    "label": "Tipo de identificación no existe"
+  },
+  {
+    "id": "132",
+    "idlanguage": "en",
+    "idkey": "66",
+    "label": "ID type not found"
+  },
+  {
+    "id": "133",
+    "idlanguage": "es",
+    "idkey": "67",
+    "label": "La tienda no existe"
+  },
+  {
+    "id": "134",
+    "idlanguage": "en",
+    "idkey": "67",
+    "label": "Store not found"
+  },
+  {
+    "id": "135",
+    "idlanguage": "es",
+    "idkey": "68",
+    "label": "El tipo de tarjeta de regalo no existe"
+  },
+  {
+    "id": "136",
+    "idlanguage": "en",
+    "idkey": "68",
+    "label": "Gift card type not found"
+  },
+  {
+    "id": "137",
+    "idlanguage": "es",
+    "idkey": "69",
+    "label": "País no habilitado para esta tarjeta de regalo"
+  },
+  {
+    "id": "138",
+    "idlanguage": "en",
+    "idkey": "69",
+    "label": "Country not enabled for this gift card"
+  },
+  {
+    "id": "139",
+    "idlanguage": "es",
+    "idkey": "70",
+    "label": "La tarjeta de regalo ya tiene el estado indicado"
+  },
+  {
+    "id": "140",
+    "idlanguage": "en",
+    "idkey": "70",
+    "label": "The gift card already has the indicated state"
+  },
+  {
+    "id": "141",
+    "idlanguage": "es",
+    "idkey": "71",
+    "label": "El inicio de la tarjeta ya existe"
+  },
+  {
+    "id": "142",
+    "idlanguage": "en",
+    "idkey": "71",
+    "label": "The start of the card already exists"
+  },
+  {
+    "id": "143",
+    "idlanguage": "es",
+    "idkey": "72",
+    "label": "La tarjeta de regalo no se reconoce"
+  },
+  {
+    "id": "144",
+    "idlanguage": "en",
+    "idkey": "72",
+    "label": "The gift card is not recognized"
+  },
+  {
+    "id": "145",
+    "idlanguage": "es",
+    "idkey": "73",
+    "label": "Tarjeta de regalo duplicada, por favor valide la lista"
+  },
+  {
+    "id": "146",
+    "idlanguage": "en",
+    "idkey": "73",
+    "label": "Gift card duplicated, please validate the list"
+  },
+  {
+    "id": "147",
+    "idlanguage": "es",
+    "idkey": "74",
+    "label": "La fecha máxima de la tarjeta no puede superar %s"
+  },
+  {
+    "id": "148",
+    "idlanguage": "en",
+    "idkey": "74",
+    "label": "The maximum date of the card cannot exceed %s"
+  },
+  {
+    "id": "149",
+    "idlanguage": "es",
+    "idkey": "75",
+    "label": "Tipo de promoción no encontrado"
+  },
+  {
+    "id": "150",
+    "idlanguage": "en",
+    "idkey": "75",
+    "label": "Promotion type not found"
+  },
+  {
+    "id": "151",
+    "idlanguage": "es",
+    "idkey": "76",
+    "label": "Tienda no encontrada"
+  },
+  {
+    "id": "152",
+    "idlanguage": "en",
+    "idkey": "76",
+    "label": "Store not found"
+  },
+  {
+    "id": "153",
+    "idlanguage": "es",
+    "idkey": "77",
+    "label": "Promoción válida no encontrada"
+  },
+  {
+    "id": "154",
+    "idlanguage": "en",
+    "idkey": "77",
+    "label": "Valid promotion not found"
+  },
+  {
+    "id": "155",
+    "idlanguage": "es",
+    "idkey": "78",
+    "label": "Promoción no encontrada"
+  },
+  {
+    "id": "156",
+    "idlanguage": "en",
+    "idkey": "78",
+    "label": "Promotion not found"
+  },
+  {
+    "id": "157",
+    "idlanguage": "es",
+    "idkey": "79",
+    "label": "No existen productos para procesar"
+  },
+  {
+    "id": "158",
+    "idlanguage": "en",
+    "idkey": "79",
+    "label": "No products to process"
+  },
+  {
+    "id": "159",
+    "idlanguage": "es",
+    "idkey": "80",
+    "label": "La transacción no existe"
+  },
+  {
+    "id": "160",
+    "idlanguage": "en",
+    "idkey": "80",
+    "label": "Transaction not found"
+  },
+  {
+    "id": "161",
+    "idlanguage": "es",
+    "idkey": "81",
+    "label": "Datos de facturación incompletos"
+  },
+  {
+    "id": "162",
+    "idlanguage": "en",
+    "idkey": "81",
+    "label": "Incomplete billing data"
+  },
+  {
+    "id": "163",
+    "idlanguage": "es",
+    "idkey": "82",
+    "label": "El identificador del POS es requerido"
+  },
+  {
+    "id": "164",
+    "idlanguage": "en",
+    "idkey": "82",
+    "label": "POS identifier is required"
+  },
+  {
+    "id": "165",
+    "idlanguage": "es",
+    "idkey": "83",
+    "label": "Número de tienda no válido"
+  },
+  {
+    "id": "166",
+    "idlanguage": "en",
+    "idkey": "83",
+    "label": "Invalid store number"
+  },
+  {
+    "id": "167",
+    "idlanguage": "es",
+    "idkey": "84",
+    "label": "La transacción no puede finalizarse, debe estar activa"
+  },
+  {
+    "id": "168",
+    "idlanguage": "en",
+    "idkey": "84",
+    "label": "Transaction cannot be finalized, it must be active"
+  },
+  {
+    "id": "169",
+    "idlanguage": "es",
+    "idkey": "85",
+    "label": "Transacción finalizada con éxito"
+  },
+  {
+    "id": "170",
+    "idlanguage": "en",
+    "idkey": "85",
+    "label": "Transaction successfully finalized"
+  },
+  {
+    "id": "171",
+    "idlanguage": "es",
+    "idkey": "86",
+    "label": "Transacción cancelada con éxito"
+  },
+  {
+    "id": "172",
+    "idlanguage": "en",
+    "idkey": "86",
+    "label": "Transaction successfully cancelled"
+  },
+  {
+    "id": "173",
+    "idlanguage": "es",
+    "idkey": "87",
+    "label": "No es posible modificar la transacción"
+  },
+  {
+    "id": "174",
+    "idlanguage": "en",
+    "idkey": "87",
+    "label": "It is not possible to modify the transaction"
+  },
+  {
+    "id": "175",
+    "idlanguage": "es",
+    "idkey": "88",
+    "label": "La entidad no se encuentra"
+  },
+  {
+    "id": "176",
+    "idlanguage": "en",
+    "idkey": "88",
+    "label": "Entity not found"
+  },
+  {
+    "id": "177",
+    "idlanguage": "es",
+    "idkey": "89",
+    "label": "Tipo de pago no reconocido"
+  },
+  {
+    "id": "178",
+    "idlanguage": "en",
+    "idkey": "89",
+    "label": "Payment type not recognized"
+  },
+  {
+    "id": "179",
+    "idlanguage": "es",
+    "idkey": "90",
+    "label": "El pago tiene diferencias con respecto a la venta"
+  },
+  {
+    "id": "180",
+    "idlanguage": "en",
+    "idkey": "90",
+    "label": "The payment has differences compared to the sale"
+  },
+  {
+    "id": "181",
+    "idlanguage": "es",
+    "idkey": "91",
+    "label": "La transacción ya ha sido finalizada"
+  },
+  {
+    "id": "182",
+    "idlanguage": "en",
+    "idkey": "91",
+    "label": "The transaction has already been finalized"
+  },
+  {
+    "id": "183",
+    "idlanguage": "es",
+    "idkey": "92",
+    "label": "Grupo no encontrado"
+  },
+  {
+    "id": "184",
+    "idlanguage": "en",
+    "idkey": "92",
+    "label": "Group not found"
+  },
+  {
+    "id": "185",
+    "idlanguage": "es",
+    "idkey": "92",
+    "label": "No tiene permisos de creación."
+  },
+  {
+    "id": "186",
+    "idlanguage": "en",
+    "idkey": "92",
+    "label": "You do not have creation permissions."
+  },
+  {
+    "id": "187",
+    "idlanguage": "es",
+    "idkey": "94",
+    "label": "Ya existe un usuario con este Correo."
+  },
+  {
+    "id": "188",
+    "idlanguage": "en",
+    "idkey": "94",
+    "label": "A user with this email already exists."
+  },
+  {
+    "id": "189",
+    "idlanguage": "es",
+    "idkey": "95",
+    "label": "Ya existe un usuario con este nombre de usuario."
+  },
+  {
+    "id": "190",
+    "idlanguage": "en",
+    "idkey": "95",
+    "label": "A user with this username already exists."
+  },
+  {
+    "id": "191",
+    "idlanguage": "es",
+    "idkey": "96",
+    "label": "No se pudo recuperar el cliente."
+  },
+  {
+    "id": "192",
+    "idlanguage": "en",
+    "idkey": "96",
+    "label": "Could not retrieve the customer."
+  },
+  {
+    "id": "193",
+    "idlanguage": "es",
+    "idkey": "97",
+    "label": "No se reconoce el id"
+  },
+  {
+    "id": "194",
+    "idlanguage": "en",
+    "idkey": "97",
+    "label": "ID not recognized"
+  },
+  {
+    "id": "195",
+    "idlanguage": "es",
+    "idkey": "98",
+    "label": "No se reconoce la CompaÑia"
+  },
+  {
+    "id": "196",
+    "idlanguage": "en",
+    "idkey": "98",
+    "label": "Company not recognized"
+  },
+  {
+    "id": "197",
+    "idlanguage": "es",
+    "idkey": "99",
+    "label": "No se reconoce la SubSidiaria"
+  },
+  {
+    "id": "198",
+    "idlanguage": "en",
+    "idkey": "99",
+    "label": "Subsidiary not recognized"
+  },
+  {
+    "id": "199",
+    "idlanguage": "es",
+    "idkey": "100",
+    "label": "No se reconoce la Tipo de TlogString"
+  },
+  {
+    "id": "200",
+    "idlanguage": "en",
+    "idkey": "100",
+    "label": "Tlog type not recognized"
+  },
+  {
+    "id": "201",
+    "idlanguage": "es",
+    "idkey": "101",
+    "label": "No se reconoce la Configuración de la Tienda y el Tipo de Tlog"
+  },
+  {
+    "id": "202",
+    "idlanguage": "en",
+    "idkey": "101",
+    "label": "Store configuration and Tlog type not recognized"
+  },
+  {
+    "id": "203",
+    "idlanguage": "es",
+    "idkey": "102",
+    "label": "No se reconoce la configuración del Pos"
+  },
+  {
+    "id": "204",
+    "idlanguage": "en",
+    "idkey": "102",
+    "label": "POS configuration not recognized"
+  },
+
+  {
+    "id": "204",
+    "idlanguage": "es",
+    "idkey": "103",
+    "label": "No existe la entidad con el parametro: %s"
+  },
+  {
+    "id": "205",
+    "idlanguage": "en",
+    "idkey": "103",
+    "label": "It not exist the entity with parameter: %s"
+  },
+  {
+    "id": "206",
+    "idlanguage": "es",
+    "idkey": "104",
+    "label": "Usuario no encontrado"
+  },
+  {
+    "id": "207",
+    "idlanguage": "en",
+    "idkey": "104",
+    "label": "User not found"
+  },
+  {
+    "id": "208",
+    "idlanguage": "es",
+    "idkey": "105",
+    "label": "Modulo no encontrado."
+  },
+  {
+    "id": "209",
+    "idlanguage": "en",
+    "idkey": "105",
+    "label": "Module not found."
+  },
+  {
+    "id": "210",
+    "idlanguage": "es",
+    "idkey": "106",
+    "label": "Archivo(s) no encontrados."
+  },
+  {
+    "id": "211",
+    "idlanguage": "en",
+    "idkey": "106",
+    "label": "File(s) not found."
+  },
+  {"id":"212","idlanguage":"es","idkey":"107","label":"No se encontró el registro solicitado."},
+  {"id":"213","idlanguage":"en","idkey":"107","label":"The requested record was not found."},
+  {"id":"214","idlanguage":"es","idkey":"108","label":"El cuerpo de la solicitud es requerido."},
+  {"id":"215","idlanguage":"en","idkey":"108","label":"Request body is required."},
+  {"id":"216","idlanguage":"es","idkey":"109","label":"Por favor, verifique los datos e intente nuevamente."},
+  {"id":"217","idlanguage":"en","idkey":"109","label":"Please verify the data and try again."},
+  {"id":"218","idlanguage":"es","idkey":"110","label":"Por favor, verifique el ID e intente nuevamente."},
+  {"id":"219","idlanguage":"en","idkey":"110","label":"Please verify the ID and try again."},
+  {"id":"220","idlanguage":"es","idkey":"111","label":"Por favor, verifique los filtros e intente nuevamente."},
+  {"id":"221","idlanguage":"en","idkey":"111","label":"Please verify the filters and try again."},
+  {"id":"222","idlanguage":"es","idkey":"112","label":"Ya existe un registro con este nombre."},
+  {"id":"223","idlanguage":"en","idkey":"112","label":"A record with this name already exists."},
+  {"id":"224","idlanguage":"es","idkey":"113","label":"El nombre es obligatorio."},
+  {"id":"225","idlanguage":"en","idkey":"113","label":"Name is required."},
+  {"id":"226","idlanguage":"es","idkey":"114","label":"Los días de plazo de pago deben ser mayores que 0."},
+  {"id":"227","idlanguage":"en","idkey":"114","label":"Payment term days must be greater than 0."},
+  {"id":"228","idlanguage":"es","idkey":"115","label":"El porcentaje no puede ser mayor a 100%."},
+  {"id":"229","idlanguage":"en","idkey":"115","label":"Percentage cannot exceed 100%."},
+  {"id":"230","idlanguage":"es","idkey":"116","label":"El monto debe ser mayor que 0."},
+  {"id":"231","idlanguage":"en","idkey":"116","label":"Amount must be greater than 0."},
+  {"id":"232","idlanguage":"es","idkey":"117","label":"La suma de los pagos excede el valor total del procedimiento."},
+  {"id":"233","idlanguage":"en","idkey":"117","label":"Sum of payments exceeds the total procedure value."},
+  {"id":"234","idlanguage":"es","idkey":"118","label":"El pago del paciente no puede ser negativo."},
+  {"id":"235","idlanguage":"en","idkey":"118","label":"Patient payment cannot be negative."},
+  {"id":"236","idlanguage":"es","idkey":"119","label":"El pago del contratista no puede ser negativo."},
+  {"id":"237","idlanguage":"en","idkey":"119","label":"Contractor payment cannot be negative."},
+  {"id":"238","idlanguage":"es","idkey":"120","label":"Ya existe una factura con este número para el contratista indicado."},
+  {"id":"239","idlanguage":"en","idkey":"120","label":"An invoice with this number already exists for the specified contractor."},
+  {"id":"240","idlanguage":"es","idkey":"121","label":"Ya existe un insumo con este nombre para el procedimiento."},
+  {"id":"241","idlanguage":"en","idkey":"121","label":"A supply with this name already exists for the procedure."},
+  {"id":"242","idlanguage":"es","idkey":"122","label":"La suma de los porcentajes de insumos no puede exceder el 100%."},
+  {"id":"243","idlanguage":"en","idkey":"122","label":"The sum of supply percentages cannot exceed 100%."},
+  {"id":"244","idlanguage":"es","idkey":"123","label":"El nombre del campo no es válido. Debe corresponder a un campo del Excel."},
+  {"id":"245","idlanguage":"en","idkey":"123","label":"Invalid field name. Must match an Excel field."},
+  {"id":"246","idlanguage":"es","idkey":"124","label":"La columna del Excel no es válida. Use letras de la A a la Z (ej: A, B, AA)."},
+  {"id":"247","idlanguage":"en","idkey":"124","label":"Invalid Excel column. Use letters A-Z (e.g. A, B, AA)."},
+  {"id":"248","idlanguage":"es","idkey":"125","label":"Este campo ya tiene una columna asignada."},
+  {"id":"249","idlanguage":"en","idkey":"125","label":"This field already has an assigned column."},
+  {"id":"250","idlanguage":"es","idkey":"126","label":"Tipo de ingreso no válido. Use: CONSULTA_PARTICULAR, COMISION_POLIZA, INSUMO_PAQUETE o AJUSTE_MANUAL."},
+  {"id":"251","idlanguage":"en","idkey":"126","label":"Invalid income type. Use: CONSULTA_PARTICULAR, COMISION_POLIZA, INSUMO_PAQUETE or AJUSTE_MANUAL."},
+  {"id":"252","idlanguage":"es","idkey":"127","label":"Fila omitida: el estado de la factura indica anulación."},
+  {"id":"253","idlanguage":"en","idkey":"127","label":"Row skipped: invoice status indicates annulment."},
+  {"id":"254","idlanguage":"es","idkey":"128","label":"Fila omitida: el estado de la factura corresponde a una nota crédito."},
+  {"id":"255","idlanguage":"en","idkey":"128","label":"Row skipped: invoice status corresponds to a credit note."},
+  {"id":"256","idlanguage":"es","idkey":"129","label":"Fila omitida: la descripción del servicio corresponde a honorarios."},
+  {"id":"257","idlanguage":"en","idkey":"129","label":"Row skipped: service description corresponds to fees/honorarium."},
+  {"id":"258","idlanguage":"es","idkey":"130","label":"Fila omitida: el valor del procedimiento es igual al pago compartido del paciente."},
+  {"id":"259","idlanguage":"en","idkey":"130","label":"Row skipped: procedure value equals patient shared payment."},
+  {"id":"260","idlanguage":"es","idkey":"131","label":"Fila omitida: el valor del procedimiento es 0 o está vacío. Ningún procedimiento puede tener valor cero."},
+  {"id":"261","idlanguage":"en","idkey":"131","label":"Row skipped: procedure value is 0 or empty. No procedure can have zero value."},
+  {"id":"262","idlanguage":"es","idkey":"132","label":"Transacción creada exitosamente."},
+  {"id":"263","idlanguage":"en","idkey":"132","label":"Transaction created successfully."},
+  {"id":"264","idlanguage":"es","idkey":"133","label":"Se detectó un registro existente con los mismos datos. El registro fue actualizado."},
+  {"id":"265","idlanguage":"en","idkey":"133","label":"An existing record with the same data was detected. The record was updated."},
+  {"id":"266","idlanguage":"es","idkey":"134","label":"Procesado exitosamente."},
+  {"id":"267","idlanguage":"en","idkey":"134","label":"Processed successfully."},
+  {"id":"268","idlanguage":"es","idkey":"135","label":"El tipo de transacción es requerido. Proporciónelo en los datos o configure el tipo en el procedimiento médico."},
+  {"id":"269","idlanguage":"en","idkey":"135","label":"Transaction type is required. Provide it in the data or configure the type in the medical procedure."},
+  {"id":"270","idlanguage":"es","idkey":"136","label":"Debe asignar un médico cuando el insumo es de tipo doctor."},
+  {"id":"271","idlanguage":"en","idkey":"136","label":"A doctor must be assigned when the supply is of doctor type."},
+  {"id":"272","idlanguage":"es","idkey":"137","label":"El procedimiento médico no pertenece a la misma sede."},
+  {"id":"273","idlanguage":"en","idkey":"137","label":"The medical procedure does not belong to the same subsidiary."},
+  {"id":"274","idlanguage":"es","idkey":"138","label":"El centro de costos es obligatorio cuando el estado de la factura es Pagada."},
+  {"id":"275","idlanguage":"en","idkey":"138","label":"Cost center is required when invoice status is Paid."},
+  {"id":"276","idlanguage":"es","idkey":"139","label":"El estado de pago no es válido."},
+  {"id":"277","idlanguage":"en","idkey":"139","label":"Payment status is not valid."},
+  {"id":"278","idlanguage":"es","idkey":"140","label":"Ya existe un contratista con este NIT."},
+  {"id":"279","idlanguage":"en","idkey":"140","label":"A contractor with this NIT already exists."},
+  {"id":"280","idlanguage":"es","idkey":"141","label":"Ya existe un contratista con este nombre."},
+  {"id":"281","idlanguage":"en","idkey":"141","label":"A contractor with this name already exists."},
+  {"id":"282","idlanguage":"es","idkey":"142","label":"Ya existe un médico con este número de documento."},
+  {"id":"283","idlanguage":"en","idkey":"142","label":"A doctor with this document number already exists."},
+  {"id":"284","idlanguage":"es","idkey":"143","label":"Ya existe un médico con este nombre."},
+  {"id":"285","idlanguage":"en","idkey":"143","label":"A doctor with this name already exists."},
+  {"id":"286","idlanguage":"es","idkey":"144","label":"Ya existe un procedimiento médico con este código."},
+  {"id":"287","idlanguage":"en","idkey":"144","label":"A medical procedure with this code already exists."},
+  {"id":"288","idlanguage":"es","idkey":"145","label":"Ya existe un servicio con este nombre."},
+  {"id":"289","idlanguage":"en","idkey":"145","label":"A service with this name already exists."},
+  {"id":"290","idlanguage":"es","idkey":"146","label":"Ya existe esta combinación de contratista y procedimiento."},
+  {"id":"291","idlanguage":"en","idkey":"146","label":"This contractor-procedure combination already exists."},
+  {"id":"292","idlanguage":"es","idkey":"147","label":"El monto de la factura no es válido."},
+  {"id":"293","idlanguage":"en","idkey":"147","label":"Invoice amount is not valid."},
+  {"id":"294","idlanguage":"es","idkey":"148","label":"El valor no puede ser negativo."},
+  {"id":"295","idlanguage":"en","idkey":"148","label":"Value cannot be negative."}
+]

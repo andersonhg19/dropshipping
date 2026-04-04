@@ -1,0 +1,72 @@
+[
+  {
+    "idPage": 1,
+    "idTypeUser": 1,
+    "idModifiedBy": 1,
+    "canCreate": true,
+    "canUpdate": true,
+    "canRead": true,
+    "canDelete": true,
+    "active": true
+  },
+  {
+    "idPage": 2,
+    "idTypeUser": 1,
+    "idModifiedBy": 1,
+    "canCreate": true,
+    "canUpdate": true,
+    "canRead": true,
+    "canDelete": true,
+    "active": true
+  },
+  {
+    "idPage": 3,
+    "idTypeUser": 1,
+    "idModifiedBy": 1,
+    "canCreate": true,
+    "canUpdate": true,
+    "canRead": true,
+    "canDelete": true,
+    "active": true
+  },
+  {
+    "idPage": 4,
+    "idTypeUser": 1,
+    "idModifiedBy": 1,
+    "canCreate": true,
+    "canUpdate": true,
+    "canRead": true,
+    "canDelete": true,
+    "active": true
+  },
+  {
+    "idPage": 5,
+    "idTypeUser": 1,
+    "idModifiedBy": 1,
+    "canCreate": true,
+    "canUpdate": true,
+    "canRead": true,
+    "canDelete": true,
+    "active": true
+  },
+  {
+    "idPage": 6,
+    "idTypeUser": 1,
+    "idModifiedBy": 1,
+    "canCreate": true,
+    "canUpdate": true,
+    "canRead": true,
+    "canDelete": true,
+    "active": true
+  },
+  {
+    "idPage": 7,
+    "idTypeUser": 1,
+    "idModifiedBy": 1,
+    "canCreate": true,
+    "canUpdate": true,
+    "canRead": true,
+    "canDelete": true,
+    "active": true
+  }
+]

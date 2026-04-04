@@ -1,0 +1,50 @@
+.addButton {
+  cursor: pointer;
+  outline: none;
+  transition:
+    transform 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out;
+  background-color: #4caf50;
+  border-radius: 50%;
+  border: none;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.addButton:hover {
+  box-shadow:
+    9px 9px 10px #000000,
+    5px 5px 4px #5e5757;
+  transform: translateY(-5px);
+}
+
+.addButton:active {
+  box-shadow:
+    9px 9px 10px #000,
+    5px 5px 4px #5e5757;
+  transform: translateY(-5px);
+}
+
+/* Estilo para el SVG */
+.addButtonIcon {
+  stroke: #a3e635;
+  fill: none;
+  transition:
+    fill 0.3s ease-in-out,
+    stroke 0.3s ease-in-out,
+    transform 0.3s ease-in-out;
+}
+
+.addButtonIcon:hover {
+  fill: #65a30d;
+}
+
+.addButtonIcon:active {
+  stroke: #d9f99d;
+  fill: #4d7c0f;
+  transition-duration: 0s;
+  transform: rotate(90deg);
+}

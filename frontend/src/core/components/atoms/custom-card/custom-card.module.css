@@ -1,0 +1,99 @@
+.one-div {
+  position: relative;
+  width: 650px;
+  height: 550px;
+  background-color: rgb(15, 15, 15);
+  transform-style: preserve-3d;
+  animation: rot 2s infinite ease;
+  border-radius: 20px;
+  box-shadow:
+    0 0 50px 0px white,
+    inset 0 0 50px 0px white;
+  transition: 1s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-before {
+  position: absolute;
+  top: -20px;
+  left: 40px;
+  background-color: rgb(25, 25, 25);
+  width: 650px;
+  height: 550px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateY(50px) translateZ(50px);
+  border-radius: 20px;
+  filter: blur(0px);
+  transition: 0.5s;
+  box-shadow:
+    0 0 5px 0px black,
+    -3px -3px 10px 3px rgb(25, 25, 25),
+    inset 0px 0px 40px -20px black;
+}
+
+.custom-after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 30px;
+  text-shadow: 5px 5px 1px black;
+  transition: all 0.5s;
+}
+
+.custom-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+.one-div:hover .custom-after {
+  font-size: 40px;
+}
+
+.one-div:hover .custom-before {
+  font-size: 10px;
+  width: 550px;
+  height: 400px;
+  transform: translateZ(-50px) translateY(50px);
+  box-shadow:
+    0 0 5px 0px black,
+    -3px -3px 10px 3px rgb(25, 25, 25),
+    inset 0px 0px 40px -20px;
+}
+
+.one-div:hover {
+  width: 900px;
+  height: 500px;
+  box-shadow:
+    0 0 5px 0px black,
+    inset -3px -3px 10px 3px rgb(25, 25, 25),
+    inset 3px 3px 20px 3px black;
+  cursor: pointer;
+}
+
+@keyframes rot {
+  0% {
+    transform: rotateX(-15deg) translateY(0px);
+  }
+
+  50% {
+    transform: rotateX(-15deg) translateY(-10px);
+  }
+
+  100% {
+    transform: rotateX(-15deg) translateY(0px);
+  }
+}

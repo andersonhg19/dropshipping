@@ -1,0 +1,25 @@
+# ============================================================
+# Etapa Frontend: Solo la aplicacion React/Next.js
+# Uso: docker-compose -f docker-compose.frontend.yml up --build -d
+# ============================================================
+
+services:
+  frontend:
+    image: vn-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8820}
+        NEXT_PUBLIC_ID_COMPANY: ${NEXT_PUBLIC_ID_COMPANY:-1}
+        NEXT_PUBLIC_TZ: ${NEXT_PUBLIC_TZ:-America/Bogota}
+        NEXT_PUBLIC_CACHE_SECRET: ${NEXT_PUBLIC_CACHE_SECRET:-changeme123}
+    ports:
+      - "3000:3000"
+    networks:
+      - visnex-network
+
+networks:
+  visnex-network:
+    external: true
+    name: dropshipping_visnex-network
