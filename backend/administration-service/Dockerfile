@@ -8,7 +8,7 @@ WORKDIR /app
 COPY target/administration-service-0.0.1-SNAPSHOT.jar app.jar
 
 # Expone el puerto en el que la aplicación se ejecutará
-EXPOSE 8823
+EXPOSE 8844
 
 # Comando para ejecutar la aplicación
 CMD ["java", "-jar", "app.jar"]

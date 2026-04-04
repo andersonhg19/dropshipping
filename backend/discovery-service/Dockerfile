@@ -11,7 +11,7 @@ COPY target/discovery-service-0.0.1-SNAPSHOT.jar app.jar
 COPY src/main/resources/application.properties application.properties
 
 # Expone el puerto en el que la aplicación se ejecutará
-EXPOSE 8760
+EXPOSE 8840
 
 # Comando para ejecutar la aplicación
 CMD ["java", "-jar", "app.jar"]

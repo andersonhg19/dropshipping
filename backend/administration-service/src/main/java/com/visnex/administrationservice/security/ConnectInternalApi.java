@@ -46,7 +46,7 @@ public class ConnectInternalApi {
     @Value("${authUrl}")
     String authUrl;
     
-    @Value("${administrationMicroserviceUrl:http://gateway-service:8820/ADMINISTRATION-SERVICE/vn-api/v2/}")
+    @Value("${administrationMicroserviceUrl:http://gateway-service:8841/ADMINISTRATION-SERVICE/vn-api/v2/}")
     String administrationMicroserviceUrl;
     
     private String gLanguage;
@@ -65,7 +65,7 @@ public class ConnectInternalApi {
             this.restTemplate = new RestTemplate();
         }
         if(languageMicroserviceUrl==null) {
-            this.languageMicroserviceUrl = "http://localhost:8888/LANGUAGE-SERVICE/vn-api/v2/message/getOneMessage/";
+            this.languageMicroserviceUrl = "http://localhost:8841/LANGUAGE-SERVICE/vn-api/v2/message/getOneMessage/";
         }
         this.gLanguage = appConfig.getLanguage();
     }

@@ -1,5 +1,5 @@
 server:
-  port: 8820
+  port: 8841
 
 logging:
   level:
@@ -37,4 +37,4 @@ eureka:
     preferIpAddress: false
   client:
     service-url:
-      defaultZone: http://discovery-service:8760/eureka
+      defaultZone: http://discovery-service:8840/eureka

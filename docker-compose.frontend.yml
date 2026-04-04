@@ -10,12 +10,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8820}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8841}
         NEXT_PUBLIC_ID_COMPANY: ${NEXT_PUBLIC_ID_COMPANY:-1}
         NEXT_PUBLIC_TZ: ${NEXT_PUBLIC_TZ:-America/Bogota}
         NEXT_PUBLIC_CACHE_SECRET: ${NEXT_PUBLIC_CACHE_SECRET:-changeme123}
     ports:
-      - "3000:3000"
+      - "3001:3000"
     networks:
       - visnex-network
 

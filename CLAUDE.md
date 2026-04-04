@@ -70,42 +70,42 @@ git config --local user.name "Anderson Herrera"
 
 ```
                     ┌──────────────┐
-                    │   Frontend   │ :3000 (Next.js / React)
+                    │   Frontend   │ :3001 (Next.js / React)
                     └──────┬───────┘
                            │
                     ┌──────┴───────┐
-                    │   Gateway    │ :8820
+                    │   Gateway    │ :8841
                     └──────┬───────┘
                            │
      ┌──────────┬──────────┼──────────┬──────────┐
      │          │          │          │          │
   ┌──┴──┐  ┌───┴──┐  ┌───┴───┐  ┌──┴───┐  ┌──┴───┐
   │Auth │  │Admin │  │Audit  │  │Acqui │  │Comm  │
-  │:8821│  │:8823 │  │:8827  │  │:8830 │  │:8831 │
+  │:8842│  │:8844 │  │:8845  │  │:8846 │  │:8847 │
   └──┬──┘  └───┬──┘  └───┬───┘  └──┬───┘  └──┬───┘
      │         │         │         │         │
   ┌──┴─────────┴─────────┴─────────┴─────────┴──┐
-  │              PostgreSQL :5432                 │
+  │              PostgreSQL :5433                 │
   └──────────────────────────────────────────────┘
 
-  WordPress :8085 + MySQL :3306 | phpMyAdmin :8081
-  Discovery (Eureka) :8760 | Language :8822
+  WordPress :8850 + MySQL :3307 | phpMyAdmin :8851
+  Discovery (Eureka) :8840 | Language :8843
 ```
 
 ### Servicios
 
 | Puerto | Servicio | Proposito | BD |
 |--------|----------|-----------|-----|
-| 8760 | discovery-service | Registro Eureka | - |
-| 8820 | gateway-service | API Gateway + CORS | - |
-| 8821 | auth-service | Autenticacion JWT | auth_db |
-| 8822 | language-service | Internacionalizacion | lang_db |
-| 8823 | administration-service | Empresas, usuarios, roles, config | admin_db |
-| 8827 | audit-service | Registro de auditoria | audit_db |
-| 8830 | acquisition-service | Busqueda, importacion, proveedores, scores | acquisition_db |
-| 8831 | commerce-service | Catalogo, IA, pricing, publicacion, stats | commerce_db |
-| 3000 | frontend | Panel admin (Next.js) | - |
-| 8085 | wordpress | Tienda ecommerce | wordpress_vn (MySQL) |
+| 8840 | discovery-service | Registro Eureka | - |
+| 8841 | gateway-service | API Gateway + CORS | - |
+| 8842 | auth-service | Autenticacion JWT | auth_db |
+| 8843 | language-service | Internacionalizacion | lang_db |
+| 8844 | administration-service | Empresas, usuarios, roles, config | admin_db |
+| 8845 | audit-service | Registro de auditoria | audit_db |
+| 8846 | acquisition-service | Busqueda, importacion, proveedores, scores | acquisition_db |
+| 8847 | commerce-service | Catalogo, IA, pricing, publicacion, stats | commerce_db |
+| 3001 | frontend | Panel admin (Next.js) | - |
+| 8850 | wordpress | Tienda ecommerce | wordpress_vn (MySQL) |
 
 ---
 

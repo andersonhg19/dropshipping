@@ -14,10 +14,11 @@ frontend/.env.local
 frontend/tsconfig.tsbuildinfo
 frontend/graph.svg
 
-# ==================== Docker ====================
+# ==================== Docker / WordPress ====================
 wordpress/db-data/
-wordpress/wp-content/uploads/
-wordpress/wp-content/cache/
+wordpress/wp-content/
+!wordpress/wp-content/mu-plugins/
+!wordpress/config/
 
 # ==================== IDE ====================
 .idea/

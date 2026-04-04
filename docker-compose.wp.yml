@@ -22,7 +22,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - visnex-network
     command: '--default-authentication-plugin=mysql_native_password'
@@ -49,7 +49,7 @@ services:
       - ./wordpress/wp-content:/var/www/html/wp-content
       - ./wordpress/config/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     ports:
-      - "8085:80"
+      - "8850:80"
     networks:
       - visnex-network
 
@@ -63,6 +63,6 @@ services:
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-vnroot2026}
     ports:
-      - "8081:80"
+      - "8851:80"
     networks:
       - visnex-network

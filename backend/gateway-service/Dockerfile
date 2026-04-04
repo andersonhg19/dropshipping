@@ -11,7 +11,7 @@ COPY src/main/resources/application.yml application.yml
 COPY target/gateway-service-0.0.1-SNAPSHOT.jar app.jar
 
 # Expone el puerto en el que la aplicación se ejecutará
-EXPOSE 8820
+EXPOSE 8841
 
 # Comando para ejecutar la aplicación
 CMD ["java", "-jar", "app.jar"]

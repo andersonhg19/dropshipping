@@ -8,7 +8,7 @@ WORKDIR /app
 COPY target/language-service-1.0-SNAPSHOT.jar app.jar
 
 # Expone el puerto que tu aplicación va a usar
-EXPOSE 8822
+EXPOSE 8843
 
 # Define el comando para ejecutar tu aplicación
 CMD ["java", "-jar", "app.jar"]
