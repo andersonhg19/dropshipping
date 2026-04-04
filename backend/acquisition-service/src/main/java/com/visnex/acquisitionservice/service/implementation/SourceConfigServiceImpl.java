@@ -18,7 +18,6 @@ import com.visnex.acquisitionservice.entity.SourceConfig;
 import com.visnex.acquisitionservice.enums.Message;
 import com.visnex.acquisitionservice.exception.ValidationException;
 import com.visnex.acquisitionservice.mapper.SourceConfigMapper;
-import com.visnex.acquisitionservice.repository.CustomSourceConfigRepository;
 import com.visnex.acquisitionservice.repository.SourceConfigRepository;
 import com.visnex.acquisitionservice.security.ConnectInternalApi;
 import com.visnex.acquisitionservice.service.SourceConfigService;
@@ -32,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 public class SourceConfigServiceImpl implements SourceConfigService {
 
     private final SourceConfigRepository repository;
-    private final CustomSourceConfigRepository customRepository;
     private final SourceConfigMapper mapper;
     private final ValidationUtils validation;
     private final ConnectInternalApi connectInternalApi;
@@ -124,7 +122,7 @@ public class SourceConfigServiceImpl implements SourceConfigService {
             size = Math.min(size, 200);
 
             PageRequest pageable = PageRequest.of(page, size);
-            Page<ResultSourceConfigDTO> pageResult = customRepository.findAllWithCriteria(filterDTO, pageable);
+            Page<ResultSourceConfigDTO> pageResult = repository.findAllWithCriteria(filterDTO, pageable);
 
             if (pageResult == null || pageResult.isEmpty()) {
                 PageDTO<ResultSourceConfigDTO> empty = new PageDTO<>(page, size, 0, Collections.emptyList());

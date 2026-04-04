@@ -17,7 +17,6 @@ import com.visnex.acquisitionservice.entity.SourceProduct;
 import com.visnex.acquisitionservice.enums.Message;
 import com.visnex.acquisitionservice.exception.ValidationException;
 import com.visnex.acquisitionservice.mapper.SourceProductMapper;
-import com.visnex.acquisitionservice.repository.CustomSourceProductRepository;
 import com.visnex.acquisitionservice.repository.SourceProductRepository;
 import com.visnex.acquisitionservice.security.ConnectInternalApi;
 import com.visnex.acquisitionservice.service.SourceProductService;
@@ -31,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 public class SourceProductServiceImpl implements SourceProductService {
 
     private final SourceProductRepository repository;
-    private final CustomSourceProductRepository customRepository;
     private final SourceProductMapper mapper;
     private final ValidationUtils validation;
     private final ConnectInternalApi connectInternalApi;
@@ -116,7 +114,7 @@ public class SourceProductServiceImpl implements SourceProductService {
             size = Math.min(size, 200);
 
             PageRequest pageable = PageRequest.of(page, size);
-            Page<ResultSourceProductDTO> pageResult = customRepository.findAllWithCriteria(filterDTO, pageable);
+            Page<ResultSourceProductDTO> pageResult = repository.findAllWithCriteria(filterDTO, pageable);
 
             if (pageResult == null || pageResult.isEmpty()) {
                 PageDTO<ResultSourceProductDTO> empty = new PageDTO<>(page, size, 0, Collections.emptyList());

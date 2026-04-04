@@ -18,7 +18,6 @@ import com.visnex.acquisitionservice.entity.Supplier;
 import com.visnex.acquisitionservice.enums.Message;
 import com.visnex.acquisitionservice.exception.ValidationException;
 import com.visnex.acquisitionservice.mapper.SupplierMapper;
-import com.visnex.acquisitionservice.repository.CustomSupplierRepository;
 import com.visnex.acquisitionservice.repository.SupplierRepository;
 import com.visnex.acquisitionservice.security.ConnectInternalApi;
 import com.visnex.acquisitionservice.service.SupplierService;
@@ -32,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 public class SupplierServiceImpl implements SupplierService {
 
     private final SupplierRepository repository;
-    private final CustomSupplierRepository customRepository;
     private final SupplierMapper mapper;
     private final ValidationUtils validation;
     private final ConnectInternalApi connectInternalApi;
@@ -124,7 +122,7 @@ public class SupplierServiceImpl implements SupplierService {
             size = Math.min(size, 200);
 
             PageRequest pageable = PageRequest.of(page, size);
-            Page<ResultSupplierDTO> pageResult = customRepository.findAllWithCriteria(filterDTO, pageable);
+            Page<ResultSupplierDTO> pageResult = repository.findAllWithCriteria(filterDTO, pageable);
 
             if (pageResult == null || pageResult.isEmpty()) {
                 PageDTO<ResultSupplierDTO> empty = new PageDTO<>(page, size, 0, Collections.emptyList());

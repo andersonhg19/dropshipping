@@ -17,7 +17,6 @@ import com.visnex.acquisitionservice.entity.ImportJob;
 import com.visnex.acquisitionservice.enums.Message;
 import com.visnex.acquisitionservice.exception.ValidationException;
 import com.visnex.acquisitionservice.mapper.ImportJobMapper;
-import com.visnex.acquisitionservice.repository.CustomImportJobRepository;
 import com.visnex.acquisitionservice.repository.ImportJobRepository;
 import com.visnex.acquisitionservice.security.ConnectInternalApi;
 import com.visnex.acquisitionservice.service.ImportJobService;
@@ -31,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 public class ImportJobServiceImpl implements ImportJobService {
 
     private final ImportJobRepository repository;
-    private final CustomImportJobRepository customRepository;
     private final ImportJobMapper mapper;
     private final ValidationUtils validation;
     private final ConnectInternalApi connectInternalApi;
@@ -110,7 +108,7 @@ public class ImportJobServiceImpl implements ImportJobService {
             size = Math.min(size, 200);
 
             PageRequest pageable = PageRequest.of(page, size);
-            Page<ResultImportJobDTO> pageResult = customRepository.findAllWithCriteria(filterDTO, pageable);
+            Page<ResultImportJobDTO> pageResult = repository.findAllWithCriteria(filterDTO, pageable);
 
             if (pageResult == null || pageResult.isEmpty()) {
                 PageDTO<ResultImportJobDTO> empty = new PageDTO<>(page, size, 0, Collections.emptyList());

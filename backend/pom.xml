@@ -45,6 +45,7 @@
 		<module>administration-service</module>
 		<module>audit-service</module>
 		<module>acquisition-service</module>
+		<module>commerce-service</module>
 	</modules>
 
 	<repositories>

@@ -198,6 +198,49 @@ services:
     networks:
       - visnex-network
 
+  commerce-service:
+    image: vn-commerce
+    build:
+      context: ./backend/commerce-service
+    ports:
+      - "8847:8847"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/commerce_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
+      SECRET: ${SECRET:-visnex@secret.key}
+      EXP_TIME: ${EXP_TIME:-864000000}
+      WC_URL: ${WC_URL:-http://wordpress:8850}
+      WC_CONSUMER_KEY: ${WC_CONSUMER_KEY:-}
+      WC_CONSUMER_SECRET: ${WC_CONSUMER_SECRET:-}
+    networks:
+      - visnex-network
+
+  acquisition-service:
+    image: vn-acquisition
+    build:
+      context: ./backend/acquisition-service
+    ports:
+      - "8846:8846"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/acquisition_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
+      SECRET: ${SECRET:-visnex@secret.key}
+      EXP_TIME: ${EXP_TIME:-864000000}
+    networks:
+      - visnex-network
+
   # ==================== FRONTEND ====================
   frontend:
     image: vn-frontend

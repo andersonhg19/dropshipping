@@ -18,7 +18,6 @@ import com.visnex.acquisitionservice.entity.ImportTemplate;
 import com.visnex.acquisitionservice.enums.Message;
 import com.visnex.acquisitionservice.exception.ValidationException;
 import com.visnex.acquisitionservice.mapper.ImportTemplateMapper;
-import com.visnex.acquisitionservice.repository.CustomImportTemplateRepository;
 import com.visnex.acquisitionservice.repository.ImportTemplateRepository;
 import com.visnex.acquisitionservice.security.ConnectInternalApi;
 import com.visnex.acquisitionservice.service.ImportTemplateService;
@@ -32,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 public class ImportTemplateServiceImpl implements ImportTemplateService {
 
     private final ImportTemplateRepository repository;
-    private final CustomImportTemplateRepository customRepository;
     private final ImportTemplateMapper mapper;
     private final ValidationUtils validation;
     private final ConnectInternalApi connectInternalApi;
@@ -124,7 +122,7 @@ public class ImportTemplateServiceImpl implements ImportTemplateService {
             size = Math.min(size, 200);
 
             PageRequest pageable = PageRequest.of(page, size);
-            Page<ResultImportTemplateDTO> pageResult = customRepository.findAllWithCriteria(filterDTO, pageable);
+            Page<ResultImportTemplateDTO> pageResult = repository.findAllWithCriteria(filterDTO, pageable);
 
             if (pageResult == null || pageResult.isEmpty()) {
                 PageDTO<ResultImportTemplateDTO> empty = new PageDTO<>(page, size, 0, Collections.emptyList());
