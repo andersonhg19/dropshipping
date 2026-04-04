@@ -1,0 +1,221 @@
+'use client'
+
+import React, { useCallback, useEffect, useState } from 'react'
+
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Fab,
+  MenuItem,
+  TextField,
+  Tooltip,
+} from '@mui/material'
+import { useTheme } from '@mui/material/styles'
+import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { PlusIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+
+import { usePaletteVars } from '@hooks/ui/use-palette-vars'
+
+import { GetAllPublishChannel } from '@api/commerce/publish-channel/get-all-publish-channel-api'
+import { SavePublishChannelApi } from '@api/commerce/publish-channel/save-publish-channel-api'
+
+interface ChannelRow {
+  id: string
+  name: string
+  type: string
+  status: string
+  apiUrl: string
+  apiKey: string
+  lastSync: string
+  active: boolean
+}
+
+const emptyForm: ChannelRow = {
+  id: '',
+  name: '',
+  type: 'WOOCOMMERCE',
+  status: 'INACTIVE',
+  apiUrl: '',
+  apiKey: '',
+  lastSync: '',
+  active: true,
+}
+
+const statusColorMap: Record<string, 'default' | 'success' | 'error'> = {
+  ACTIVE: 'success',
+  INACTIVE: 'default',
+  ERROR: 'error',
+}
+
+const PublishChannelLayoutForm = () => {
+  const { t } = useTranslation()
+  const muiTheme = useTheme()
+  const { cardBgColor, cardBorderColor } = usePaletteVars()
+
+  const [rows, setRows] = useState<ChannelRow[]>([])
+  const [loading, setLoading] = useState(false)
+  const [openDialog, setOpenDialog] = useState(false)
+  const [editItem, setEditItem] = useState<ChannelRow>(emptyForm)
+
+  const columns: GridColDef[] = [
+    { field: 'name', headerName: t('lbl_name'), flex: 1, minWidth: 180 },
+    { field: 'type', headerName: t('lbl_type'), width: 140 },
+    {
+      field: 'status',
+      headerName: t('lbl_status'),
+      width: 120,
+      renderCell: (params) => (
+        <Chip
+          label={params.value}
+          color={statusColorMap[params.value as string] || 'default'}
+          size="small"
+        />
+      ),
+    },
+    { field: 'apiUrl', headerName: 'URL', flex: 1, minWidth: 200 },
+    { field: 'lastSync', headerName: t('lbl_last_sync'), width: 170 },
+    {
+      field: 'actions',
+      headerName: t('lbl_actions'),
+      width: 100,
+      sortable: false,
+      renderCell: (params) => (
+        <Button size="small" onClick={() => handleEdit(params.row)}>
+          {t('lbl_edit')}
+        </Button>
+      ),
+    },
+  ]
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await GetAllPublishChannel({ page: 0, size: 100 })
+      if (res.correct && res.object) {
+        setRows(res.object.list || [])
+      }
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  const handleEdit = (row: ChannelRow) => {
+    setEditItem({ ...row })
+    setOpenDialog(true)
+  }
+
+  const handleNew = () => {
+    setEditItem({ ...emptyForm })
+    setOpenDialog(true)
+  }
+
+  const handleSave = async () => {
+    const res = await SavePublishChannelApi(editItem)
+    if (res.correct) {
+      setOpenDialog(false)
+      fetchData()
+    }
+  }
+
+  return (
+    <Card
+      elevation={1}
+      sx={{
+        background: cardBgColor,
+        boxShadow: muiTheme.shadows[2],
+        borderRadius: { xs: 2, sm: muiTheme.shape.borderRadius },
+        mb: { xs: 2, sm: 3 },
+        border: `1px solid ${cardBorderColor}`,
+        overflow: 'hidden',
+      }}
+    >
+      <CardHeader
+        sx={{ '& .MuiCardHeader-title': { fontSize: { xs: '1rem', sm: '1.25rem' } } }}
+        title={t('lbl_publish_channels')}
+        action={
+          <Tooltip title={t('lbl_add_new')}>
+            <Fab color="primary" size="small" aria-label="add" onClick={handleNew}>
+              <PlusIcon />
+            </Fab>
+          </Tooltip>
+        }
+      />
+      <CardContent>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          loading={loading}
+          autoHeight
+          pageSizeOptions={[10, 25, 50]}
+          initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
+          disableRowSelectionOnClick
+        />
+      </CardContent>
+
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>{editItem.id ? t('lbl_edit') : t('lbl_add_new')}</DialogTitle>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
+          <TextField
+            label={t('lbl_name')}
+            value={editItem.name}
+            onChange={(e) => setEditItem({ ...editItem, name: e.target.value })}
+            fullWidth
+          />
+          <TextField
+            label={t('lbl_type')}
+            value={editItem.type}
+            onChange={(e) => setEditItem({ ...editItem, type: e.target.value })}
+            select
+            fullWidth
+          >
+            <MenuItem value="WOOCOMMERCE">WooCommerce</MenuItem>
+            <MenuItem value="SHOPIFY">Shopify</MenuItem>
+            <MenuItem value="MERCADOLIBRE">MercadoLibre</MenuItem>
+            <MenuItem value="CUSTOM">Custom</MenuItem>
+          </TextField>
+          <TextField
+            label={t('lbl_status')}
+            value={editItem.status}
+            onChange={(e) => setEditItem({ ...editItem, status: e.target.value })}
+            select
+            fullWidth
+          >
+            <MenuItem value="ACTIVE">Active</MenuItem>
+            <MenuItem value="INACTIVE">Inactive</MenuItem>
+          </TextField>
+          <TextField
+            label="API URL"
+            value={editItem.apiUrl}
+            onChange={(e) => setEditItem({ ...editItem, apiUrl: e.target.value })}
+            fullWidth
+          />
+          <TextField
+            label="API Key"
+            value={editItem.apiKey}
+            onChange={(e) => setEditItem({ ...editItem, apiKey: e.target.value })}
+            fullWidth
+            type="password"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>{t('lbl_cancel')}</Button>
+          <Button variant="contained" onClick={handleSave}>{t('lbl_save')}</Button>
+        </DialogActions>
+      </Dialog>
+    </Card>
+  )
+}
+
+export default PublishChannelLayoutForm
