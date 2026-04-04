@@ -1,52 +1,40 @@
-// const contexPath = 'rhi-bpc'
-const contexPath = 'hq-crm'
+const contextPath = 'vn-api'
 
-export const BASE_URL_AUTHENTICATION = `/AUTHENTICATION-SERVICE/${contexPath}/`
-export const BASE_URL_ADMINISTRATION_USER = `/ADMINISTRATION-SERVICE/${contexPath}/v2/user/`
-export const BASE_URL_ADMINISTRATION_PASSWORD = `/ADMINISTRATION-SERVICE/${contexPath}/v2/password/`
+// Auth
+export const BASE_URL_AUTHENTICATION = `/AUTHENTICATION-SERVICE/${contextPath}/`
 
-export const BASE_URL_ADMINISTRATION_MODULE = `/ADMINISTRATION-SERVICE/${contexPath}/v2/module/`
-export const BASE_URL_ADMINISTRATION_PAGES = `/ADMINISTRATION-SERVICE/${contexPath}/v2/pages/`
-export const BASE_URL_ADMINISTRATION_TYPE_USER = `/ADMINISTRATION-SERVICE/${contexPath}/v2/type-user/`
-export const BASE_URL_ADMINISTRATION_PAGES_TYPE_USER = `/ADMINISTRATION-SERVICE/${contexPath}/v2/page-type-user/`
+// Administration
+export const BASE_URL_ADMINISTRATION_USER = `/ADMINISTRATION-SERVICE/${contextPath}/v2/user/`
+export const BASE_URL_ADMINISTRATION_PASSWORD = `/ADMINISTRATION-SERVICE/${contextPath}/v2/password/`
+export const BASE_URL_ADMINISTRATION_MODULE = `/ADMINISTRATION-SERVICE/${contextPath}/v2/module/`
+export const BASE_URL_ADMINISTRATION_PAGES = `/ADMINISTRATION-SERVICE/${contextPath}/v2/pages/`
+export const BASE_URL_ADMINISTRATION_TYPE_USER = `/ADMINISTRATION-SERVICE/${contextPath}/v2/type-user/`
+export const BASE_URL_ADMINISTRATION_PAGES_TYPE_USER = `/ADMINISTRATION-SERVICE/${contextPath}/v2/page-type-user/`
+export const BASE_URL_ADMINISTRATION_COMPANY = `/ADMINISTRATION-SERVICE/${contextPath}/v2/company/`
+export const BASE_URL_ADMINISTRATION_FILIAL = `/ADMINISTRATION-SERVICE/${contextPath}/v2/subsidiary/`
+export const BASE_URL_ADMINISTRATION_FILIAL_STYLE = `/ADMINISTRATION-SERVICE/${contextPath}/v2/filial-styles/`
+export const BASE_URL_ADMINISTRATION_FILIAL_CONFIG = `/ADMINISTRATION-SERVICE/${contextPath}/v2/filial-configurations/`
+export const BASE_URL_ADMINISTRATION_UTILS = `/ADMINISTRATION-SERVICE/${contextPath}/v2/utils/`
+export const BASE_URL_ADMINISTRATION_STORE = `/ADMINISTRATION-SERVICE/${contextPath}/v2/store/`
 
-export const BASE_URL_ADMINISTRATION_POS = `/ADMINISTRATION-SERVICE/${contexPath}/v2/pos/`
-export const BASE_URL_ADMINISTRATION_POSTYPE = `/ADMINISTRATION-SERVICE/${contexPath}/v2/posType/`
-export const BASE_URL_ADMINISTRATION_POSTYPESUBDIVISION = `/ADMINISTRATION-SERVICE/${contexPath}/v2/posTypeSubdivision/`
-export const BASE_URL_ADMINISTRATION_POSTYPESUBDIVISION_BUTTON = `/ADMINISTRATION-SERVICE/${contexPath}/v2/posTypeSubdivisionButton/`
+// Audit
+export const BASE_URL_AUDIT_LOG = `/AUDIT-SERVICE/${contextPath}/v2/audit-log/`
+export const BASE_URL_SECURITY_EVENT = `/AUDIT-SERVICE/${contextPath}/v2/security-event/`
 
-export const BASE_URL_ADMINISTRATION_PAYMENTTYPE = `/ADMINISTRATION-SERVICE/${contexPath}/v2/paymentType/`
-export const BASE_URL_ADMINISTRATION_PAYMENTSUBTYPE = `/ADMINISTRATION-SERVICE/${contexPath}/v2/paymentSubType/`
-export const BASE_URL_ADMINISTRATION_PAYMENTBYPOSTYPE = `/ADMINISTRATION-SERVICE/${contexPath}/v2/paymentByPosType/`
+// Acquisition Service
+export const BASE_URL_ACQUISITION_SUPPLIER = `/ACQUISITION-SERVICE/${contextPath}/v2/supplier/`
+export const BASE_URL_ACQUISITION_SOURCE_CONFIG = `/ACQUISITION-SERVICE/${contextPath}/v2/source-config/`
+export const BASE_URL_ACQUISITION_SOURCE_PRODUCT = `/ACQUISITION-SERVICE/${contextPath}/v2/source-product/`
+export const BASE_URL_ACQUISITION_IMPORT_JOB = `/ACQUISITION-SERVICE/${contextPath}/v2/import-job/`
+export const BASE_URL_ACQUISITION_IMPORT_TEMPLATE = `/ACQUISITION-SERVICE/${contextPath}/v2/import-template/`
 
-export const BASE_URL_ADMINISTRATION_STORE = `/ADMINISTRATION-SERVICE/${contexPath}/v2/store/`
-export const BASE_URL_ADMINISTRATION_FILIAL_STYLE = `/ADMINISTRATION-SERVICE/${contexPath}/v2/filial-styles/`
-export const BASE_URL_ADMINISTRATION_FILIAL_CONFIG = `/ADMINISTRATION-SERVICE/${contexPath}/v2/filial-configurations/`
-export const BASE_URL_ADMINISTRATION_COMPANY = `/ADMINISTRATION-SERVICE/${contexPath}/v2/company/`
-export const BASE_URL_ADMINISTRATION_FILIAL = `/ADMINISTRATION-SERVICE/${contexPath}/v2/subsidiary/`
-export const BASE_URL_ADMINISTRATION_UTILS = `/ADMINISTRATION-SERVICE/${contexPath}/v2/utils/`
-
-export const BASE_URL_CUSTOMER = `/CUSTOMER-SERVICE/${contexPath}/v2/customer/`
-export const BASE_URL_CUSTOMER_VALIDATION = `/CUSTOMER-SERVICE/${contexPath}/v2/customer-type-validation-method/`
-
-export const BASE_URL_HEALTH_DOCTOR = `/HEALTH-SERVICE/${contexPath}/v2/doctor/`
-export const BASE_URL_HEALTH_CONTRACTOR = `/HEALTH-SERVICE/${contexPath}/v2/contractor/`
-export const BASE_URL_HEALTH_CONTRACTOR_PROCEDURE = `/HEALTH-SERVICE/${contexPath}/v2/contractor-procedure/`
-export const BASE_URL_HEALTH_CONTRACTOR_INVOICE_STATUS = `/HEALTH-SERVICE/${contexPath}/v2/contractor-invoice-status/`
-export const BASE_URL_HEALTH_MEDICAL_PROCEDURE = `/HEALTH-SERVICE/${contexPath}/v2/medical-procedure/`
-export const BASE_URL_HEALTH_MEDICAL_TRANSACTION = `/HEALTH-SERVICE/${contexPath}/v2/medical-transaction/`
-export const BASE_URL_HEALTH_PROCEDURE_SUPPLY = `/HEALTH-SERVICE/${contexPath}/v2/procedure-supply/`
-export const BASE_URL_HEALTH_UTILS = `/HEALTH-SERVICE/${contexPath}/v2/utils/`
-export const BASE_URL_HEALTH_SERVICE = `/HEALTH-SERVICE/${contexPath}/v2/service/`
-export const BASE_URL_HEALTH_SERVICE_BY_DOCTOR = `/HEALTH-SERVICE/${contexPath}/v2/service-by-doctor/`
-
-export const BASE_URL_FINANCE_INCOME_EXPENSE = `/FINANCE-SERVICE/${contexPath}/v2/income-expense/`
-export const BASE_URL_FINANCE_COST_CENTER = `/FINANCE-SERVICE/${contexPath}/v2/cost-center/`
-export const BASE_URL_FINANCE_TAG = `/FINANCE-SERVICE/${contexPath}/v2/tag/`
-
-export const BASE_URL_HEALTH_EXCEL_FIELD_MAPPING = `/HEALTH-SERVICE/${contexPath}/v2/excel-field-mapping/`
-export const BASE_URL_HEALTH_DOCTOR_INCOME = `/HEALTH-SERVICE/${contexPath}/v2/doctor-income/`
-export const BASE_URL_HEALTH_DASHBOARD = `/HEALTH-SERVICE/${contexPath}/v2/dashboard/`
-
-export const BASE_URL_AUDIT_LOG = `/AUDIT-SERVICE/${contexPath}/v2/audit-log/`
-export const BASE_URL_SECURITY_EVENT = `/AUDIT-SERVICE/${contexPath}/v2/security-event/`
+// Commerce Service
+export const BASE_URL_COMMERCE_PRODUCT = `/COMMERCE-SERVICE/${contextPath}/v2/product/`
+export const BASE_URL_COMMERCE_CATEGORY = `/COMMERCE-SERVICE/${contextPath}/v2/category/`
+export const BASE_URL_COMMERCE_PRODUCT_IMAGE = `/COMMERCE-SERVICE/${contextPath}/v2/product-image/`
+export const BASE_URL_COMMERCE_PRICING_CONFIG = `/COMMERCE-SERVICE/${contextPath}/v2/pricing-config/`
+export const BASE_URL_COMMERCE_PROMOTION = `/COMMERCE-SERVICE/${contextPath}/v2/promotion/`
+export const BASE_URL_COMMERCE_PUBLISH_CHANNEL = `/COMMERCE-SERVICE/${contextPath}/v2/publish-channel/`
+export const BASE_URL_COMMERCE_PRODUCT_PUBLISH = `/COMMERCE-SERVICE/${contextPath}/v2/product-publish/`
+export const BASE_URL_COMMERCE_ENRICHMENT_CONFIG = `/COMMERCE-SERVICE/${contextPath}/v2/enrichment-config/`
+export const BASE_URL_COMMERCE_PROMPT_TEMPLATE = `/COMMERCE-SERVICE/${contextPath}/v2/prompt-template/`

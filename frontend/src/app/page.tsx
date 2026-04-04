@@ -177,11 +177,11 @@ const HomePage: React.FC = () => {
             {[
               {
                 icon: Users,
-                title: t('lbl_doctors'),
+                title: t('lbl_products'),
               },
               {
                 icon: BarChart,
-                title: t('lbl_advanced_analysis'),
+                title: t('lbl_trending'),
               },
             ].map((feature, index) => (
               <Grid size={{ xs: 12, md: 6, lg: 4 }} key={index}>
