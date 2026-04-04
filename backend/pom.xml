@@ -44,6 +44,7 @@
 		<module>language-service</module>
 		<module>administration-service</module>
 		<module>audit-service</module>
+		<module>acquisition-service</module>
 	</modules>
 
 	<repositories>
