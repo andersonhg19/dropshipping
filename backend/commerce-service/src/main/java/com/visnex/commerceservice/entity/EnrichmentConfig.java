@@ -44,6 +44,9 @@ public class EnrichmentConfig {
     @Column(name = "current_month_spend", precision = 12, scale = 2)
     private BigDecimal currentMonthSpend;
 
+    @Column(name = "last_spend_reset")
+    private LocalDateTime lastSpendReset;
+
     @Column(nullable = false, columnDefinition = "boolean default true")
     private Boolean active = true;
 

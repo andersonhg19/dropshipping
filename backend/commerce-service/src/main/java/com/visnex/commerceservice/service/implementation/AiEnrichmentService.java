@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
@@ -29,10 +32,26 @@ public class AiEnrichmentService {
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
 
+    // Bug #20: Rate limiting - max 5 concurrent enrichments
+    private static final AtomicInteger concurrentEnrichments = new AtomicInteger(0);
+    private static final int MAX_CONCURRENT_ENRICHMENTS = 5;
+
     /**
      * Enrich a single product using AI - generates title, description, bullets, SEO in one call.
      */
     public ResultDTO enrichProduct(Long productId, Long companyId, String language) {
+        return enrichProduct(productId, companyId, language, false);
+    }
+
+    /**
+     * Enrich a single product using AI with optional force flag.
+     */
+    public ResultDTO enrichProduct(Long productId, Long companyId, String language, boolean force) {
+        // Bug #20: Check concurrent enrichment limit
+        if (concurrentEnrichments.get() >= MAX_CONCURRENT_ENRICHMENTS) {
+            return new ResultDTO(false, "Too many concurrent enrichments. Please try again later.", 103);
+        }
+        concurrentEnrichments.incrementAndGet();
         try {
             Optional<Product> optProduct = productRepository.findById(productId);
             if (optProduct.isEmpty()) {
@@ -40,6 +59,12 @@ public class AiEnrichmentService {
             }
 
             Product product = optProduct.get();
+
+            // Bug #26: Skip if already enriched (unless force=true)
+            if ("ENRICHED".equals(product.getStatus()) && !force) {
+                return new ResultDTO(false, "Product is already enriched. Use force=true to re-enrich.", 101);
+            }
+
             List<EnrichmentConfig> configs = enrichmentConfigRepository
                     .findAll().stream()
                     .filter(c -> c.getCompanyId() != null && c.getCompanyId().equals(companyId) && Boolean.TRUE.equals(c.getActive()))
@@ -50,6 +75,15 @@ public class AiEnrichmentService {
             }
 
             EnrichmentConfig config = configs.get(0);
+
+            // Bug #25: Reset monthly spend if lastSpendReset is null or in a different month
+            YearMonth currentMonth = YearMonth.now();
+            if (config.getLastSpendReset() == null
+                    || !YearMonth.from(config.getLastSpendReset()).equals(currentMonth)) {
+                config.setCurrentMonthSpend(BigDecimal.ZERO);
+                config.setLastSpendReset(LocalDateTime.now());
+                enrichmentConfigRepository.save(config);
+            }
 
             // Check budget
             if (config.getMonthlyBudget() != null && config.getCurrentMonthSpend() != null
@@ -64,6 +98,11 @@ public class AiEnrichmentService {
             Map<String, Object> aiResponse = callAiApi(config, prompt);
             if (aiResponse == null) {
                 return new ResultDTO(false, "AI API call failed", 103);
+            }
+
+            // Bug #21: Validate that AI response contains "enrichedTitle"
+            if (!aiResponse.containsKey("enrichedTitle")) {
+                return new ResultDTO(false, "AI response missing required 'enrichedTitle' field", 103);
             }
 
             // Apply enrichment to product
@@ -90,6 +129,9 @@ public class AiEnrichmentService {
         } catch (Exception e) {
             log.error("Error enriching product {}: {}", productId, e.getMessage());
             return new ResultDTO(false, "Error: " + e.getMessage(), 103);
+        } finally {
+            // Bug #20: Always decrement concurrent counter
+            concurrentEnrichments.decrementAndGet();
         }
     }
 

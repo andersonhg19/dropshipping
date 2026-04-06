@@ -2,7 +2,6 @@ package com.visnex.commerceservice.service.implementation;
 
 import java.net.URISyntaxException;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -27,7 +26,9 @@ import com.visnex.commerceservice.util.ValidationUtils;
 
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +41,9 @@ public class ProductServiceImpl implements ProductService {
     private final CompletionUtils completionUtils;
 
     private static final String DEFAULT_LANG = "es";
+    // Bug #30: Valid status values
+    private static final Set<String> VALID_STATUSES = Set.of("DRAFT", "READY", "ENRICHED", "PUBLISHED", "ARCHIVED");
+
     private String lang(String language) { return (language == null || language.isBlank()) ? DEFAULT_LANG : language; }
 
     private String m(String key, String lng) {
@@ -70,16 +74,21 @@ public class ProductServiceImpl implements ProductService {
             if (dto.getStatus() == null || dto.getStatus().isBlank()) {
                 dto.setStatus("DRAFT");
             }
+            // Bug #30: Validate status value
+            if (!VALID_STATUSES.contains(dto.getStatus())) {
+                return new ResultDTO(false, "Invalid status. Allowed: " + VALID_STATUSES, 103);
+            }
             if (dto.getCurrency() == null || dto.getCurrency().isBlank()) {
                 dto.setCurrency("USD");
             }
+            // Bug #31: Validate basePrice >= 0 if provided
+            if (dto.getBasePrice() != null && dto.getBasePrice().compareTo(BigDecimal.ZERO) < 0) {
+                return new ResultDTO(false, "Base price cannot be negative", 103);
+            }
 
             // CREATE
+            // Bug #29: No title uniqueness check - dropshipping can have same title from different suppliers
             if (dto.getId() == null) {
-                Optional<Product> existingByTitle = repository.findFirstByTitleAndCompanyIdAndActive(dto.getTitle(), dto.getIdCompany(), true);
-                if (existingByTitle.isPresent()) {
-                    return new ResultDTO(false, m(Message.Msj.thisNameExists.toString(), lng), 101);
-                }
                 Product entity = mapper.toEntity(dto);
                 if (entity.getActive() == null) entity.setActive(true);
                 Product created = repository.save(entity);
@@ -90,11 +99,6 @@ public class ProductServiceImpl implements ProductService {
 
             // UPDATE
             Product existing = validation.requireProduct(dto.getId(), lng);
-
-            Optional<Product> conflict = repository.findFirstByTitleAndCompanyIdAndActive(dto.getTitle(), dto.getIdCompany(), true);
-            if (conflict.isPresent() && !conflict.get().getId().equals(dto.getId())) {
-                return new ResultDTO(false, m(Message.Msj.thisNameExists.toString(), lng), 101);
-            }
 
             Product updated = repository.save(mapper.toEntity(dto));
             ResultProductDTO result = mapper.toDTO(updated);

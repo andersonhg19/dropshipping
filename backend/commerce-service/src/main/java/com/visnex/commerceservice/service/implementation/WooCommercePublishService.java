@@ -26,6 +26,18 @@ public class WooCommercePublishService {
             Optional<PublishChannel> optC = channelRepository.findById(channelId);
             if (optC.isEmpty()) return new ResultDTO(false, "Channel not found", 102);
             Product product = optP.get();
+
+            // Bug #15: Validate basePrice is not null before publishing
+            if (product.getBasePrice() == null) {
+                return new ResultDTO(false, "Product must have a base price before publishing", 102);
+            }
+
+            // Bug #14: Check if ProductPublish already exists for this product+channel
+            Optional<ProductPublish> existingPub = publishRepository.findFirstByIdProductAndIdChannelAndActive(productId, channelId, true);
+            if (existingPub.isPresent()) {
+                return new ResultDTO(false, "Product is already published to this channel. External ID: " + existingPub.get().getExternalId(), 101);
+            }
+
             Map<String, String> cfg = objectMapper.readValue(optC.get().getConfig(), Map.class);
             Map<String, Object> wc = new LinkedHashMap<>();
             wc.put("name", product.getEnrichedTitle() != null ? product.getEnrichedTitle() : product.getTitle());
@@ -37,8 +49,39 @@ public class WooCommercePublishService {
             HttpHeaders headers = new HttpHeaders();
             headers.setBasicAuth(cfg.get("consumerKey"), cfg.get("consumerSecret"));
             headers.setContentType(MediaType.APPLICATION_JSON);
-            ResponseEntity<String> resp = restTemplate.exchange(cfg.get("siteUrl") + "/wp-json/wc/v3/products", HttpMethod.POST, new HttpEntity<>(wc, headers), String.class);
-            if (!resp.getStatusCode().is2xxSuccessful()) return new ResultDTO(false, "WC error", 103);
+            ResponseEntity<String> resp;
+            try {
+                resp = restTemplate.exchange(cfg.get("siteUrl") + "/wp-json/wc/v3/products", HttpMethod.POST, new HttpEntity<>(wc, headers), String.class);
+            } catch (Exception apiEx) {
+                // Bug #16: If API call fails, save FAILED status, don't mark product as PUBLISHED
+                ProductPublish failedPub = new ProductPublish();
+                failedPub.setIdProduct(productId);
+                failedPub.setIdChannel(channelId);
+                failedPub.setSyncStatus("FAILED");
+                failedPub.setLastError(apiEx.getMessage());
+                failedPub.setLastSync(LocalDateTime.now());
+                failedPub.setCompanyId(product.getCompanyId());
+                failedPub.setSubsidiaryId(product.getSubsidiaryId());
+                failedPub.setIdModifiedBy(product.getIdModifiedBy());
+                failedPub.setActive(true);
+                publishRepository.save(failedPub);
+                return new ResultDTO(false, "WC API call failed: " + apiEx.getMessage(), 103);
+            }
+            if (!resp.getStatusCode().is2xxSuccessful()) {
+                // Bug #16: Save FAILED status on non-2xx response
+                ProductPublish failedPub = new ProductPublish();
+                failedPub.setIdProduct(productId);
+                failedPub.setIdChannel(channelId);
+                failedPub.setSyncStatus("FAILED");
+                failedPub.setLastError("WC API returned status: " + resp.getStatusCode());
+                failedPub.setLastSync(LocalDateTime.now());
+                failedPub.setCompanyId(product.getCompanyId());
+                failedPub.setSubsidiaryId(product.getSubsidiaryId());
+                failedPub.setIdModifiedBy(product.getIdModifiedBy());
+                failedPub.setActive(true);
+                publishRepository.save(failedPub);
+                return new ResultDTO(false, "WC error: " + resp.getStatusCode(), 103);
+            }
             JsonNode wcR = objectMapper.readTree(resp.getBody());
             ProductPublish pub = new ProductPublish();
             pub.setIdProduct(productId);
@@ -52,6 +95,7 @@ public class WooCommercePublishService {
             pub.setIdModifiedBy(product.getIdModifiedBy());
             pub.setActive(true);
             publishRepository.save(pub);
+            // Bug #16: Only set PUBLISHED after successful WC API call
             product.setStatus("PUBLISHED");
             productRepository.save(product);
             return new ResultDTO(Map.of("wcProductId", wcR.path("id").asText(), "permalink", wcR.path("permalink").asText()));

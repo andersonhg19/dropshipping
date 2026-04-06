@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVFormat;
@@ -296,8 +297,25 @@ public class FileImportService {
             Map<String, String> fieldMapping = objectMapper.readValue(
                     fieldMappingJson, new TypeReference<Map<String, String>>() {});
 
+            // Bug #3: Validate that fieldMapping contains "title" key
+            boolean hasTitleMapping = fieldMapping.values().stream()
+                    .anyMatch(v -> "title".equalsIgnoreCase(v));
+            if (!hasTitleMapping) {
+                return new ResultDTO(false, "Field mapping must include a mapping for 'title'", 103);
+            }
+
             String fileType = detectFileType(file.getOriginalFilename());
             List<Map<String, String>> rows = parseFile(file);
+
+            // Bug #1: Check if rows is empty after parsing
+            if (rows.isEmpty()) {
+                return new ResultDTO(false, "File contains no data rows", 103);
+            }
+
+            // Bug #5: Max rows limit
+            if (rows.size() > 5000) {
+                return new ResultDTO(false, "File too large. Maximum allowed: 5000 rows, found: " + rows.size(), 103);
+            }
 
             // Create ImportJob record
             ImportJob job = ImportJob.builder()
@@ -319,6 +337,7 @@ public class FileImportService {
 
             int successCount = 0;
             int errorCount = 0;
+            int skippedCount = 0;
             List<String> errors = new ArrayList<>();
 
             for (int i = 0; i < rows.size(); i++) {
@@ -330,6 +349,15 @@ public class FileImportService {
                     if (product.getTitle() == null || product.getTitle().isBlank()) {
                         errorCount++;
                         errors.add("Row " + (i + 2) + ": title is required");
+                        continue;
+                    }
+
+                    // Bug #2: Check for existing product with same title + sourceProvider + companyId
+                    Optional<SourceProduct> existing = sourceProductRepository
+                            .findFirstByTitleAndSourceProviderAndCompanyIdAndActive(
+                                    product.getTitle(), product.getSourceProvider(), companyId, true);
+                    if (existing.isPresent()) {
+                        skippedCount++;
                         continue;
                     }
 
@@ -348,6 +376,7 @@ public class FileImportService {
             // Update ImportJob
             job.setSuccessCount(successCount);
             job.setErrorCount(errorCount);
+            job.setWarningCount(skippedCount);
             job.setStatus(errorCount == 0 ? "COMPLETED" : (successCount == 0 ? "FAILED" : "COMPLETED_WITH_ERRORS"));
             if (!errors.isEmpty()) {
                 job.setErrors(objectMapper.writeValueAsString(errors));
@@ -426,7 +455,9 @@ public class FileImportService {
                 String cleaned = priceStr.replaceAll("[^\\d.,\\-]", "").replace(",", ".");
                 product.setPrice(new BigDecimal(cleaned));
             } catch (NumberFormatException e) {
-                log.warn("Invalid price value '{}', skipping", priceStr);
+                // Bug #4: Surface price parsing errors instead of silently skipping
+                log.warn("Invalid price value '{}' for product '{}'", priceStr, product.getTitle());
+                throw new IllegalArgumentException("Invalid price value: " + priceStr);
             }
         }
 
