@@ -4,6 +4,9 @@ import com.visnex.commerceservice.entity.ProductImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ProductImageRepository extends JpaRepository<ProductImage, Long>, CustomProductImageRepository {
+    List<ProductImage> findByIdProductAndActiveOrderBySortOrderAsc(Long idProduct, Boolean active);
 }
