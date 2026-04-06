@@ -36,6 +36,8 @@ public class SecurityConfig {
                         .requestMatchers("/v2/enrichment-config/**").hasAuthority(ADMIN)
                         .requestMatchers("/v2/prompt-template/**").hasAuthority(ADMIN)
                         .requestMatchers("/v2/woocommerce/**").hasAuthority(ADMIN)
+                        .requestMatchers("/v2/ai-enrichment/**").hasAuthority(ADMIN)
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

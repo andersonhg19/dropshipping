@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/v2/import-job/**").hasAuthority(ADMIN)
                         .requestMatchers("/v2/import-template/**").hasAuthority(ADMIN)
                         .requestMatchers("/v2/file-import/**").hasAuthority(ADMIN)
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

@@ -39,20 +39,25 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secParams.getSecret())).build();
-        jwt = jwt.substring(7);
-        DecodedJWT decodedJWT = verifier.verify(jwt);
+        try {
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secParams.getSecret())).build();
+            jwt = jwt.substring(7);
+            DecodedJWT decodedJWT = verifier.verify(jwt);
 
-        String username = decodedJWT.getSubject();
-        List<String> roles = decodedJWT.getClaims().get(ROLES).asList(String.class);
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
+            String username = decodedJWT.getSubject();
+            List<String> roles = decodedJWT.getClaims().get(ROLES).asList(String.class);
+            Collection<GrantedAuthority> authorities = new ArrayList<>();
 
-        for (String r : roles) {
-            authorities.add(new SimpleGrantedAuthority(r));
+            for (String r : roles) {
+                authorities.add(new SimpleGrantedAuthority(r));
+            }
+
+            UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(username, null, authorities);
+            SecurityContextHolder.getContext().setAuthentication(user);
+        } catch (Exception e) {
+            // Token invalid or expired - continue without auth, Spring Security will handle 403
+            SecurityContextHolder.clearContext();
         }
-
-        UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(username, null, authorities);
-        SecurityContextHolder.getContext().setAuthentication(user);
         filterChain.doFilter(request, response);
     }
 }
