@@ -3,22 +3,26 @@
 import React, { useCallback, useEffect, useState } from 'react'
 
 import {
+  Alert,
   Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   MenuItem,
   Skeleton,
+  Snackbar,
   TextField,
   Typography,
 } from '@mui/material'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Globe, MapPin, Package, Plus, Star, Truck } from 'lucide-react'
+import { Globe, MapPin, Package, Plus, Star, Trash2, Truck } from 'lucide-react'
 
 import { GetAllSupplier } from '@api/acquisition/supplier/get-all-supplier-api'
 import { SaveSupplierApi } from '@api/acquisition/supplier/save-supplier-api'
+import ConfirmDialog from '@components/atoms/confirm-dialog'
 
 interface SupplierRow {
   id: string
@@ -62,17 +66,26 @@ const getFlag = (code: string) => flagMap[code?.toUpperCase()] || '\u{1F30D}'
 const getType = (t: string) => typeConfig[t] || typeConfig.OTHER
 
 const SupplierLayoutForm = () => {
+  const PAGE_SIZE = 20
   const [rows, setRows] = useState<SupplierRow[]>([])
   const [loading, setLoading] = useState(true)
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState<SupplierRow>(emptyForm)
   const [saveError, setSaveError] = useState('')
+  const [currentPage, setCurrentPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({ open: false, message: '', severity: 'success' })
+  const [confirmDelete, setConfirmDelete] = useState<{ open: boolean; item: SupplierRow | null }>({ open: false, item: null })
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (page = 0) => {
     setLoading(true)
     try {
-      const res = await GetAllSupplier({ page: 0, size: 100 })
-      if (res.correct && res.object) setRows(res.object.list || [])
+      const res = await GetAllSupplier({ page, size: PAGE_SIZE })
+      if (res.correct && res.object) {
+        setRows(res.object.list || [])
+        setTotalPages(res.object.totalPage ?? 1)
+        setCurrentPage(page)
+      }
     } finally {
       setLoading(false)
     }
@@ -87,8 +100,25 @@ const SupplierLayoutForm = () => {
       return
     }
     const res = await SaveSupplierApi(form)
-    if (res.correct) { setSaveError(''); setOpen(false); fetchData() }
-    else { setSaveError(res.message || 'Error al guardar el proveedor.') }
+    if (res.correct) {
+      setSaveError(''); setOpen(false); fetchData(currentPage)
+      setSnackbar({ open: true, message: form.id ? 'Proveedor actualizado correctamente.' : 'Proveedor creado correctamente.', severity: 'success' })
+    } else {
+      setSaveError(res.message || 'Error al guardar el proveedor.')
+    }
+  }
+
+  const handleDelete = async () => {
+    const item = confirmDelete.item
+    if (!item) return
+    setConfirmDelete({ open: false, item: null })
+    const res = await SaveSupplierApi({ ...item, active: false })
+    if (res.correct) {
+      setSnackbar({ open: true, message: 'Proveedor eliminado correctamente.', severity: 'success' })
+      fetchData(currentPage)
+    } else {
+      setSnackbar({ open: true, message: res.message || 'Error al eliminar el proveedor.', severity: 'error' })
+    }
   }
 
   const upd = (field: keyof SupplierRow, val: string | number) =>
@@ -189,7 +219,7 @@ const SupplierLayoutForm = () => {
                   </Typography>
                 </Box>
 
-                {/* Right: shipping + score */}
+                {/* Right: shipping + score + delete */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
                   <Box sx={{
                     px: 1.5, py: 0.5, borderRadius: 2, bgcolor: 'action.hover',
@@ -203,12 +233,53 @@ const SupplierLayoutForm = () => {
                       <Typography sx={{ fontSize: 13, fontWeight: 600 }}>{s.reliabilityScore}</Typography>
                     </Box>
                   )}
+                  <IconButton
+                    size="small"
+                    onClick={(e) => { e.stopPropagation(); setConfirmDelete({ open: true, item: s }) }}
+                    sx={{
+                      opacity: 0.4, '&:hover': { opacity: 1, color: '#ef4444', bgcolor: '#ef444410' },
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <Trash2 size={16} />
+                  </IconButton>
                 </Box>
               </Box>
             </motion.div>
           )
         })}
       </AnimatePresence>
+
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, mt: 4 }}>
+          <Button
+            disabled={currentPage === 0}
+            onClick={() => fetchData(currentPage - 1)}
+            sx={{
+              borderRadius: 99, px: 2.5, py: 0.8, textTransform: 'none', fontWeight: 600,
+              fontSize: 13, bgcolor: 'action.hover', color: 'text.primary',
+              '&:hover': { bgcolor: 'action.selected' }, '&:disabled': { opacity: 0.4 },
+            }}
+          >
+            Anterior
+          </Button>
+          <Typography sx={{ fontSize: 13, color: 'text.secondary', fontWeight: 500 }}>
+            Pagina {currentPage + 1} de {totalPages}
+          </Typography>
+          <Button
+            disabled={currentPage >= totalPages - 1}
+            onClick={() => fetchData(currentPage + 1)}
+            sx={{
+              borderRadius: 99, px: 2.5, py: 0.8, textTransform: 'none', fontWeight: 600,
+              fontSize: 13, bgcolor: 'action.hover', color: 'text.primary',
+              '&:hover': { bgcolor: 'action.selected' }, '&:disabled': { opacity: 0.4 },
+            }}
+          >
+            Siguiente
+          </Button>
+        </Box>
+      )}
 
       {/* Dialog */}
       <Dialog
@@ -256,6 +327,34 @@ const SupplierLayoutForm = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Confirm Delete */}
+      <ConfirmDialog
+        open={confirmDelete.open}
+        title="Eliminar proveedor"
+        message={`Estas seguro de eliminar el proveedor "${confirmDelete.item?.name || ''}"? Esta accion lo desactivara.`}
+        confirmText="Eliminar"
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmDelete({ open: false, item: null })}
+        destructive
+      />
+
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ borderRadius: 3, fontWeight: 500 }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

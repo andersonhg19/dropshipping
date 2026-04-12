@@ -2,12 +2,13 @@
 
 import React, { useCallback, useEffect, useState } from 'react'
 
-import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Skeleton, TextField, Typography } from '@mui/material'
-import { Globe, Plus, Wifi, WifiOff } from 'lucide-react'
+import { Alert, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Skeleton, Snackbar, TextField, Typography } from '@mui/material'
+import { Globe, Plus, Trash2, Wifi, WifiOff } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 import { GetAllPublishChannel } from '@api/commerce/publish-channel/get-all-publish-channel-api'
 import { SavePublishChannelApi } from '@api/commerce/publish-channel/save-publish-channel-api'
+import ConfirmDialog from '@components/atoms/confirm-dialog'
 
 interface ChannelItem { id: number; name: string; type: string; status: string; lastSync: string | null; autoSync: boolean; active: boolean }
 
@@ -16,23 +17,58 @@ const typeLabels: Record<string, string> = { WOOCOMMERCE: 'WooCommerce', FACEBOO
 const initial = { name: '', type: 'WOOCOMMERCE', config: '', autoSync: false }
 
 export default function PublishChannelLayoutForm() {
+  const PAGE_SIZE = 20
   const [channels, setChannels] = useState<ChannelItem[]>([])
   const [loading, setLoading] = useState(true)
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState(initial)
   const [editId, setEditId] = useState<number | null>(null)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({ open: false, message: '', severity: 'success' })
+  const [confirmDelete, setConfirmDelete] = useState<{ open: boolean; item: ChannelItem | null }>({ open: false, item: null })
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (page = 0) => {
     setLoading(true)
-    try { const res = await GetAllPublishChannel({ page: 0, size: 50 }); if (res?.correct) setChannels(res.object?.list ?? []) } catch {}
+    try {
+      const res = await GetAllPublishChannel({ page, size: PAGE_SIZE })
+      if (res?.correct) {
+        setChannels(res.object?.list ?? [])
+        setTotalPages(res.object?.totalPage ?? 1)
+        setCurrentPage(page)
+      }
+    } catch {}
     setLoading(false)
   }, [])
 
   useEffect(() => { fetchData() }, [fetchData])
 
   const handleSave = async () => {
-    await SavePublishChannelApi({ ...(editId ? { id: editId } : {}), idCompany: 1, idSubsidiary: 1, idModifiedBy: 1, name: form.name, type: form.type, config: form.config || '{}', autoSync: form.autoSync, status: 'DISCONNECTED', active: true })
-    setOpen(false); setForm(initial); setEditId(null); fetchData()
+    const res = await SavePublishChannelApi({ ...(editId ? { id: editId } : {}), idCompany: 1, idSubsidiary: 1, idModifiedBy: 1, name: form.name, type: form.type, config: form.config || '{}', autoSync: form.autoSync, status: 'DISCONNECTED', active: true })
+    setOpen(false); setForm(initial); setEditId(null)
+    if (res?.correct) {
+      setSnackbar({ open: true, message: editId ? 'Canal actualizado correctamente.' : 'Canal creado correctamente.', severity: 'success' })
+    } else {
+      setSnackbar({ open: true, message: res?.message || 'Error al guardar el canal.', severity: 'error' })
+    }
+    fetchData(currentPage)
+  }
+
+  const handleDelete = async () => {
+    const item = confirmDelete.item
+    if (!item) return
+    setConfirmDelete({ open: false, item: null })
+    const res = await SavePublishChannelApi({
+      id: item.id, idCompany: 1, idSubsidiary: 1, idModifiedBy: 1,
+      name: item.name, type: item.type, config: '{}', autoSync: item.autoSync,
+      status: item.status, active: false,
+    })
+    if (res?.correct) {
+      setSnackbar({ open: true, message: 'Canal desconectado correctamente.', severity: 'success' })
+      fetchData(currentPage)
+    } else {
+      setSnackbar({ open: true, message: res?.message || 'Error al desconectar el canal.', severity: 'error' })
+    }
   }
 
   return (
@@ -66,18 +102,61 @@ export default function PublishChannelLayoutForm() {
                       <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>{typeLabels[ch.type] || ch.type}</Typography>
                     </Box>
                   </Box>
-                  <Chip
-                    icon={ch.status === 'CONNECTED' ? <Wifi size={14} /> : <WifiOff size={14} />}
-                    label={ch.status === 'CONNECTED' ? 'Conectado' : ch.status === 'ERROR' ? 'Error' : 'Desconectado'}
-                    size="small"
-                    sx={{ borderRadius: 99, fontWeight: 500, fontSize: 12,
-                      bgcolor: ch.status === 'CONNECTED' ? '#10b98120' : ch.status === 'ERROR' ? '#ef444420' : '#9ca3af20',
-                      color: ch.status === 'CONNECTED' ? '#059669' : ch.status === 'ERROR' ? '#dc2626' : '#6b7280' }} />
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Chip
+                      icon={ch.status === 'CONNECTED' ? <Wifi size={14} /> : <WifiOff size={14} />}
+                      label={ch.status === 'CONNECTED' ? 'Conectado' : ch.status === 'ERROR' ? 'Error' : 'Desconectado'}
+                      size="small"
+                      sx={{ borderRadius: 99, fontWeight: 500, fontSize: 12,
+                        bgcolor: ch.status === 'CONNECTED' ? '#10b98120' : ch.status === 'ERROR' ? '#ef444420' : '#9ca3af20',
+                        color: ch.status === 'CONNECTED' ? '#059669' : ch.status === 'ERROR' ? '#dc2626' : '#6b7280' }} />
+                    <IconButton
+                      size="small"
+                      onClick={(e) => { e.stopPropagation(); setConfirmDelete({ open: true, item: ch }) }}
+                      sx={{
+                        opacity: 0.4, '&:hover': { opacity: 1, color: '#ef4444', bgcolor: '#ef444410' },
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      <Trash2 size={16} />
+                    </IconButton>
+                  </Box>
                 </Box>
               </Box>
             </motion.div>
           ))}
         </Box>}
+
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, mt: 4 }}>
+          <Button
+            disabled={currentPage === 0}
+            onClick={() => fetchData(currentPage - 1)}
+            sx={{
+              borderRadius: 99, px: 2.5, py: 0.8, textTransform: 'none', fontWeight: 600,
+              fontSize: 13, bgcolor: 'action.hover', color: 'text.primary',
+              '&:hover': { bgcolor: 'action.selected' }, '&:disabled': { opacity: 0.4 },
+            }}
+          >
+            Anterior
+          </Button>
+          <Typography sx={{ fontSize: 13, color: 'text.secondary', fontWeight: 500 }}>
+            Pagina {currentPage + 1} de {totalPages}
+          </Typography>
+          <Button
+            disabled={currentPage >= totalPages - 1}
+            onClick={() => fetchData(currentPage + 1)}
+            sx={{
+              borderRadius: 99, px: 2.5, py: 0.8, textTransform: 'none', fontWeight: 600,
+              fontSize: 13, bgcolor: 'action.hover', color: 'text.primary',
+              '&:hover': { bgcolor: 'action.selected' }, '&:disabled': { opacity: 0.4 },
+            }}
+          >
+            Siguiente
+          </Button>
+        </Box>
+      )}
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 4, p: 1 } }}>
         <DialogTitle sx={{ fontWeight: 700, fontSize: 20, pb: 1 }}>{editId ? 'Editar Canal' : 'Nuevo Canal'}</DialogTitle>
@@ -95,6 +174,34 @@ export default function PublishChannelLayoutForm() {
             {editId ? 'Actualizar' : 'Crear'}</Button>
         </DialogActions>
       </Dialog>
+
+      {/* Confirm Delete */}
+      <ConfirmDialog
+        open={confirmDelete.open}
+        title="Desconectar canal"
+        message={`Estas seguro de desconectar el canal "${confirmDelete.item?.name || ''}"? Esta accion lo desactivara.`}
+        confirmText="Desconectar"
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmDelete({ open: false, item: null })}
+        destructive
+      />
+
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ borderRadius: 3, fontWeight: 500 }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

@@ -2,14 +2,15 @@
 
 import React, { useCallback, useEffect, useState } from 'react'
 
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Skeleton, TextField, Typography } from '@mui/material'
-import { Folder, Plus } from 'lucide-react'
+import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Skeleton, Snackbar, TextField, Typography } from '@mui/material'
+import { Folder, Plus, Trash2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 
 import { usePaletteVars } from '@hooks/ui/use-palette-vars'
 import { GetAllCategory } from '@api/commerce/category/get-all-category-api'
 import { SaveCategoryApi } from '@api/commerce/category/save-category-api'
+import ConfirmDialog from '@components/atoms/confirm-dialog'
 
 interface CategoryItem {
   id: number
@@ -24,17 +25,26 @@ const initial = { name: '', parentId: '', icon: '' }
 export default function CategoryLayoutForm() {
   const { t } = useTranslation()
   const palette = usePaletteVars()
+  const PAGE_SIZE = 20
   const [categories, setCategories] = useState<CategoryItem[]>([])
   const [loading, setLoading] = useState(true)
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState(initial)
   const [editId, setEditId] = useState<number | null>(null)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({ open: false, message: '', severity: 'success' })
+  const [confirmDelete, setConfirmDelete] = useState<{ open: boolean; item: CategoryItem | null }>({ open: false, item: null })
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (page = 0) => {
     setLoading(true)
     try {
-      const res = await GetAllCategory({ page: 0, size: 200 })
-      if (res?.correct) setCategories(res.object?.list ?? [])
+      const res = await GetAllCategory({ page, size: PAGE_SIZE })
+      if (res?.correct) {
+        setCategories(res.object?.list ?? [])
+        setTotalPages(res.object?.totalPage ?? 1)
+        setCurrentPage(page)
+      }
     } catch { /* ignore */ }
     setLoading(false)
   }, [])
@@ -42,7 +52,7 @@ export default function CategoryLayoutForm() {
   useEffect(() => { fetchData() }, [fetchData])
 
   const handleSave = async () => {
-    await SaveCategoryApi({
+    const res = await SaveCategoryApi({
       ...(editId ? { id: editId } : {}),
       idCompany: 1, idSubsidiary: 1, idModifiedBy: 1,
       name: form.name,
@@ -53,7 +63,28 @@ export default function CategoryLayoutForm() {
     setOpen(false)
     setForm(initial)
     setEditId(null)
-    fetchData()
+    if (res?.correct) {
+      setSnackbar({ open: true, message: editId ? 'Categoria actualizada correctamente.' : 'Categoria creada correctamente.', severity: 'success' })
+    } else {
+      setSnackbar({ open: true, message: res?.message || 'Error al guardar la categoria.', severity: 'error' })
+    }
+    fetchData(currentPage)
+  }
+
+  const handleDelete = async () => {
+    const item = confirmDelete.item
+    if (!item) return
+    setConfirmDelete({ open: false, item: null })
+    const res = await SaveCategoryApi({
+      id: item.id, idCompany: 1, idSubsidiary: 1, idModifiedBy: 1,
+      name: item.name, parentId: item.parentId, icon: item.icon, active: false,
+    })
+    if (res?.correct) {
+      setSnackbar({ open: true, message: 'Categoria eliminada correctamente.', severity: 'success' })
+      fetchData(currentPage)
+    } else {
+      setSnackbar({ open: true, message: res?.message || 'Error al eliminar la categoria.', severity: 'error' })
+    }
   }
 
   const openEdit = (cat: CategoryItem) => {
@@ -128,20 +159,72 @@ export default function CategoryLayoutForm() {
                   <Typography sx={{ fontSize: 12, color: 'text.disabled', bgcolor: 'action.hover', px: 1.5, py: 0.5, borderRadius: 99 }}>
                     {getChildren(cat.id).length} sub
                   </Typography>
+                  <IconButton
+                    size="small"
+                    onClick={(e) => { e.stopPropagation(); setConfirmDelete({ open: true, item: cat }) }}
+                    sx={{
+                      opacity: 0.4, '&:hover': { opacity: 1, color: '#ef4444', bgcolor: '#ef444410' },
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <Trash2 size={16} />
+                  </IconButton>
                 </Box>
               </Box>
               {getChildren(cat.id).map(child => (
                 <Box key={child.id} onClick={() => openEdit(child)}
                   sx={{
                     ml: 6, mt: 0.5, p: 1.5, borderRadius: 2, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     bgcolor: 'action.hover', '&:hover': { bgcolor: 'action.selected' }, transition: 'all 0.15s',
                   }}
                 >
                   <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>{child.name}</Typography>
+                  <IconButton
+                    size="small"
+                    onClick={(e) => { e.stopPropagation(); setConfirmDelete({ open: true, item: child }) }}
+                    sx={{
+                      opacity: 0.3, '&:hover': { opacity: 1, color: '#ef4444', bgcolor: '#ef444410' },
+                      transition: 'all 0.2s', p: 0.5,
+                    }}
+                  >
+                    <Trash2 size={14} />
+                  </IconButton>
                 </Box>
               ))}
             </motion.div>
           ))}
+        </Box>
+      )}
+
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, mt: 4 }}>
+          <Button
+            disabled={currentPage === 0}
+            onClick={() => fetchData(currentPage - 1)}
+            sx={{
+              borderRadius: 99, px: 2.5, py: 0.8, textTransform: 'none', fontWeight: 600,
+              fontSize: 13, bgcolor: 'action.hover', color: 'text.primary',
+              '&:hover': { bgcolor: 'action.selected' }, '&:disabled': { opacity: 0.4 },
+            }}
+          >
+            Anterior
+          </Button>
+          <Typography sx={{ fontSize: 13, color: 'text.secondary', fontWeight: 500 }}>
+            Pagina {currentPage + 1} de {totalPages}
+          </Typography>
+          <Button
+            disabled={currentPage >= totalPages - 1}
+            onClick={() => fetchData(currentPage + 1)}
+            sx={{
+              borderRadius: 99, px: 2.5, py: 0.8, textTransform: 'none', fontWeight: 600,
+              fontSize: 13, bgcolor: 'action.hover', color: 'text.primary',
+              '&:hover': { bgcolor: 'action.selected' }, '&:disabled': { opacity: 0.4 },
+            }}
+          >
+            Siguiente
+          </Button>
         </Box>
       )}
 
@@ -170,6 +253,34 @@ export default function CategoryLayoutForm() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Confirm Delete */}
+      <ConfirmDialog
+        open={confirmDelete.open}
+        title="Eliminar categoria"
+        message={`Estas seguro de eliminar la categoria "${confirmDelete.item?.name || ''}"? Esta accion la desactivara.`}
+        confirmText="Eliminar"
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmDelete({ open: false, item: null })}
+        destructive
+      />
+
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ borderRadius: 3, fontWeight: 500 }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }
