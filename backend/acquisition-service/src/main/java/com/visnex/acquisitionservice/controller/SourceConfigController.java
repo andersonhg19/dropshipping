@@ -6,6 +6,7 @@ import com.visnex.acquisitionservice.dto.output.ResultDTO;
 import com.visnex.acquisitionservice.service.SourceConfigService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Source Config Management", description = "Controller for managing source configurations.")
@@ -21,7 +22,7 @@ public class SourceConfigController {
 
     @Operation(summary = "Save or update a source configuration.")
     @PostMapping(value = "/save", produces = "application/json")
-    public ResultDTO save(@RequestBody SourceConfigDTO dto,
+    public ResultDTO save(@Valid @RequestBody SourceConfigDTO dto,
                           @RequestHeader(name = "lng") String language) throws Exception {
         return sourceConfigService.saveAndUpdate(dto, language);
     }

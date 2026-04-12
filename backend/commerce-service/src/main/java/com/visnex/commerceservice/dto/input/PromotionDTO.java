@@ -1,6 +1,7 @@
 package com.visnex.commerceservice.dto.input;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ public class PromotionDTO {
     @Schema(description = "Primary key; omit when creating a new record", example = "1")
     private Long id;
 
+    @NotNull
     @Schema(description = "Company identifier", example = "1", required = true)
     private Long idCompany;
 
@@ -24,9 +26,11 @@ public class PromotionDTO {
     @Schema(description = "User who creates or updates the record", example = "5")
     private Long idModifiedBy;
 
+    @NotBlank
     @Schema(description = "Promotion name", example = "Summer Sale", required = true)
     private String name;
 
+    @NotBlank
     @Schema(description = "Promotion type: PERCENTAGE|FIXED_AMOUNT|BUY_X_GET_Y", example = "PERCENTAGE")
     private String type;
 

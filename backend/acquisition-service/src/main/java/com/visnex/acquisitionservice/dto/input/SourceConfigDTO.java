@@ -1,6 +1,7 @@
 package com.visnex.acquisitionservice.dto.input;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ public class SourceConfigDTO {
     @Schema(description = "Primary key; omit when creating", example = "1")
     private Long id;
 
+    @NotNull
     @Schema(description = "Company identifier", example = "1", required = true)
     private Long idCompany;
 
@@ -21,9 +23,11 @@ public class SourceConfigDTO {
     @Schema(description = "User who creates or updates the record", example = "5")
     private Long idModifiedBy;
 
+    @NotBlank
     @Schema(description = "Configuration name", example = "CJ Main Config", required = true)
     private String name;
 
+    @NotBlank
     @Schema(description = "Provider: CJ_DROPSHIPPING, MERCADOLIBRE, EPROLO, ALIEXPRESS, FILE", example = "CJ_DROPSHIPPING")
     private String provider;
 

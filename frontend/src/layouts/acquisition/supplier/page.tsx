@@ -125,7 +125,7 @@ const SupplierLayoutForm = () => {
 
       {/* Empty state */}
       {!loading && rows.length === 0 && (
-        <Box sx={{ textAlign: 'center', py: 10, color: '#9ca3af' }}>
+        <Box sx={{ textAlign: 'center', py: 10, color: 'text.secondary' }}>
           <Package size={48} strokeWidth={1.2} style={{ margin: '0 auto 12px' }} />
           <Typography sx={{ fontSize: 18, fontWeight: 500 }}>Sin proveedores</Typography>
           <Typography sx={{ fontSize: 14, mt: 0.5 }}>Agrega tu primer proveedor para comenzar</Typography>
@@ -152,13 +152,13 @@ const SupplierLayoutForm = () => {
                 sx={{
                   display: 'flex', alignItems: 'center', gap: 2.5, mb: 1.5,
                   p: 2.5, borderRadius: 4, cursor: 'pointer',
-                  bgcolor: '#fff', border: '1px solid #f0f0f0',
+                  bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider',
                   boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                   transition: 'all 0.2s ease',
                   '&:hover': {
                     transform: 'translateY(-2px)',
                     boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-                    borderColor: '#e0e0e0',
+                    borderColor: 'action.focus',
                   },
                 }}
               >
@@ -184,7 +184,7 @@ const SupplierLayoutForm = () => {
                       {cfg.label}
                     </Box>
                   </Box>
-                  <Typography sx={{ fontSize: 13, color: '#6b7280' }}>
+                  <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>
                     {getFlag(s.country)} {s.country}{s.contactInfo ? ` \u00B7 ${s.contactInfo}` : ''}
                   </Typography>
                 </Box>
@@ -192,8 +192,8 @@ const SupplierLayoutForm = () => {
                 {/* Right: shipping + score */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
                   <Box sx={{
-                    px: 1.5, py: 0.5, borderRadius: 2, bgcolor: '#f3f4f6',
-                    fontSize: 13, fontWeight: 500, color: '#374151', whiteSpace: 'nowrap',
+                    px: 1.5, py: 0.5, borderRadius: 2, bgcolor: 'action.hover',
+                    fontSize: 13, fontWeight: 500, color: 'text.primary', whiteSpace: 'nowrap',
                   }}>
                     ~{avg} dias
                   </Box>
@@ -244,7 +244,7 @@ const SupplierLayoutForm = () => {
           )}
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5 }}>
-          <Button onClick={() => setOpen(false)} sx={{ borderRadius: 2, textTransform: 'none', color: '#6b7280' }}>
+          <Button onClick={() => setOpen(false)} sx={{ borderRadius: 2, textTransform: 'none', color: 'text.secondary' }}>
             Cancelar
           </Button>
           <Button onClick={handleSave} sx={{

@@ -6,6 +6,7 @@ import com.visnex.commerceservice.dto.output.ResultDTO;
 import com.visnex.commerceservice.service.EnrichmentConfigService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Enrichment Config Management", description = "Controller for managing AI enrichment configurations.")
@@ -21,7 +22,7 @@ public class EnrichmentConfigController {
 
     @Operation(summary = "Save or update an enrichment config.")
     @PostMapping(value = "/save", produces = "application/json")
-    public ResultDTO save(@RequestBody EnrichmentConfigDTO dto,
+    public ResultDTO save(@Valid @RequestBody EnrichmentConfigDTO dto,
                           @RequestHeader(name = "lng") String language) throws Exception {
         return enrichmentConfigService.saveAndUpdate(dto, language);
     }

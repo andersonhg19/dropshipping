@@ -48,6 +48,21 @@ export async function RawFetchData<T = unknown>(
     const bodyText = await res.text()
     const parsed = isJson && bodyText ? (JSON.parse(bodyText) as T) : (null as unknown as T)
 
+    // Token expired - redirect to login
+    if (res.status === 401) {
+      if (typeof window !== 'undefined') {
+        sessionStorage.clear()
+        localStorage.clear()
+        window.location.href = '/users/login'
+      }
+      const err: RawHttpError<T> = Object.assign(new Error('Session expired'), {
+        status: 401,
+        url,
+        payload: parsed,
+      })
+      throw err
+    }
+
     if (!res.ok) {
       const err: RawHttpError<T> = Object.assign(new Error(`HTTP ${res.status} ${res.statusText}`), {
         status: res.status,

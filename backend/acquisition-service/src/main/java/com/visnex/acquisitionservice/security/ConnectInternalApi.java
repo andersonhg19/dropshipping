@@ -18,12 +18,15 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visnex.acquisitionservice.config.AppConfig;
 import com.visnex.acquisitionservice.dto.output.ResultDTO;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class ConnectInternalApi {
 
@@ -78,13 +81,13 @@ public class ConnectInternalApi {
                 String responseBody = responseEntity.getBody();
                 return parseTokenFromResponse(responseBody);
             } else {
-                System.out.println("Error: Server not found");
+                log.error("Error: Server not found");
                 return "";
             }
         } catch (HttpServerErrorException e) {
-            System.out.println("Server Error: " + e.getRawStatusCode() + " - " + e.getStatusText());
+            log.error("Server error: {} - {}", e.getRawStatusCode(), e.getStatusText());
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            log.error("Error generating internal token: {}", e.getMessage());
         }
         return "";
     }
@@ -94,8 +97,15 @@ public class ConnectInternalApi {
         return (t == null) ? "" : t;
     }
 
-    private static String parseTokenFromResponse(String responseBody) {
-        return responseBody.substring(responseBody.indexOf("\"token\":\"") + 8, responseBody.indexOf("\",\"username\"")).replace("\"", "");
+    private String parseTokenFromResponse(String responseBody) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(responseBody);
+            return root.path("token").asText("");
+        } catch (Exception e) {
+            log.error("Failed to parse token from response", e);
+            return "";
+        }
     }
 
     public String chargeMessage(String key, String language) throws URISyntaxException, JsonProcessingException {
@@ -138,7 +148,7 @@ public class ConnectInternalApi {
                 return Optional.of((Map<String, Object>) result.getObject());
             }
         } catch (Exception e) {
-            System.out.println("adminGetCompany error: " + e.getMessage());
+            log.error("adminGetCompany error: {}", e.getMessage());
         }
         return Optional.empty();
     }
@@ -164,7 +174,7 @@ public class ConnectInternalApi {
                 return Optional.of((Map<String, Object>) result.getObject());
             }
         } catch (Exception e) {
-            System.out.println("adminGetSubsidiary error: " + e.getMessage());
+            log.error("adminGetSubsidiary error: {}", e.getMessage());
         }
         return Optional.empty();
     }
@@ -206,7 +216,7 @@ public class ConnectInternalApi {
                 return Optional.of((Map<String, Object>) result.getObject());
             }
         } catch (Exception e) {
-            System.out.println("adminGetUser error: " + e.getMessage());
+            log.error("adminGetUser error: {}", e.getMessage());
         }
         return Optional.empty();
     }

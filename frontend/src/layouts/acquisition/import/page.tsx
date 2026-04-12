@@ -7,6 +7,7 @@ import { CheckCircle, FileSpreadsheet, Upload, XCircle, Clock } from 'lucide-rea
 import { motion } from 'framer-motion'
 
 import { GetAllImportJob } from '@api/acquisition/import-job/get-all-import-job-api'
+import { getKeyApi } from '@utils/utilities'
 
 interface ImportJobItem {
   id: number
@@ -31,6 +32,8 @@ const statusConfig: Record<string, { color: string; bg: string; icon: any; label
 export default function ImportLayoutForm() {
   const [jobs, setJobs] = useState<ImportJobItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [uploading, setUploading] = useState(false)
+  const [uploadResult, setUploadResult] = useState<any>(null)
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -57,24 +60,61 @@ export default function ImportLayoutForm() {
       {/* Upload zone */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <Box sx={{
-          border: '2px dashed #d1d5db', borderRadius: 4, p: 5, textAlign: 'center',
-          bgcolor: '#fafafa', mb: 4, cursor: 'pointer', transition: 'all 0.2s',
+          border: '2px dashed', borderColor: 'divider', borderRadius: 4, p: 5, textAlign: 'center',
+          bgcolor: 'action.hover', mb: 4, cursor: 'pointer', transition: 'all 0.2s',
           '&:hover': { borderColor: '#0071e3', bgcolor: '#0071e308' },
         }}
         onClick={() => {
           const input = document.createElement('input')
           input.type = 'file'
           input.accept = '.csv,.xlsx,.json'
-          input.onchange = () => {
-            // TODO: integrate with file-import API
-            alert('Funcionalidad de upload sera conectada al backend en la siguiente iteracion')
+          input.onchange = async (e) => {
+            const file = (e.target as HTMLInputElement).files?.[0]
+            if (!file) return
+
+            setUploading(true)
+            try {
+              const token = await getKeyApi()
+              const formData = new FormData()
+              formData.append('file', file)
+
+              const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
+              const resp = await fetch(
+                `${BASE_URL}/ACQUISITION-SERVICE/vn-api/v2/file-import/upload`,
+                {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'lng': 'es'
+                  },
+                  body: formData
+                }
+              )
+
+              const data = await resp.json()
+              if (data.correct) {
+                setUploadResult({ ...data.object, fileName: file.name })
+                fetchData()
+              } else {
+                alert(data.message || 'Error uploading file')
+              }
+            } catch (err) {
+              alert('Error uploading: ' + (err as Error).message)
+            }
+            setUploading(false)
           }
           input.click()
         }}>
           <Upload size={40} color="#9ca3af" />
-          <Typography sx={{ mt: 2, fontWeight: 600, color: 'text.primary' }}>
-            Arrastra un archivo o haz clic para seleccionar
-          </Typography>
+          {uploading ? (
+            <Typography sx={{ mt: 2, fontWeight: 600, color: 'text.primary' }}>
+              Subiendo archivo...
+            </Typography>
+          ) : (
+            <Typography sx={{ mt: 2, fontWeight: 600, color: 'text.primary' }}>
+              Arrastra un archivo o haz clic para seleccionar
+            </Typography>
+          )}
           <Typography sx={{ mt: 0.5, fontSize: 13, color: 'text.secondary' }}>
             Formatos soportados: CSV, Excel (.xlsx), JSON
           </Typography>
@@ -83,6 +123,38 @@ export default function ImportLayoutForm() {
           </Typography>
         </Box>
       </motion.div>
+
+      {/* Upload result */}
+      {uploadResult && (
+        <Box sx={{
+          p: 3, borderRadius: 3, bgcolor: 'background.paper', mb: 4,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)',
+          border: '1px solid', borderColor: 'divider',
+        }}>
+          <Typography sx={{ fontWeight: 600, fontSize: 15, mb: 1.5, color: '#059669' }}>
+            <CheckCircle size={16} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+            Archivo subido exitosamente
+          </Typography>
+          <Typography sx={{ fontSize: 13, color: 'text.secondary', mb: 1 }}>
+            {uploadResult.fileName}
+          </Typography>
+          {uploadResult.totalRows != null && (
+            <Typography sx={{ fontSize: 13, color: 'text.secondary', mb: 1 }}>
+              Filas detectadas: {uploadResult.totalRows}
+            </Typography>
+          )}
+          {uploadResult.columns && uploadResult.columns.length > 0 && (
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1.5 }}>
+              {uploadResult.columns.map((col: string, idx: number) => (
+                <Chip key={idx} label={col} size="small" sx={{ borderRadius: 2, fontSize: 11 }} />
+              ))}
+            </Box>
+          )}
+          <Typography sx={{ fontSize: 12, color: 'text.disabled', fontStyle: 'italic' }}>
+            El mapeo de campos y la ejecucion estaran disponibles en la proxima actualizacion.
+          </Typography>
+        </Box>
+      )}
 
       {/* Import history */}
       <Typography sx={{ fontWeight: 600, fontSize: 16, mb: 2 }}>
@@ -133,7 +205,7 @@ export default function ImportLayoutForm() {
                   {job.status === 'COMPLETED' && (
                     <>
                       <LinearProgress variant="determinate" value={successRate}
-                        sx={{ height: 6, borderRadius: 3, bgcolor: '#f1f1f1',
+                        sx={{ height: 6, borderRadius: 3, bgcolor: 'action.disabledBackground',
                           '& .MuiLinearProgress-bar': { bgcolor: job.errorCount > 0 ? '#f59e0b' : '#10b981', borderRadius: 3 } }} />
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
                         <Typography sx={{ fontSize: 12, color: '#059669' }}>

@@ -6,6 +6,7 @@ import com.visnex.commerceservice.dto.output.ResultDTO;
 import com.visnex.commerceservice.service.PromptTemplateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Prompt Template Management", description = "Controller for managing AI prompt templates.")
@@ -21,7 +22,7 @@ public class PromptTemplateController {
 
     @Operation(summary = "Save or update a prompt template.")
     @PostMapping(value = "/save", produces = "application/json")
-    public ResultDTO save(@RequestBody PromptTemplateDTO dto,
+    public ResultDTO save(@Valid @RequestBody PromptTemplateDTO dto,
                           @RequestHeader(name = "lng") String language) throws Exception {
         return promptTemplateService.saveAndUpdate(dto, language);
     }

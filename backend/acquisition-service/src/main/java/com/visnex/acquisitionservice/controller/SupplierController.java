@@ -6,6 +6,7 @@ import com.visnex.acquisitionservice.dto.output.ResultDTO;
 import com.visnex.acquisitionservice.service.SupplierService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Supplier Management", description = "Controller for managing suppliers.")
@@ -21,7 +22,7 @@ public class SupplierController {
 
     @Operation(summary = "Save or update a supplier.")
     @PostMapping(value = "/save", produces = "application/json")
-    public ResultDTO save(@RequestBody SupplierDTO dto,
+    public ResultDTO save(@Valid @RequestBody SupplierDTO dto,
                           @RequestHeader(name = "lng") String language) throws Exception {
         return supplierService.saveAndUpdate(dto, language);
     }

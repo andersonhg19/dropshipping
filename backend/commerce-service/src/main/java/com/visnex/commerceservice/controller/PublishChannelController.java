@@ -6,6 +6,7 @@ import com.visnex.commerceservice.dto.output.ResultDTO;
 import com.visnex.commerceservice.service.PublishChannelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Publish Channel Management", description = "Controller for managing publish channels.")
@@ -21,7 +22,7 @@ public class PublishChannelController {
 
     @Operation(summary = "Save or update a publish channel.")
     @PostMapping(value = "/save", produces = "application/json")
-    public ResultDTO save(@RequestBody PublishChannelDTO dto,
+    public ResultDTO save(@Valid @RequestBody PublishChannelDTO dto,
                           @RequestHeader(name = "lng") String language) throws Exception {
         return publishChannelService.saveAndUpdate(dto, language);
     }

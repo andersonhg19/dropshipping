@@ -125,7 +125,7 @@ export default function CategoryLayoutForm() {
                       </Typography>
                     )}
                   </Box>
-                  <Typography sx={{ fontSize: 12, color: 'text.disabled', bgcolor: '#f5f5f7', px: 1.5, py: 0.5, borderRadius: 99 }}>
+                  <Typography sx={{ fontSize: 12, color: 'text.disabled', bgcolor: 'action.hover', px: 1.5, py: 0.5, borderRadius: 99 }}>
                     {getChildren(cat.id).length} sub
                   </Typography>
                 </Box>
@@ -134,7 +134,7 @@ export default function CategoryLayoutForm() {
                 <Box key={child.id} onClick={() => openEdit(child)}
                   sx={{
                     ml: 6, mt: 0.5, p: 1.5, borderRadius: 2, cursor: 'pointer',
-                    bgcolor: '#fafafa', '&:hover': { bgcolor: '#f0f0f2' }, transition: 'all 0.15s',
+                    bgcolor: 'action.hover', '&:hover': { bgcolor: 'action.selected' }, transition: 'all 0.15s',
                   }}
                 >
                   <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>{child.name}</Typography>

@@ -6,6 +6,7 @@ import com.visnex.commerceservice.dto.output.ResultDTO;
 import com.visnex.commerceservice.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Product Management", description = "Controller for managing products.")
@@ -21,7 +22,7 @@ public class ProductController {
 
     @Operation(summary = "Save or update a product.")
     @PostMapping(value = "/save", produces = "application/json")
-    public ResultDTO save(@RequestBody ProductDTO dto,
+    public ResultDTO save(@Valid @RequestBody ProductDTO dto,
                           @RequestHeader(name = "lng") String language) throws Exception {
         return productService.saveAndUpdate(dto, language);
     }

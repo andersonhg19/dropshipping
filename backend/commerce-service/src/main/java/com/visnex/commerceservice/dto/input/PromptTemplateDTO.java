@@ -1,6 +1,7 @@
 package com.visnex.commerceservice.dto.input;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ public class PromptTemplateDTO {
     @Schema(description = "Primary key; omit when creating a new record", example = "1")
     private Long id;
 
+    @NotNull
     @Schema(description = "Company identifier", example = "1", required = true)
     private Long idCompany;
 
@@ -21,6 +23,7 @@ public class PromptTemplateDTO {
     @Schema(description = "User who creates or updates the record", example = "5")
     private Long idModifiedBy;
 
+    @NotBlank
     @Schema(description = "Template name", example = "Default SEO Template", required = true)
     private String name;
 
@@ -30,6 +33,7 @@ public class PromptTemplateDTO {
     @Schema(description = "Category ID for category-specific templates")
     private Long idCategory;
 
+    @NotBlank
     @Schema(description = "The prompt text template")
     private String promptText;
 

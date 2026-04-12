@@ -6,6 +6,7 @@ import com.visnex.acquisitionservice.dto.output.ResultDTO;
 import com.visnex.acquisitionservice.service.ImportJobService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Import Job Management", description = "Controller for managing import jobs.")
@@ -21,7 +22,7 @@ public class ImportJobController {
 
     @Operation(summary = "Save or update an import job.")
     @PostMapping(value = "/save", produces = "application/json")
-    public ResultDTO save(@RequestBody ImportJobDTO dto,
+    public ResultDTO save(@Valid @RequestBody ImportJobDTO dto,
                           @RequestHeader(name = "lng") String language) throws Exception {
         return importJobService.saveAndUpdate(dto, language);
     }

@@ -6,6 +6,7 @@ import com.visnex.commerceservice.dto.output.ResultDTO;
 import com.visnex.commerceservice.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Category Management", description = "Controller for managing categories.")
@@ -21,7 +22,7 @@ public class CategoryController {
 
     @Operation(summary = "Save or update a category.")
     @PostMapping(value = "/save", produces = "application/json")
-    public ResultDTO save(@RequestBody CategoryDTO dto,
+    public ResultDTO save(@Valid @RequestBody CategoryDTO dto,
                           @RequestHeader(name = "lng") String language) throws Exception {
         return categoryService.saveAndUpdate(dto, language);
     }

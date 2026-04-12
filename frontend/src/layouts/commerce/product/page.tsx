@@ -122,7 +122,7 @@ const ProductLayoutForm = () => {
       {/* --- Filters --- */}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'center', mb: 4 }}>
         <Box sx={{
-          display: 'flex', alignItems: 'center', bgcolor: cardBgColor || '#f5f5f7',
+          display: 'flex', alignItems: 'center', bgcolor: cardBgColor || 'action.hover',
           borderRadius: '12px', px: 1.5, py: 0.5, flex: { xs: '1 1 100%', sm: '0 1 280px' },
         }}>
           <Search size={18} color="#86868b" />
@@ -142,8 +142,8 @@ const ProductLayoutForm = () => {
             onClick={() => setStatusFilter(s)}
             sx={{
               ...pill,
-              bgcolor: statusFilter === s ? (s === 'ALL' ? '#1d1d1f' : STATUS_COLORS[s]) : '#f5f5f7',
-              color: statusFilter === s ? '#fff' : '#6e6e73',
+              bgcolor: statusFilter === s ? (s === 'ALL' ? '#1d1d1f' : STATUS_COLORS[s]) : 'action.hover',
+              color: statusFilter === s ? '#fff' : 'text.secondary',
               '&:hover': { opacity: 0.85 },
             }}
           >
@@ -160,12 +160,12 @@ const ProductLayoutForm = () => {
           ))}
         </Box>
       ) : filtered.length === 0 ? (
-        <Box sx={{ textAlign: 'center', py: 12, color: '#86868b' }}>
+        <Box sx={{ textAlign: 'center', py: 12, color: 'text.secondary' }}>
           <PackageOpen size={56} strokeWidth={1.2} style={{ marginBottom: 16 }} />
           <Typography sx={{ fontSize: 18, fontWeight: 600 }}>
             {t('lbl_no_data') || 'No products found'}
           </Typography>
-          <Typography sx={{ fontSize: 14, mt: 0.5, color: '#aeaeb2' }}>
+          <Typography sx={{ fontSize: 14, mt: 0.5, color: 'text.disabled' }}>
             {t('lbl_try_different_filter') || 'Try a different filter or create a new product'}
           </Typography>
         </Box>
@@ -181,20 +181,20 @@ const ProductLayoutForm = () => {
                 transition={{ duration: 0.35, delay: i * 0.05 }}
                 onClick={() => openEdit(row)}
                 sx={{
-                  bgcolor: '#fff', borderRadius: '16px', overflow: 'hidden', cursor: 'pointer',
+                  bgcolor: 'background.paper', borderRadius: '16px', overflow: 'hidden', cursor: 'pointer',
                   boxShadow: '0 1px 3px rgba(0,0,0,.08)', transition: 'transform .25s, box-shadow .25s',
                   '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 8px 24px rgba(0,0,0,.12)' },
                 }}
               >
                 {/* Image placeholder */}
-                <Box sx={{ bgcolor: '#f5f5f7', height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box sx={{ bgcolor: 'action.hover', height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <PackageOpen size={40} color="#c7c7cc" strokeWidth={1.3} />
                 </Box>
                 <Box sx={{ p: 2.5 }}>
                   <Typography sx={{ fontWeight: 700, fontSize: 16, mb: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {row.title || 'Untitled'}
                   </Typography>
-                  <Typography sx={{ fontSize: 15, fontWeight: 600, color: row.sellingPrice > 0 ? '#1b8a4a' : '#aeaeb2', mb: 1 }}>
+                  <Typography sx={{ fontSize: 15, fontWeight: 600, color: row.sellingPrice > 0 ? '#1b8a4a' : 'text.disabled', mb: 1 }}>
                     {row.sellingPrice > 0 ? `$${row.sellingPrice.toFixed(2)}` : 'Sin precio'}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -206,7 +206,7 @@ const ProductLayoutForm = () => {
                       {row.status}
                     </Box>
                     {row.supplierName && (
-                      <Typography sx={{ fontSize: 12, color: '#aeaeb2' }}>
+                      <Typography sx={{ fontSize: 12, color: 'text.disabled' }}>
                         {row.supplierName}
                       </Typography>
                     )}
@@ -245,7 +245,7 @@ const ProductLayoutForm = () => {
           )}
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5 }}>
-          <Button onClick={() => setOpenDialog(false)} sx={{ borderRadius: '999px', textTransform: 'none', color: '#6e6e73' }}>
+          <Button onClick={() => setOpenDialog(false)} sx={{ borderRadius: '999px', textTransform: 'none', color: 'text.secondary' }}>
             {t('lbl_cancel')}
           </Button>
           <Button onClick={handleSave} sx={{ bgcolor: APPLE_BLUE, color: '#fff', borderRadius: '999px', textTransform: 'none', fontWeight: 600, px: 3, '&:hover': { bgcolor: '#005ecb' } }}>

@@ -1,6 +1,7 @@
 package com.visnex.commerceservice.dto.input;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +15,7 @@ public class ProductDTO {
     @Schema(description = "Primary key; omit when creating a new record", example = "1")
     private Long id;
 
+    @NotNull
     @Schema(description = "Company identifier", example = "1", required = true)
     private Long idCompany;
 
@@ -23,6 +25,8 @@ public class ProductDTO {
     @Schema(description = "User who creates or updates the record", example = "5")
     private Long idModifiedBy;
 
+    @NotBlank
+    @Size(max = 500)
     @Schema(description = "Product title", example = "Wireless Bluetooth Earbuds", required = true)
     private String title;
 
@@ -50,6 +54,7 @@ public class ProductDTO {
     @Schema(description = "Product status: DRAFT|READY|ENRICHED|PUBLISHED|ARCHIVED", example = "DRAFT")
     private String status;
 
+    @DecimalMin(value = "0")
     @Schema(description = "Base price from source", example = "5.99")
     private BigDecimal basePrice;
 

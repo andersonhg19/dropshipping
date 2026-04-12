@@ -1,6 +1,7 @@
 package com.visnex.commerceservice.dto.input;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +15,7 @@ public class PublishChannelDTO {
     @Schema(description = "Primary key; omit when creating a new record", example = "1")
     private Long id;
 
+    @NotNull
     @Schema(description = "Company identifier", example = "1", required = true)
     private Long idCompany;
 
@@ -23,9 +25,11 @@ public class PublishChannelDTO {
     @Schema(description = "User who creates or updates the record", example = "5")
     private Long idModifiedBy;
 
+    @NotBlank
     @Schema(description = "Channel name", example = "Mi WooCommerce", required = true)
     private String name;
 
+    @NotBlank
     @Schema(description = "Channel type: WOOCOMMERCE|FACEBOOK_MARKETPLACE|INSTAGRAM_SHOPPING|MERCADOLIBRE|CSV_EXPORT", example = "WOOCOMMERCE")
     private String type;
 

@@ -25,6 +25,16 @@ async function FetchData<T>(BASE_URL_MODULE: string, endpoint: string, options: 
       return response
     }
 
+    if (response.status === 401) {
+      // Token expired - redirect to login
+      if (typeof window !== 'undefined') {
+        sessionStorage.clear()
+        localStorage.clear()
+        window.location.href = '/users/login'
+      }
+      return new ReturnService<T>(null as unknown as T, false, 'Session expired', 401)
+    }
+
     if (response.status === 403) {
       const text = i18n.t('inCorrectAccess') as string
       return new ReturnService<T>(null as unknown as T, false, text, 1)
