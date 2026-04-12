@@ -17,6 +17,7 @@ import {
   Typography,
 } from '@mui/material'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 import {
   ChevronLeft,
   ChevronRight,
@@ -65,6 +66,7 @@ const MotionBox = motion.create(Box)
 const ProductLayoutForm = () => {
   const { t } = useTranslation()
   const { cardBgColor } = usePaletteVars()
+  const router = useRouter()
 
   const [rows, setRows] = useState<ProductRow[]>([])
   const [loading, setLoading] = useState(true)
@@ -381,7 +383,14 @@ const ProductLayoutForm = () => {
                   bgcolor: 'background.paper', borderRadius: '16px', overflow: 'hidden', position: 'relative',
                   boxShadow: selected.has(row.id) ? `0 0 0 2px ${APPLE_BLUE}` : '0 1px 3px rgba(0,0,0,.08)',
                   transition: 'transform .25s, box-shadow .25s',
+                  cursor: 'pointer',
                   '&:hover': { transform: 'translateY(-2px)', boxShadow: selected.has(row.id) ? `0 4px 16px rgba(0,113,227,.25)` : '0 8px 24px rgba(0,0,0,.12)' },
+                }}
+                onClick={(e) => {
+                  // Don't navigate if clicking on checkbox, button, or action elements
+                  const target = e.target as HTMLElement
+                  if (target.closest('button') || target.closest('input') || target.closest('a')) return
+                  router.push(`/dashboard/products/${row.id}`)
                 }}
               >
                 {/* Checkbox (top-left) */}

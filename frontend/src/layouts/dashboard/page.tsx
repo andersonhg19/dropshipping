@@ -18,6 +18,8 @@ import { usePaletteVars } from '@hooks/ui/use-palette-vars'
 import { GetAllProduct } from '@api/commerce/product/get-all-product-api'
 import { GetAllSupplier } from '@api/acquisition/supplier/get-all-supplier-api'
 
+import OnboardingWizard from '@components/organisms/onboarding/onboarding-wizard'
+
 const fade = (delay: number) => ({
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -32,10 +34,17 @@ export default function DashboardContent() {
   const palette = usePaletteVars()
   const router = useRouter()
 
+  const [showOnboarding, setShowOnboarding] = useState(false)
   const [productCount, setProductCount] = useState(0)
   const [supplierCount, setSupplierCount] = useState(0)
   const [publishedCount, setPublishedCount] = useState(0)
   const [draftCount, setDraftCount] = useState(0)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !localStorage.getItem('visnex_onboarding_completed')) {
+      setShowOnboarding(true)
+    }
+  }, [])
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -96,6 +105,13 @@ export default function DashboardContent() {
   }
 
   return (
+    <>
+    {showOnboarding && (
+      <OnboardingWizard onComplete={() => {
+        localStorage.setItem('visnex_onboarding_completed', 'true')
+        setShowOnboarding(false)
+      }} />
+    )}
     <Box role="main" sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, md: 4 }, py: { xs: 3, md: 5 } }}>
       {/* Hero */}
       <motion.div {...fade(0)}>
@@ -240,5 +256,6 @@ export default function DashboardContent() {
         </Box>
       </motion.div>
     </Box>
+    </>
   )
 }
