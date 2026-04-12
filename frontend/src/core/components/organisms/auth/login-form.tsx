@@ -172,6 +172,7 @@ const LoginForm: React.FC = () => {
           <Label htmlFor="email" text={t('lbl_email')} style={labelStyle} />
           <Input
             type="email"
+            name="email"
             placeholder={t('msj_enter_your_email')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -179,6 +180,9 @@ const LoginForm: React.FC = () => {
             style={inputStyle}
             onFocus={(e) => (e.currentTarget.style.borderColor = buttonBgColor)}
             onBlur={(e) => (e.currentTarget.style.borderColor = muiTheme.palette.divider)}
+            aria-label={t('lbl_email')}
+            aria-invalid={!!error}
+            aria-describedby={error ? 'login-error-message' : undefined}
           />
         </motion.div>
       </Grid2>
@@ -189,6 +193,7 @@ const LoginForm: React.FC = () => {
           <Label htmlFor="password" text={t('lbl_password')} style={labelStyle} />
           <Input
             type="password"
+            name="password"
             placeholder={t('msj_enter_your_password')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -196,6 +201,9 @@ const LoginForm: React.FC = () => {
             style={inputStyle}
             onFocus={(e) => (e.currentTarget.style.borderColor = buttonBgColor)}
             onBlur={(e) => (e.currentTarget.style.borderColor = muiTheme.palette.divider)}
+            aria-label={t('lbl_password')}
+            aria-invalid={!!error}
+            aria-describedby={error ? 'login-error-message' : undefined}
           />
         </motion.div>
       </Grid2>
@@ -204,7 +212,7 @@ const LoginForm: React.FC = () => {
       {error && (
         <Grid2 size={{ xs: 12 }}>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-            <Typography style={errorStyle}>{error}</Typography>
+            <Typography id="login-error-message" role="alert" aria-live="assertive" style={errorStyle}>{error}</Typography>
           </motion.div>
         </Grid2>
       )}

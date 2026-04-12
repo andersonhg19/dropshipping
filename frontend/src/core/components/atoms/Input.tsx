@@ -17,6 +17,9 @@ interface InputProps {
   disabled?: boolean
   className?: string
   style?: React.CSSProperties
+  'aria-label'?: string
+  'aria-invalid'?: boolean
+  'aria-describedby'?: string
 }
 
 const Input: React.FC<InputProps> = ({
@@ -32,6 +35,9 @@ const Input: React.FC<InputProps> = ({
   disabled,
   className,
   style,
+  'aria-label': ariaLabel,
+  'aria-invalid': ariaInvalid,
+  'aria-describedby': ariaDescribedby,
 }) => {
   return (
     <TextField
@@ -49,6 +55,11 @@ const Input: React.FC<InputProps> = ({
       disabled={disabled}
       className={className}
       style={style}
+      inputProps={{
+        'aria-label': ariaLabel,
+        'aria-invalid': ariaInvalid,
+        'aria-describedby': ariaDescribedby,
+      }}
     />
   )
 }

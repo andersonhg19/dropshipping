@@ -21,9 +21,10 @@ export default function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <Dialog open={open} onClose={onCancel} maxWidth="xs" fullWidth
+      aria-labelledby="confirm-dialog-title"
       PaperProps={{ sx: { borderRadius: 4, p: 1 } }}>
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1.5, fontWeight: 700, fontSize: 18, pb: 0 }}>
-        <AlertTriangle size={20} color={destructive ? '#ef4444' : '#f59e0b'} />
+      <DialogTitle id="confirm-dialog-title" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, fontWeight: 700, fontSize: 18, pb: 0 }}>
+        <AlertTriangle size={20} color={destructive ? '#ef4444' : '#f59e0b'} aria-hidden="true" />
         {title}
       </DialogTitle>
       <DialogContent sx={{ pt: '12px !important' }}>

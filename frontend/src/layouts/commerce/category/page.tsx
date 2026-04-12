@@ -146,7 +146,7 @@ export default function CategoryLayoutForm() {
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#0071e315', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Folder size={20} color="#0071e3" />
+                    <Folder size={20} color="#0071e3" aria-hidden="true" />
                   </Box>
                   <Box sx={{ flex: 1 }}>
                     <Typography sx={{ fontWeight: 600, fontSize: 15 }}>{cat.name}</Typography>
@@ -161,13 +161,14 @@ export default function CategoryLayoutForm() {
                   </Typography>
                   <IconButton
                     size="small"
+                    aria-label={`Eliminar categoria ${cat.name}`}
                     onClick={(e) => { e.stopPropagation(); setConfirmDelete({ open: true, item: cat }) }}
                     sx={{
                       opacity: 0.4, '&:hover': { opacity: 1, color: '#ef4444', bgcolor: '#ef444410' },
                       transition: 'all 0.2s',
                     }}
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={16} aria-hidden="true" />
                   </IconButton>
                 </Box>
               </Box>
@@ -182,13 +183,14 @@ export default function CategoryLayoutForm() {
                   <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>{child.name}</Typography>
                   <IconButton
                     size="small"
+                    aria-label={`Eliminar subcategoria ${child.name}`}
                     onClick={(e) => { e.stopPropagation(); setConfirmDelete({ open: true, item: child }) }}
                     sx={{
                       opacity: 0.3, '&:hover': { opacity: 1, color: '#ef4444', bgcolor: '#ef444410' },
                       transition: 'all 0.2s', p: 0.5,
                     }}
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={14} aria-hidden="true" />
                   </IconButton>
                 </Box>
               ))}
@@ -228,13 +230,13 @@ export default function CategoryLayoutForm() {
         </Box>
       )}
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: 4, p: 1 } }}>
-        <DialogTitle sx={{ fontWeight: 700, fontSize: 20, pb: 1 }}>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth aria-labelledby="category-dialog-title" PaperProps={{ sx: { borderRadius: 4, p: 1 } }}>
+        <DialogTitle id="category-dialog-title" sx={{ fontWeight: 700, fontSize: 20, pb: 1 }}>
           {editId ? 'Editar Categoria' : 'Nueva Categoria'}
         </DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: '12px !important' }}>
           <TextField label="Nombre" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-            fullWidth size="small" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
+            fullWidth size="small" required aria-required="true" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
           <TextField label="Categoria padre" select value={form.parentId}
             onChange={e => setForm(p => ({ ...p, parentId: e.target.value }))}
             fullWidth size="small" sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}

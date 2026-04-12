@@ -200,7 +200,7 @@ const SupplierLayoutForm = () => {
                   alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                   bgcolor: cfg.bg,
                 }}>
-                  <Icon size={24} color={cfg.color} strokeWidth={1.8} />
+                  <Icon size={24} color={cfg.color} strokeWidth={1.8} aria-hidden="true" />
                 </Box>
 
                 {/* Center info */}
@@ -237,13 +237,14 @@ const SupplierLayoutForm = () => {
                   )}
                   <IconButton
                     size="small"
+                    aria-label={`Eliminar proveedor ${s.name}`}
                     onClick={(e) => { e.stopPropagation(); setConfirmDelete({ open: true, item: s }) }}
                     sx={{
                       opacity: 0.4, '&:hover': { opacity: 1, color: '#ef4444', bgcolor: '#ef444410' },
                       transition: 'all 0.2s',
                     }}
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={16} aria-hidden="true" />
                   </IconButton>
                 </Box>
               </Box>
@@ -289,13 +290,14 @@ const SupplierLayoutForm = () => {
         onClose={() => setOpen(false)}
         maxWidth="xs"
         fullWidth
+        aria-labelledby="supplier-dialog-title"
         PaperProps={{ sx: { borderRadius: 4, p: 1 } }}
       >
-        <DialogTitle sx={{ fontWeight: 700, fontSize: 20 }}>
+        <DialogTitle id="supplier-dialog-title" sx={{ fontWeight: 700, fontSize: 20 }}>
           {form.id ? 'Editar Proveedor' : 'Nuevo Proveedor'}
         </DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '8px !important' }}>
-          <TextField label="Nombre" value={form.name} onChange={(e) => upd('name', e.target.value)} fullWidth size="small" />
+          <TextField label="Nombre" value={form.name} onChange={(e) => upd('name', e.target.value)} fullWidth size="small" required aria-required="true" />
           <TextField label="Tipo" value={form.type} onChange={(e) => upd('type', e.target.value)} select fullWidth size="small">
             {Object.entries(typeConfig).map(([k, v]) => (
               <MenuItem key={k} value={k}>{v.label}</MenuItem>
@@ -311,7 +313,7 @@ const SupplierLayoutForm = () => {
               onChange={(e) => upd('shippingDaysMax', Number(e.target.value))} fullWidth size="small" />
           </Box>
           {saveError && (
-            <Typography sx={{ color: '#ef4444', fontSize: 13, fontWeight: 500, mt: 0.5 }}>
+            <Typography role="alert" sx={{ color: '#ef4444', fontSize: 13, fontWeight: 500, mt: 0.5 }}>
               {saveError}
             </Typography>
           )}

@@ -59,15 +59,27 @@ export default function ImportLayoutForm() {
 
       {/* Upload zone */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <Box sx={{
+        <Box
+          role="button"
+          tabIndex={0}
+          aria-label="Subir archivo CSV, Excel o JSON"
+          sx={{
           border: '2px dashed', borderColor: 'divider', borderRadius: 4, p: 5, textAlign: 'center',
           bgcolor: 'action.hover', mb: 4, cursor: 'pointer', transition: 'all 0.2s',
           '&:hover': { borderColor: '#0071e3', bgcolor: '#0071e308' },
+          '&:focus-visible': { outline: '2px solid #0071e3', outlineOffset: '2px' },
+        }}
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            (e.currentTarget as HTMLElement).click()
+          }
         }}
         onClick={() => {
           const input = document.createElement('input')
           input.type = 'file'
           input.accept = '.csv,.xlsx,.json'
+          input.setAttribute('aria-label', 'Seleccionar archivo para importar')
           input.onchange = async (e) => {
             const file = (e.target as HTMLInputElement).files?.[0]
             if (!file) return
@@ -105,7 +117,7 @@ export default function ImportLayoutForm() {
           }
           input.click()
         }}>
-          <Upload size={40} color="#9ca3af" />
+          <Upload size={40} color="#9ca3af" aria-hidden="true" />
           {uploading ? (
             <Typography sx={{ mt: 2, fontWeight: 600, color: 'text.primary' }}>
               Subiendo archivo...
