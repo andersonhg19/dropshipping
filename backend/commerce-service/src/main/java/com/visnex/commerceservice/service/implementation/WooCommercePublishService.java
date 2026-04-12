@@ -16,6 +16,7 @@ public class WooCommercePublishService {
     private final ProductRepository productRepository;
     private final PublishChannelRepository channelRepository;
     private final ProductPublishRepository publishRepository;
+    private final ProductImageRepository productImageRepository;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
     @SuppressWarnings("unchecked")
@@ -40,12 +41,57 @@ public class WooCommercePublishService {
 
             Map<String, String> cfg = objectMapper.readValue(optC.get().getConfig(), Map.class);
             Map<String, Object> wc = new LinkedHashMap<>();
-            wc.put("name", product.getEnrichedTitle() != null ? product.getEnrichedTitle() : product.getTitle());
+            String title = product.getEnrichedTitle() != null ? product.getEnrichedTitle() : product.getTitle();
+            wc.put("name", title);
             wc.put("type", "simple");
             String price = product.getSellingPrice() != null ? product.getSellingPrice().toString() : product.getBasePrice() != null ? product.getBasePrice().toString() : "0";
             wc.put("regular_price", price);
             wc.put("description", product.getEnrichedDescription() != null ? product.getEnrichedDescription() : product.getDescription() != null ? product.getDescription() : "");
+            wc.put("short_description", product.getBulletPoints() != null ? product.getBulletPoints() : "");
             wc.put("status", "publish");
+
+            // SEO meta data (Yoast SEO)
+            List<Map<String, String>> metaData = new ArrayList<>();
+            if (product.getSeoTitle() != null && !product.getSeoTitle().isBlank()) {
+                metaData.add(Map.of("key", "_yoast_wpseo_title", "value", product.getSeoTitle()));
+            }
+            if (product.getSeoDescription() != null && !product.getSeoDescription().isBlank()) {
+                metaData.add(Map.of("key", "_yoast_wpseo_metadesc", "value", product.getSeoDescription()));
+            }
+            if (product.getSeoKeywords() != null && !product.getSeoKeywords().isBlank()) {
+                metaData.add(Map.of("key", "_yoast_wpseo_focuskw", "value", product.getSeoKeywords().split(",")[0].trim()));
+            }
+            if (!metaData.isEmpty()) wc.put("meta_data", metaData);
+
+            // Tags from product tags JSON
+            if (product.getTags() != null && !product.getTags().isBlank()) {
+                try {
+                    List<String> tagList = objectMapper.readValue(product.getTags(), List.class);
+                    List<Map<String, String>> wcTags = tagList.stream()
+                        .map(t -> Map.of("name", t.toString().trim()))
+                        .toList();
+                    wc.put("tags", wcTags);
+                } catch (Exception ignored) {}
+            }
+
+            // Images with auto-generated alt text for accessibility
+            List<ProductImage> images = productImageRepository
+                .findByIdProductAndActiveOrderBySortOrderAsc(productId, true);
+            if (!images.isEmpty()) {
+                List<Map<String, Object>> wcImages = new ArrayList<>();
+                for (ProductImage img : images) {
+                    Map<String, Object> imgMap = new LinkedHashMap<>();
+                    imgMap.put("src", img.getUrl());
+                    // Auto alt text: use product title + image source for accessibility
+                    String altText = img.getAltText() != null && !img.getAltText().isBlank()
+                        ? img.getAltText()
+                        : title + " - " + (img.getSource() != null ? img.getSource() : "imagen");
+                    imgMap.put("alt", altText);
+                    imgMap.put("name", title);
+                    wcImages.add(imgMap);
+                }
+                wc.put("images", wcImages);
+            }
             HttpHeaders headers = new HttpHeaders();
             headers.setBasicAuth(cfg.get("consumerKey"), cfg.get("consumerSecret"));
             headers.setContentType(MediaType.APPLICATION_JSON);

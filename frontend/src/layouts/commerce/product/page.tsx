@@ -308,12 +308,13 @@ const ProductLayoutForm = () => {
 
       {/* --- Filters --- */}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'center', mb: 4 }}>
-        <Box sx={{
+        <Box role="search" sx={{
           display: 'flex', alignItems: 'center', bgcolor: cardBgColor || 'action.hover',
           borderRadius: '12px', px: 1.5, py: 0.5, flex: { xs: '1 1 100%', sm: '0 1 280px' },
         }}>
-          <Search size={18} color="#86868b" />
+          <Search size={18} color="#86868b" aria-hidden="true" />
           <input
+            aria-label="Buscar productos"
             placeholder={t('lbl_search') || 'Buscar...'}
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
@@ -365,10 +366,12 @@ const ProductLayoutForm = () => {
           </Typography>
         </Box>
       ) : (
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: 'repeat(3, 1fr)', xl: 'repeat(4, 1fr)' }, gap: 3 }}>
+        <Box role="list" sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: 'repeat(3, 1fr)', xl: 'repeat(4, 1fr)' }, gap: 3 }}>
           <AnimatePresence>
             {rows.map((row, i) => (
               <MotionBox
+                role="listitem"
+                aria-label={`Producto: ${row.title || 'Sin titulo'}, precio: ${row.sellingPrice > 0 ? '$' + row.sellingPrice.toFixed(2) : 'Sin precio'}, estado: ${row.status}`}
                 key={row.id || i}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -386,21 +389,27 @@ const ProductLayoutForm = () => {
                   checked={selected.has(row.id)}
                   onChange={() => toggleSelect(row.id)}
                   size="small"
+                  inputProps={{ 'aria-label': `Seleccionar producto ${row.title || 'Sin titulo'}` } as React.InputHTMLAttributes<HTMLInputElement>}
                   sx={{ position: 'absolute', top: 4, left: 4, zIndex: 2, bgcolor: 'rgba(255,255,255,.85)', borderRadius: '8px', '&:hover': { bgcolor: 'rgba(255,255,255,.95)' } }}
                 />
 
                 {/* Delete button (top-right) */}
                 <Box
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Eliminar producto ${row.title || 'Sin titulo'}`}
                   onClick={(e) => { e.stopPropagation(); handleDelete(row) }}
+                  onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); handleDelete(row) } }}
                   sx={{
                     position: 'absolute', top: 8, right: 8, zIndex: 2,
                     width: 28, height: 28, borderRadius: '8px',
                     bgcolor: 'rgba(255,255,255,.85)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     cursor: 'pointer', transition: 'all .2s',
                     '&:hover': { bgcolor: '#fef2f2', color: '#ef4444' },
+                    '&:focus-visible': { outline: '2px solid #0071e3', outlineOffset: '2px' },
                   }}
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={14} aria-hidden="true" />
                 </Box>
 
                 {/* Image placeholder */}
@@ -408,7 +417,7 @@ const ProductLayoutForm = () => {
                   onClick={() => openEdit(row)}
                   sx={{ bgcolor: 'action.hover', height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                 >
-                  <PackageOpen size={40} color="#c7c7cc" strokeWidth={1.3} />
+                  <PackageOpen size={40} color="#c7c7cc" strokeWidth={1.3} aria-hidden="true" />
                 </Box>
 
                 <Box sx={{ p: 2.5 }} onClick={() => openEdit(row)} style={{ cursor: 'pointer' }}>
@@ -439,7 +448,8 @@ const ProductLayoutForm = () => {
                   {row.status === 'DRAFT' && (
                     <Button
                       size="small"
-                      startIcon={<Sparkles size={14} />}
+                      aria-label={`Enriquecer producto ${row.title || 'Sin titulo'}`}
+                      startIcon={<Sparkles size={14} aria-hidden="true" />}
                       onClick={(e) => { e.stopPropagation(); handleEnrich(row.id) }}
                       sx={actionBtn('#8B5CF6', '#7C3AED')}
                     >
@@ -449,7 +459,8 @@ const ProductLayoutForm = () => {
                   {row.status === 'ENRICHED' && (
                     <Button
                       size="small"
-                      startIcon={<Upload size={14} />}
+                      aria-label={`Publicar producto ${row.title || 'Sin titulo'}`}
+                      startIcon={<Upload size={14} aria-hidden="true" />}
                       onClick={(e) => { e.stopPropagation(); handlePublish(row.id) }}
                       sx={actionBtn('#10B981', '#059669')}
                     >
@@ -459,7 +470,8 @@ const ProductLayoutForm = () => {
                   {row.status === 'PUBLISHED' && (
                     <Button
                       size="small"
-                      startIcon={<ExternalLink size={14} />}
+                      aria-label={`Ver producto ${row.title || 'Sin titulo'} en tienda`}
+                      startIcon={<ExternalLink size={14} aria-hidden="true" />}
                       onClick={(e) => e.stopPropagation()}
                       href={process.env.NEXT_PUBLIC_STORE_URL || '#'}
                       target="_blank"
@@ -480,9 +492,10 @@ const ProductLayoutForm = () => {
       {!loading && totalPages > 1 && (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, mt: 5 }}>
           <Button
+            aria-label="Pagina anterior"
             onClick={() => goPage(currentPage - 1)}
             disabled={currentPage === 0}
-            startIcon={<ChevronLeft size={16} />}
+            startIcon={<ChevronLeft size={16} aria-hidden="true" />}
             sx={{
               borderRadius: '999px', textTransform: 'none', fontWeight: 600, fontSize: 13,
               border: '1px solid', borderColor: 'divider', color: 'text.secondary', px: 2.5,
@@ -492,13 +505,14 @@ const ProductLayoutForm = () => {
           >
             Anterior
           </Button>
-          <Typography sx={{ fontSize: 14, fontWeight: 500, color: 'text.secondary' }}>
+          <Typography aria-live="polite" sx={{ fontSize: 14, fontWeight: 500, color: 'text.secondary' }}>
             Pagina {currentPage + 1} de {totalPages}
           </Typography>
           <Button
+            aria-label="Pagina siguiente"
             onClick={() => goPage(currentPage + 1)}
             disabled={currentPage >= totalPages - 1}
-            endIcon={<ChevronRight size={16} />}
+            endIcon={<ChevronRight size={16} aria-hidden="true" />}
             sx={{
               borderRadius: '999px', textTransform: 'none', fontWeight: 600, fontSize: 13,
               border: '1px solid', borderColor: 'divider', color: 'text.secondary', px: 2.5,
@@ -515,6 +529,8 @@ const ProductLayoutForm = () => {
       <AnimatePresence>
         {selected.size > 0 && (
           <MotionBox
+            role="toolbar"
+            aria-label="Acciones por lote"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
@@ -561,13 +577,14 @@ const ProductLayoutForm = () => {
       <Dialog
         open={openDialog} onClose={() => setOpenDialog(false)}
         maxWidth="sm" fullWidth
+        aria-labelledby="product-dialog-title"
         PaperProps={{ sx: { borderRadius: '16px', p: 1 } }}
       >
-        <DialogTitle sx={{ fontWeight: 700, fontSize: 20 }}>
+        <DialogTitle id="product-dialog-title" sx={{ fontWeight: 700, fontSize: 20 }}>
           {editItem.id ? t('lbl_edit') : t('lbl_add_new')}
         </DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: '12px !important' }}>
-          <TextField label={t('lbl_title')} value={editItem.title} onChange={(e) => set('title', e.target.value)} fullWidth size="small" />
+          <TextField label={t('lbl_title')} value={editItem.title} onChange={(e) => set('title', e.target.value)} fullWidth size="small" required aria-required="true" />
           <TextField label={t('lbl_description')} value={editItem.description} onChange={(e) => set('description', e.target.value)} multiline rows={3} fullWidth size="small" />
           <Box sx={{ display: 'flex', gap: 2 }}>
             <TextField label={t('lbl_base_price')} type="number" value={editItem.basePrice} onChange={(e) => set('basePrice', Number(e.target.value))} fullWidth size="small" />

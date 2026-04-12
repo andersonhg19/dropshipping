@@ -96,11 +96,11 @@ export default function DashboardContent() {
   }
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, md: 4 }, py: { xs: 3, md: 5 } }}>
+    <Box role="main" sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, md: 4 }, py: { xs: 3, md: 5 } }}>
       {/* Hero */}
       <motion.div {...fade(0)}>
         <Box sx={{ mb: 5 }}>
-          <Typography sx={{ fontSize: { xs: 28, md: 36 }, fontWeight: 700, color: palette.textColor, letterSpacing: '-0.02em' }}>
+          <Typography component="h1" sx={{ fontSize: { xs: 28, md: 36 }, fontWeight: 700, color: palette.textColor, letterSpacing: '-0.02em' }}>
             {t('lbl_welcome') || 'Bienvenido'} a VISNEX
           </Typography>
           <Typography sx={{ fontSize: 15, color: palette.textSecondaryColor, mt: 0.5, textTransform: 'capitalize' }}>
@@ -116,7 +116,7 @@ export default function DashboardContent() {
           return (
             <Grid key={s.label} size={{ xs: 6, md: 3 }}>
               <motion.div {...fade(0.1 + i * 0.08)}>
-                <Box sx={{ ...card, p: 3, display: 'flex', alignItems: 'center', gap: 2.5 }}>
+                <Box aria-label={`${s.value} ${s.label} en total`} sx={{ ...card, p: 3, display: 'flex', alignItems: 'center', gap: 2.5 }}>
                   <Box
                     sx={{
                       width: 48,
@@ -128,7 +128,7 @@ export default function DashboardContent() {
                       background: `${s.color}14`,
                     }}
                   >
-                    <Icon sx={{ color: s.color, fontSize: 24 }} />
+                    <Icon sx={{ color: s.color, fontSize: 24 }} aria-hidden="true" />
                   </Box>
                   <Box>
                     <Typography sx={{ fontSize: 28, fontWeight: 700, color: palette.textColor, lineHeight: 1.1 }}>
@@ -147,7 +147,7 @@ export default function DashboardContent() {
 
       {/* Quick Actions */}
       <motion.div {...fade(0.45)}>
-        <Typography sx={{ fontSize: 20, fontWeight: 600, color: palette.textColor, mb: 2 }}>
+        <Typography component="h2" sx={{ fontSize: 20, fontWeight: 600, color: palette.textColor, mb: 2 }}>
           Acciones rapidas
         </Typography>
       </motion.div>
@@ -159,7 +159,11 @@ export default function DashboardContent() {
             <Grid key={a.title} size={{ xs: 12, md: 4 }}>
               <motion.div {...fade(0.5 + i * 0.08)}>
                 <Box
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${a.title}: ${a.desc}`}
                   onClick={() => router.push(a.href)}
+                  onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(a.href) } }}
                   sx={{
                     ...card,
                     p: 3.5,
@@ -168,6 +172,10 @@ export default function DashboardContent() {
                     '&:hover': {
                       transform: 'translateY(-2px)',
                       boxShadow: '0 4px 12px rgba(0,0,0,0.06), 0 12px 32px rgba(0,0,0,0.1)',
+                    },
+                    '&:focus-visible': {
+                      outline: '2px solid #0071e3',
+                      outlineOffset: '2px',
                     },
                   }}
                 >
@@ -183,7 +191,7 @@ export default function DashboardContent() {
                       mb: 2,
                     }}
                   >
-                    <Icon sx={{ color: a.color, fontSize: 22 }} />
+                    <Icon sx={{ color: a.color, fontSize: 22 }} aria-hidden="true" />
                   </Box>
                   <Typography sx={{ fontSize: 16, fontWeight: 600, color: palette.textColor }}>
                     {a.title}
@@ -200,7 +208,7 @@ export default function DashboardContent() {
 
       {/* Recent Activity */}
       <motion.div {...fade(0.75)}>
-        <Typography sx={{ fontSize: 20, fontWeight: 600, color: palette.textColor, mb: 2 }}>
+        <Typography component="h2" sx={{ fontSize: 20, fontWeight: 600, color: palette.textColor, mb: 2 }}>
           Actividad reciente
         </Typography>
         <Box sx={{ ...card, overflow: 'hidden' }}>
@@ -222,7 +230,7 @@ export default function DashboardContent() {
                 borderBottom: i < 4 ? `1px solid ${palette.cardBorderColor || 'rgba(0,0,0,0.06)'}` : 'none',
               }}
             >
-              <Box sx={{ width: 6, height: 6, borderRadius: '50%', background: '#0071e3', flexShrink: 0 }} />
+              <Box aria-hidden="true" sx={{ width: 6, height: 6, borderRadius: '50%', background: '#0071e3', flexShrink: 0 }} />
               <Typography sx={{ fontSize: 14, color: palette.textSecondaryColor }}>{item}</Typography>
               <Typography sx={{ fontSize: 12, color: palette.textSecondaryColor, ml: 'auto', opacity: 0.6 }}>
                 Ahora
