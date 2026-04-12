@@ -278,7 +278,8 @@
     <li><a href="#sec10">IA y Enriquecimiento</a></li>
     <li><a href="#sec11">Seguridad</a></li>
     <li><a href="#sec12">Estructura de archivos del proyecto</a></li>
-    <li><a href="#sec13">Glosario</a></li>
+    <li><a href="#sec13">Detalle por Microservicio</a></li>
+    <li><a href="#sec14">Glosario</a></li>
   </ol>
 </nav>
 
@@ -355,6 +356,32 @@
 
   WordPress :8850 + MySQL :3307  |  phpMyAdmin :8851
   Discovery (Eureka) :8840       |  Language :8843
+</code></pre>
+
+    <h3>Diagrama simplificado</h3>
+<pre><code>           +--------------+
+           |  Frontend    | :3001
+           |  Next.js     |
+           +------+-------+
+                  |
+           +------+-------+
+           |   Gateway    | :8841
+           +------+-------+
+                  |
+    +-----+------+------+------+------+
+    |     |      |      |      |      |
+  Auth  Admin  Audit  Lang  Acqui  Comm
+  8842  8844   8845   8843  8846   8847
+    |     |      |      |      |      |
+    +-----+------+------+------+------+
+                  |
+           +------+-------+
+           |  PostgreSQL  | :5433
+           |  6 databases |
+           +--------------+
+
+  WordPress :8850 + MySQL :3307 + phpMyAdmin :8851
+  Eureka :8840 | Ollama :11434
 </code></pre>
 
     <h3>Microservicios y sus puertos</h3>
@@ -513,50 +540,21 @@ cd backend &amp;&amp; mvn clean package -pl commerce-service -DskipTests</code><
       Estas credenciales son para el entorno de <strong>desarrollo local</strong>. En produccion se usan credenciales diferentes almacenadas de forma segura.
     </div>
 
-    <h3>Panel de Administracion (SaaS)</h3>
+    <h3>Panel SaaS (Administracion)</h3>
     <table>
       <tr><th>Campo</th><th>Valor</th></tr>
-      <tr><td>URL</td><td><code>http://localhost:3001</code></td></tr>
-      <tr><td>Usuario</td><td><code>admin@visnex.co</code></td></tr>
-      <tr><td>Password</td><td><code>admin123</code></td></tr>
+      <tr><td>URL</td><td><a href="http://localhost:3001" target="_blank"><code>http://localhost:3001</code></a></td></tr>
+      <tr><td>Usuario</td><td><code>visnex</code></td></tr>
+      <tr><td>Password</td><td><code>Visnex123</code></td></tr>
     </table>
 
-    <h3>WordPress Admin</h3>
+    <h3>WordPress</h3>
     <table>
       <tr><th>Campo</th><th>Valor</th></tr>
-      <tr><td>URL</td><td><code>http://localhost:8850/wp-admin</code></td></tr>
+      <tr><td>Tienda (publica)</td><td><a href="http://localhost:8850" target="_blank"><code>http://localhost:8850</code></a></td></tr>
+      <tr><td>Admin Panel</td><td><a href="http://localhost:8850/wp-admin" target="_blank"><code>http://localhost:8850/wp-admin</code></a></td></tr>
       <tr><td>Usuario</td><td><code>admin</code></td></tr>
-      <tr><td>Password</td><td>Definido durante la instalacion inicial de WordPress</td></tr>
-    </table>
-
-    <h3>PostgreSQL (Base de datos principal)</h3>
-    <table>
-      <tr><th>Campo</th><th>Valor</th></tr>
-      <tr><td>Host</td><td><code>localhost</code></td></tr>
-      <tr><td>Puerto</td><td><code>5433</code></td></tr>
-      <tr><td>Usuario</td><td><code>postgres</code></td></tr>
       <tr><td>Password</td><td><code>Visnex2026</code></td></tr>
-      <tr><td>Bases de datos</td><td><code>auth_db</code>, <code>admin_db</code>, <code>lang_db</code>, <code>audit_db</code>, <code>acquisition_db</code>, <code>commerce_db</code></td></tr>
-    </table>
-
-    <h3>MySQL (WordPress)</h3>
-    <table>
-      <tr><th>Campo</th><th>Valor</th></tr>
-      <tr><td>Host</td><td><code>localhost</code></td></tr>
-      <tr><td>Puerto</td><td><code>3307</code></td></tr>
-      <tr><td>Root password</td><td><code>vnroot2026</code></td></tr>
-      <tr><td>Usuario</td><td><code>vn_user</code></td></tr>
-      <tr><td>Password</td><td><code>vnpass2026</code></td></tr>
-      <tr><td>Base de datos</td><td><code>wordpress_vn</code></td></tr>
-    </table>
-
-    <h3>phpMyAdmin</h3>
-    <table>
-      <tr><th>Campo</th><th>Valor</th></tr>
-      <tr><td>URL</td><td><code>http://localhost:8851</code></td></tr>
-      <tr><td>Servidor</td><td><code>mysql</code> (ya configurado)</td></tr>
-      <tr><td>Usuario</td><td><code>root</code></td></tr>
-      <tr><td>Password</td><td><code>vnroot2026</code></td></tr>
     </table>
 
     <h3>WooCommerce API Keys</h3>
@@ -566,6 +564,50 @@ cd backend &amp;&amp; mvn clean package -pl commerce-service -DskipTests</code><
       <tr><td>Consumer Secret</td><td><code>cs_6ffb9521bed3a25b4d61133a4d6127a4d6686d4b</code></td></tr>
     </table>
     <p>Estas API keys permiten que el commerce-service se comunique con WooCommerce para crear, actualizar y eliminar productos en la tienda.</p>
+
+    <h3>PostgreSQL (Base de datos principal)</h3>
+    <table>
+      <tr><th>Campo</th><th>Valor</th></tr>
+      <tr><td>Host</td><td><code>localhost:5433</code></td></tr>
+      <tr><td>Usuario</td><td><code>postgres</code></td></tr>
+      <tr><td>Password</td><td><code>Visnex2026</code></td></tr>
+      <tr><td>Bases de datos</td><td><code>auth_db</code>, <code>lang_db</code>, <code>admin_db</code>, <code>audit_db</code>, <code>acquisition_db</code>, <code>commerce_db</code></td></tr>
+    </table>
+
+    <h3>MySQL (WordPress)</h3>
+    <table>
+      <tr><th>Campo</th><th>Valor</th></tr>
+      <tr><td>Host</td><td><code>localhost:3307</code></td></tr>
+      <tr><td>Usuario</td><td><code>vn_user</code></td></tr>
+      <tr><td>Password</td><td><code>vnpass2026</code></td></tr>
+      <tr><td>Root password</td><td><code>vnroot2026</code></td></tr>
+      <tr><td>Base de datos</td><td><code>wordpress_vn</code></td></tr>
+    </table>
+
+    <h3>phpMyAdmin</h3>
+    <table>
+      <tr><th>Campo</th><th>Valor</th></tr>
+      <tr><td>URL</td><td><a href="http://localhost:8851" target="_blank"><code>http://localhost:8851</code></a></td></tr>
+      <tr><td>Servidor</td><td><code>mysql</code> (ya configurado)</td></tr>
+      <tr><td>Usuario</td><td><code>root</code></td></tr>
+      <tr><td>Password</td><td><code>vnroot2026</code></td></tr>
+    </table>
+
+    <h3>Ollama (IA Local)</h3>
+    <table>
+      <tr><th>Campo</th><th>Valor</th></tr>
+      <tr><td>URL</td><td><code>http://localhost:11434</code></td></tr>
+      <tr><td>Modelo default</td><td><code>qwen2.5:14b</code> (9 GB, gratis)</td></tr>
+      <tr><td>Modelo premium</td><td><code>qwen2.5:32b</code> (20 GB, gratis)</td></tr>
+      <tr><td>Costo</td><td><strong>$0</strong></td></tr>
+    </table>
+
+    <h3>Swagger (Documentacion de API)</h3>
+    <table>
+      <tr><th>Servicio</th><th>URL</th></tr>
+      <tr><td>Acquisition</td><td><a href="http://localhost:8846/vn-api/acquisition-service/swagger-ui/index.html" target="_blank"><code>http://localhost:8846/vn-api/acquisition-service/swagger-ui/index.html</code></a></td></tr>
+      <tr><td>Commerce</td><td><a href="http://localhost:8847/vn-api/commerce-service/swagger-ui/index.html" target="_blank"><code>http://localhost:8847/vn-api/commerce-service/swagger-ui/index.html</code></a></td></tr>
+    </table>
 
     <h3>JWT (Token de seguridad)</h3>
     <table>
@@ -1424,6 +1466,44 @@ Reglas:
     </ul>
     <p>El presupuesto mensual que configuras en VISNEX se asegura de que nunca gastes mas de lo planeado.</p>
 
+    <h3>Ollama - IA Local Gratuita</h3>
+    <p><strong>Ollama</strong> es un runtime de modelos de inteligencia artificial que corre directamente en tu PC, completamente gratis y sin limites de uso.</p>
+
+    <h4>Modelos instalados</h4>
+    <table>
+      <thead><tr><th>Modelo</th><th>Parametros</th><th>Disco</th><th>Calidad</th></tr></thead>
+      <tbody>
+        <tr><td><code>qwen2.5:14b</code></td><td>14 billones</td><td>9 GB</td><td>~85% de GPT-4o-mini</td></tr>
+        <tr><td><code>qwen2.5:32b</code></td><td>32 billones</td><td>20 GB</td><td>~95% de GPT-4o-mini (calidad maxima local)</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Como funciona</h4>
+    <ul>
+      <li>El <strong>commerce-service</strong> llama a Ollama via HTTP usando la URL <code>host.docker.internal:11434</code> (desde Docker).</li>
+      <li>Ollama recibe el prompt, genera el contenido y lo devuelve al commerce-service.</li>
+      <li><strong>Costo: $0 por producto enriquecido</strong>, sin limite de cantidad.</li>
+    </ul>
+
+    <h4>Como cambiar el modelo</h4>
+    <p>En el panel VISNEX, ve a <strong>IA &rarr; Configuracion</strong> y cambia el campo "Modelo" al nombre del modelo deseado (ej: <code>qwen2.5:14b</code> o <code>qwen2.5:32b</code>).</p>
+
+    <h4>Comparacion de calidad</h4>
+    <table>
+      <thead><tr><th>Proveedor</th><th>Modelo</th><th>Calidad relativa</th><th>Costo por producto</th></tr></thead>
+      <tbody>
+        <tr><td>Ollama (local)</td><td>qwen2.5:14b</td><td>85%</td><td>$0</td></tr>
+        <tr><td>Ollama (local)</td><td>qwen2.5:32b</td><td>95%</td><td>$0</td></tr>
+        <tr><td>OpenAI</td><td>GPT-4o-mini</td><td>100% (referencia)</td><td>~$0.005 USD</td></tr>
+        <tr><td>OpenAI</td><td>GPT-4o</td><td>120%</td><td>~$0.03 USD</td></tr>
+        <tr><td>Anthropic</td><td>Claude 3.5 Sonnet</td><td>115%</td><td>~$0.02 USD</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip">
+      Para la mayoria de productos, <code>qwen2.5:14b</code> produce resultados excelentes a costo cero. Usa <code>qwen2.5:32b</code> si necesitas la maxima calidad en descripciones largas o productos complejos.
+    </div>
+
     <a href="#top" class="back-top">Volver arriba</a>
   </div>
 </details>
@@ -1603,7 +1683,248 @@ Reglas:
 <!-- ============================================================ -->
 <div class="section" id="sec13">
 <details>
-  <summary>13. Glosario</summary>
+  <summary>13. Detalle por Microservicio</summary>
+  <div class="section-content">
+
+    <p>Referencia tecnica completa de cada microservicio del backend, incluyendo responsabilidades, tablas, entidades y endpoints clave.</p>
+
+    <!-- Discovery Service -->
+    <details>
+      <summary>Discovery Service (Puerto 8840)</summary>
+      <div class="section-content">
+        <h4>Que hace</h4>
+        <p>Registro de servicios con <strong>Netflix Eureka</strong>. Todos los microservicios se registran aqui al arrancar para poder encontrarse entre si por nombre en lugar de por IP/puerto.</p>
+        <table>
+          <tr><th>Puerto</th><td><code>8840</code></td></tr>
+          <tr><th>Base de datos</th><td>Ninguna</td></tr>
+          <tr><th>Endpoint principal</th><td><code>/eureka/apps</code> (ver servicios registrados)</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <!-- Gateway Service -->
+    <details>
+      <summary>Gateway Service (Puerto 8841)</summary>
+      <div class="section-content">
+        <h4>Que hace</h4>
+        <p>API Gateway. Recibe <strong>todas</strong> las peticiones del frontend y las enruta al microservicio correcto basandose en el path de la URL. Tambien valida el token JWT en cada peticion.</p>
+        <table>
+          <tr><th>Puerto</th><td><code>8841</code></td></tr>
+          <tr><th>Base de datos</th><td>Ninguna</td></tr>
+          <tr><th>CORS</th><td>Habilitado para todos los origenes (desarrollo)</td></tr>
+        </table>
+        <h4>Rutas configuradas</h4>
+        <ul>
+          <li><code>/AUTHENTICATION-SERVICE/*</code> &rarr; auth-service</li>
+          <li><code>/ADMINISTRATION-SERVICE/*</code> &rarr; administration-service</li>
+          <li><code>/LANGUAGE-SERVICE/*</code> &rarr; language-service</li>
+          <li><code>/AUDIT-SERVICE/*</code> &rarr; audit-service</li>
+          <li><code>/ACQUISITION-SERVICE/*</code> &rarr; acquisition-service</li>
+          <li><code>/COMMERCE-SERVICE/*</code> &rarr; commerce-service</li>
+        </ul>
+      </div>
+    </details>
+
+    <!-- Auth Service -->
+    <details>
+      <summary>Auth Service (Puerto 8842)</summary>
+      <div class="section-content">
+        <h4>Que hace</h4>
+        <p>Autenticacion JWT y gestion de usuarios de acceso. Valida credenciales, genera tokens y gestiona las cuentas de login.</p>
+        <table>
+          <tr><th>Puerto</th><td><code>8842</code></td></tr>
+          <tr><th>Base de datos</th><td><code>auth_db</code></td></tr>
+          <tr><th>Tablas</th><td><code>vn_auth_user</code>, <code>vn_auth_rol</code>, <code>vn_auth_mail</code></td></tr>
+        </table>
+        <h4>Endpoints principales</h4>
+        <ul>
+          <li><code>POST /login</code> - Login externo (desde frontend)</li>
+          <li><code>POST /internalLogin</code> - Login interno (entre servicios)</li>
+          <li><code>POST /save/user</code> - Crear/actualizar usuario de acceso</li>
+        </ul>
+        <div class="info">El password se encripta con AES antes de enviarse desde el frontend, y se almacena con BCrypt en la base de datos.</div>
+      </div>
+    </details>
+
+    <!-- Language Service -->
+    <details>
+      <summary>Language Service (Puerto 8843)</summary>
+      <div class="section-content">
+        <h4>Que hace</h4>
+        <p>Internacionalizacion (i18n). Almacena y sirve mensajes de error, etiquetas y textos de la interfaz en multiples idiomas.</p>
+        <table>
+          <tr><th>Puerto</th><td><code>8843</code></td></tr>
+          <tr><th>Base de datos</th><td><code>lang_db</code></td></tr>
+          <tr><th>Tablas</th><td><code>vn_lan_languages</code>, <code>vn_lan_keywords</code>, <code>vn_lan_message_labels</code></td></tr>
+          <tr><th>Idiomas soportados</th><td><code>es</code> (espanol), <code>en</code> (ingles)</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <!-- Administration Service -->
+    <details>
+      <summary>Administration Service (Puerto 8844)</summary>
+      <div class="section-content">
+        <h4>Que hace</h4>
+        <p>Gestion de empresas, filiales, usuarios, roles, permisos, configuraciones y estilos. Es el servicio de administracion general del sistema multi-tenant.</p>
+        <table>
+          <tr><th>Puerto</th><td><code>8844</code></td></tr>
+          <tr><th>Base de datos</th><td><code>admin_db</code></td></tr>
+        </table>
+        <h4>Tablas</h4>
+        <ul>
+          <li><code>vn_adm_company</code> - Empresas</li>
+          <li><code>vn_adm_subsidiary</code> - Filiales/sucursales</li>
+          <li><code>vn_adm_user</code> - Usuarios del sistema</li>
+          <li><code>vn_adm_type_user</code> - Tipos de usuario (roles)</li>
+          <li><code>vn_adm_module</code> - Modulos del sistema</li>
+          <li><code>vn_adm_pages</code> - Paginas del panel</li>
+          <li><code>vn_adm_page_type_user</code> - Permisos por tipo de usuario</li>
+          <li><code>vn_adm_configuration</code> - Configuraciones generales</li>
+          <li><code>vn_adm_style</code> - Estilos y temas</li>
+          <li><code>vn_adm_mail_server_configuration</code> - Config del servidor de email</li>
+        </ul>
+        <h4>Entidades</h4>
+        <p>Company, Subsidiary, User, TypeUser, Module, Pages, PageTypeUser, Configuration, Style, MailServerConfiguration</p>
+        <div class="info">Multi-tenant: toda entidad tiene <code>company_id</code> + <code>subsidiary_id</code> obligatorios.</div>
+      </div>
+    </details>
+
+    <!-- Audit Service -->
+    <details>
+      <summary>Audit Service (Puerto 8845)</summary>
+      <div class="section-content">
+        <h4>Que hace</h4>
+        <p>Registro centralizado de auditoria. Almacena quien cambio que, cuando y con que valores anteriores y nuevos. Trazabilidad completa de todas las operaciones del sistema.</p>
+        <table>
+          <tr><th>Puerto</th><td><code>8845</code></td></tr>
+          <tr><th>Base de datos</th><td><code>audit_db</code></td></tr>
+          <tr><th>Tablas</th><td><code>vn_audit_log</code></td></tr>
+        </table>
+        <h4>Caracteristicas</h4>
+        <ul>
+          <li>Recibe eventos via <strong>Spring Events</strong> desde otros servicios</li>
+          <li>Limpieza automatica programada (cron) para mantener el tamano controlado</li>
+        </ul>
+      </div>
+    </details>
+
+    <!-- Acquisition Service -->
+    <details>
+      <summary>Acquisition Service (Puerto 8846) - CORE</summary>
+      <div class="section-content">
+        <h4>Que hace</h4>
+        <p>Busqueda, importacion y normalizacion de productos desde fuentes externas. Es uno de los dos servicios centrales de VISNEX.</p>
+        <table>
+          <tr><th>Puerto</th><td><code>8846</code></td></tr>
+          <tr><th>Base de datos</th><td><code>acquisition_db</code></td></tr>
+        </table>
+        <h4>Tablas</h4>
+        <ul>
+          <li><code>vn_acq_supplier</code> - Proveedores</li>
+          <li><code>vn_acq_source_config</code> - Configuracion de fuentes</li>
+          <li><code>vn_acq_source_product</code> - Productos importados</li>
+          <li><code>vn_acq_import_job</code> - Trabajos de importacion</li>
+          <li><code>vn_acq_import_template</code> - Templates de mapeo de columnas</li>
+        </ul>
+        <h4>Entidades</h4>
+        <p>Supplier, SourceConfig, SourceProduct, ImportJob, ImportTemplate</p>
+        <h4>Funcionalidades clave</h4>
+        <ul>
+          <li>Importacion CSV/Excel/JSON con mapeo de campos configurable</li>
+          <li>Gestion de proveedores (CJ Dropshipping, EPROLO, locales)</li>
+          <li>Cache de productos encontrados en busquedas</li>
+          <li>Envio de productos seleccionados al commerce-service</li>
+        </ul>
+        <h4>Endpoints especiales</h4>
+        <ul>
+          <li><code>/v2/file-import/upload</code> - Subir archivo CSV/Excel</li>
+          <li><code>/v2/file-import/execute</code> - Ejecutar importacion con mapeo</li>
+          <li><code>/v2/send-to-commerce/single</code> - Enviar producto a commerce</li>
+        </ul>
+        <h4>Swagger</h4>
+        <p><a href="http://localhost:8846/vn-api/acquisition-service/swagger-ui/index.html" target="_blank">http://localhost:8846/vn-api/acquisition-service/swagger-ui/index.html</a></p>
+      </div>
+    </details>
+
+    <!-- Commerce Service -->
+    <details>
+      <summary>Commerce Service (Puerto 8847) - CORE</summary>
+      <div class="section-content">
+        <h4>Que hace</h4>
+        <p>Catalogo de productos, enriquecimiento con IA, pricing, publicacion a WooCommerce y analytics. Es el otro servicio central de VISNEX.</p>
+        <table>
+          <tr><th>Puerto</th><td><code>8847</code></td></tr>
+          <tr><th>Base de datos</th><td><code>commerce_db</code></td></tr>
+        </table>
+        <h4>Tablas</h4>
+        <ul>
+          <li><code>vn_com_product</code> - Productos del catalogo</li>
+          <li><code>vn_com_category</code> - Categorias de productos</li>
+          <li><code>vn_com_product_image</code> - Imagenes de productos</li>
+          <li><code>vn_com_pricing_config</code> - Configuracion de precios</li>
+          <li><code>vn_com_promotion</code> - Promociones</li>
+          <li><code>vn_com_publish_channel</code> - Canales de publicacion</li>
+          <li><code>vn_com_product_publish</code> - Registro de publicaciones</li>
+          <li><code>vn_com_enrichment_config</code> - Configuracion de IA</li>
+          <li><code>vn_com_prompt_template</code> - Templates de prompts</li>
+        </ul>
+        <h4>Funcionalidades clave</h4>
+        <ul>
+          <li>CRUD de productos con ciclo de estados (<code>DRAFT</code> &rarr; <code>ENRICHED</code> &rarr; <code>PUBLISHED</code>)</li>
+          <li>Enriquecimiento con IA (OpenAI, Claude, Ollama local gratis)</li>
+          <li>Calculadora de costo real Colombia (IVA, arancel, envio, comision)</li>
+          <li>Publicacion a WooCommerce con imagenes + alt text + SEO</li>
+          <li>Pricing manual y en bloque (bulk pricing)</li>
+          <li>Export CSV/Excel</li>
+        </ul>
+        <h4>Endpoints especiales</h4>
+        <ul>
+          <li><code>/v2/ai-enrichment/enrich</code> - Enriquecer producto con IA</li>
+          <li><code>/v2/woocommerce/publish</code> - Publicar producto a WordPress</li>
+          <li><code>/v2/bulk-pricing/*</code> - Operaciones de precios en bloque</li>
+          <li><code>/v2/export/*</code> - Exportar datos a CSV/Excel</li>
+        </ul>
+        <h4>Swagger</h4>
+        <p><a href="http://localhost:8847/vn-api/commerce-service/swagger-ui/index.html" target="_blank">http://localhost:8847/vn-api/commerce-service/swagger-ui/index.html</a></p>
+      </div>
+    </details>
+
+    <!-- visnex-common -->
+    <details>
+      <summary>visnex-common (Libreria compartida)</summary>
+      <div class="section-content">
+        <h4>Que hace</h4>
+        <p>Libreria Java compartida que contiene clases reutilizadas por multiples microservicios. No es un servicio ejecutable, es una dependencia Maven.</p>
+        <h4>Clases principales</h4>
+        <table>
+          <thead><tr><th>Clase</th><th>Proposito</th></tr></thead>
+          <tbody>
+            <tr><td><code>ResultDTO</code></td><td>Respuesta estandarizada (correct, message, errorCode, object)</td></tr>
+            <tr><td><code>PageDTO</code></td><td>Respuesta de paginacion (page, size, totalPage, list)</td></tr>
+            <tr><td><code>JWTAuthorizationFilter</code></td><td>Filtro de seguridad que valida tokens JWT</td></tr>
+            <tr><td><code>SecParams</code></td><td>Parametros de seguridad compartidos</td></tr>
+            <tr><td><code>Params</code></td><td>Constantes y parametros globales</td></tr>
+            <tr><td><code>ConnectInternalApi</code></td><td>Cliente HTTP para llamadas entre microservicios</td></tr>
+            <tr><td><code>PredicateBuilderUtil</code></td><td>Utilidad para construir queries dinamicas con Criteria API</td></tr>
+            <tr><td><code>BaseMapper</code></td><td>Interfaz base para mappers MapStruct</td></tr>
+            <tr><td><code>ValidationException</code></td><td>Excepcion personalizada para validaciones</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <a href="#top" class="back-top">Volver arriba</a>
+  </div>
+</details>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 14 -->
+<!-- ============================================================ -->
+<div class="section" id="sec14">
+<details>
+  <summary>14. Glosario</summary>
   <div class="section-content">
 
     <table>
