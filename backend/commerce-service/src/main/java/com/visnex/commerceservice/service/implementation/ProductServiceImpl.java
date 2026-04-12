@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -43,6 +44,14 @@ public class ProductServiceImpl implements ProductService {
     private static final String DEFAULT_LANG = "es";
     // Bug #30: Valid status values
     private static final Set<String> VALID_STATUSES = Set.of("DRAFT", "READY", "ENRICHED", "PUBLISHED", "ARCHIVED");
+    // Bug #22: Valid status transitions
+    private static final Map<String, Set<String>> VALID_TRANSITIONS = Map.of(
+            "DRAFT", Set.of("READY", "ARCHIVED"),
+            "READY", Set.of("ENRICHED", "DRAFT", "ARCHIVED"),
+            "ENRICHED", Set.of("PUBLISHED", "DRAFT", "ARCHIVED"),
+            "PUBLISHED", Set.of("ARCHIVED", "ENRICHED"),
+            "ARCHIVED", Set.of("DRAFT")
+    );
 
     private String lang(String language) { return (language == null || language.isBlank()) ? DEFAULT_LANG : language; }
 
@@ -99,6 +108,16 @@ public class ProductServiceImpl implements ProductService {
 
             // UPDATE
             Product existing = validation.requireProduct(dto.getId(), lng);
+
+            // Bug #22: Validate status transition
+            if (existing.getStatus() != null && dto.getStatus() != null
+                    && !existing.getStatus().equals(dto.getStatus())) {
+                Set<String> allowed = VALID_TRANSITIONS.getOrDefault(existing.getStatus(), Set.of());
+                if (!allowed.contains(dto.getStatus())) {
+                    return new ResultDTO(false, "Invalid status transition from " + existing.getStatus()
+                            + " to " + dto.getStatus() + ". Allowed: " + allowed, 103);
+                }
+            }
 
             Product updated = repository.save(mapper.toEntity(dto));
             ResultProductDTO result = mapper.toDTO(updated);

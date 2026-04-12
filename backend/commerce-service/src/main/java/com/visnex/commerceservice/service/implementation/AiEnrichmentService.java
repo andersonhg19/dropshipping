@@ -165,7 +165,7 @@ public class AiEnrichmentService {
                     .replace("{{category}}", product.getIdCategory() != null ? product.getIdCategory().toString() : "General")
                     .replace("{{tags}}", product.getTags() != null ? product.getTags() : "");
         } else {
-            // Default prompt
+            // Default prompt in Spanish for Colombian market. For multi-language support, use PromptTemplate entity.
             promptText = String.format("""
                     Eres un experto en ecommerce de moda. Genera contenido comercial para este producto en espanol.
 

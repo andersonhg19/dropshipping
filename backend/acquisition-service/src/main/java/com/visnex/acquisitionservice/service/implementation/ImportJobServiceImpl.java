@@ -2,6 +2,7 @@ package com.visnex.acquisitionservice.service.implementation;
 
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +37,9 @@ public class ImportJobServiceImpl implements ImportJobService {
     private final CompletionUtils completionUtils;
 
     private static final String DEFAULT_LANG = "es";
+    // Bug #8: Valid status values for import jobs
+    private static final Set<String> VALID_STATUSES = Set.of(
+            "UPLOADED", "MAPPED", "VALIDATING", "IMPORTING", "COMPLETED", "FAILED");
     private String lang(String language) { return (language == null || language.isBlank()) ? DEFAULT_LANG : language; }
 
     private String m(String key, String lng) {
@@ -56,6 +60,11 @@ public class ImportJobServiceImpl implements ImportJobService {
 
             if (dto.getIdCompany() == null) {
                 return new ResultDTO(false, m(Message.Msj.return_field_is_required.toString(), lng) + " idCompany", 103);
+            }
+
+            // Bug #8: Validate status if provided
+            if (dto.getStatus() != null && !VALID_STATUSES.contains(dto.getStatus())) {
+                return new ResultDTO(false, "Invalid status. Allowed: " + VALID_STATUSES, 103);
             }
 
             // CREATE
