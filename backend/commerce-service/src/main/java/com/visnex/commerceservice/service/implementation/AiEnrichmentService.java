@@ -100,9 +100,29 @@ public class AiEnrichmentService {
                 return new ResultDTO(false, "AI API call failed", 103);
             }
 
-            // Bug #21: Validate that AI response contains "enrichedTitle"
-            if (!aiResponse.containsKey("enrichedTitle")) {
-                return new ResultDTO(false, "AI response missing required 'enrichedTitle' field", 103);
+            // Normalize field names - models use various naming conventions
+            String[][] mappings = {
+                {"title", "enrichedTitle"}, {"titulo", "enrichedTitle"}, {"producto", "enrichedTitle"}, {"name", "enrichedTitle"},
+                {"description", "enrichedDescription"}, {"descripcion", "enrichedDescription"},
+                {"bullets", "bulletPoints"}, {"beneficios", "bulletPoints"}, {"features", "bulletPoints"},
+                {"seo_title", "seoTitle"}, {"meta_title", "seoTitle"},
+                {"seo_description", "seoDescription"}, {"meta_description", "seoDescription"}, {"meta_desc", "seoDescription"},
+                {"keywords", "seoKeywords"}, {"seo_keywords", "seoKeywords"},
+            };
+            for (String[] m : mappings) {
+                if (!aiResponse.containsKey(m[1]) && aiResponse.containsKey(m[0])) {
+                    aiResponse.put(m[1], aiResponse.get(m[0]));
+                }
+            }
+            // Convert list fields to proper format
+            if (aiResponse.containsKey("bulletPoints") && !(aiResponse.get("bulletPoints") instanceof List)) {
+                String bp = aiResponse.get("bulletPoints").toString();
+                if (!bp.startsWith("[")) aiResponse.put("bulletPoints", List.of(bp));
+            }
+            // Accept ANY response that has at least a title or description
+            if (!aiResponse.containsKey("enrichedTitle") && !aiResponse.containsKey("enrichedDescription")) {
+                log.warn("AI response lacks enrichment fields. Keys: {}", aiResponse.keySet());
+                return new ResultDTO(false, "AI response missing enrichment fields. Got: " + aiResponse.keySet(), 103);
             }
 
             // Apply enrichment to product
@@ -213,8 +233,9 @@ public class AiEnrichmentService {
 
             if ("OLLAMA_LOCAL".equalsIgnoreCase(provider)) {
                 // Ollama runs locally - FREE, no API key needed
-                // Compatible with OpenAI format
-                url = "http://localhost:11434/api/chat";
+                // Use host.docker.internal when running in Docker, localhost otherwise
+                String ollamaHost = System.getenv("OLLAMA_HOST") != null ? System.getenv("OLLAMA_HOST") : "host.docker.internal";
+                url = "http://" + ollamaHost + ":11434/api/chat";
                 requestBody = Map.of(
                         "model", model != null ? model : "llama3.2:3b",
                         "messages", List.of(
@@ -286,7 +307,27 @@ public class AiEnrichmentService {
             if (content.endsWith("```")) content = content.substring(0, content.length() - 3);
             content = content.trim();
 
-            return objectMapper.readValue(content, Map.class);
+            Map<String, Object> parsed = objectMapper.readValue(content, Map.class);
+
+            // Ollama sometimes wraps response in a "response" key - unwrap if needed
+            if (!parsed.containsKey("enrichedTitle") && parsed.containsKey("response") && parsed.get("response") instanceof Map) {
+                parsed = (Map<String, Object>) parsed.get("response");
+            }
+            // Unwrap any nested structure - Ollama models often wrap in arbitrary keys
+            if (!parsed.containsKey("enrichedTitle") && !parsed.containsKey("title") && !parsed.containsKey("enrichedDescription")) {
+                for (Object val : parsed.values()) {
+                    if (val instanceof Map) {
+                        Map<String, Object> nested = (Map<String, Object>) val;
+                        // Take first nested Map that has content-like fields
+                        if (nested.size() >= 2) {
+                            parsed = nested;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return parsed;
 
         } catch (Exception e) {
             log.error("AI API call error: {}", e.getMessage());
