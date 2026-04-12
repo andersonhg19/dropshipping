@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/v2/woocommerce/**").hasAuthority(ADMIN)
                         .requestMatchers("/v2/ai-enrichment/**").hasAuthority(ADMIN)
                         .requestMatchers("/v2/export/**").hasAuthority(ADMIN)
+                        .requestMatchers("/v2/bulk-pricing/**").hasAuthority(ADMIN)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);

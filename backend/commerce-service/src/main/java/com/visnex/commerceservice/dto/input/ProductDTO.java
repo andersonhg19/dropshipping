@@ -67,6 +67,9 @@ public class ProductDTO {
     @Schema(description = "Margin percentage", example = "40.00")
     private BigDecimal margin;
 
+    @Schema(description = "Whether price was set manually (skip auto-calculation)", example = "false")
+    private Boolean manualPrice;
+
     @Schema(description = "Currency code", example = "USD")
     private String currency;
 

@@ -68,6 +68,9 @@ public class Product {
     @Column(precision = 8, scale = 2)
     private BigDecimal margin;
 
+    @Column(name = "manual_price", columnDefinition = "boolean default false")
+    private Boolean manualPrice = false;
+
     @Column(length = 10)
     private String currency;
 

@@ -104,8 +104,8 @@ public class ProductServiceImpl implements ProductService {
             if (dto.getId() == null) {
                 Product entity = mapper.toEntity(dto);
                 if (entity.getActive() == null) entity.setActive(true);
-                // Auto-apply pricing if basePrice is set and PricingConfig exists
-                if (entity.getBasePrice() != null && entity.getCompanyId() != null) {
+                // Auto-apply pricing ONLY if NOT manual price and basePrice is set
+                if (!Boolean.TRUE.equals(entity.getManualPrice()) && entity.getBasePrice() != null && entity.getCompanyId() != null) {
                     try {
                         pricingConfigRepository.findAll().stream()
                             .filter(c -> entity.getCompanyId().equals(c.getCompanyId()) && Boolean.TRUE.equals(c.getActive()))

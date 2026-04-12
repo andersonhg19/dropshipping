@@ -201,12 +201,30 @@ public class AiEnrichmentService {
             String apiKey = config.getApiKey();
             String model = config.getModel();
 
-            if (provider == null || apiKey == null) return null;
+            if (provider == null) return null;
+            // Ollama doesn't need API key
+            if (!"OLLAMA_LOCAL".equalsIgnoreCase(provider) && (apiKey == null || apiKey.isBlank() || apiKey.startsWith("sk-placeholder"))) {
+                log.warn("AI provider {} requires a valid API key", provider);
+                return null;
+            }
 
             String url;
             Map<String, Object> requestBody;
 
-            if ("OPENAI".equalsIgnoreCase(provider)) {
+            if ("OLLAMA_LOCAL".equalsIgnoreCase(provider)) {
+                // Ollama runs locally - FREE, no API key needed
+                // Compatible with OpenAI format
+                url = "http://localhost:11434/api/chat";
+                requestBody = Map.of(
+                        "model", model != null ? model : "llama3.2:3b",
+                        "messages", List.of(
+                                Map.of("role", "system", "content", "Eres un asistente de ecommerce. Responde SOLO con JSON valido, sin markdown."),
+                                Map.of("role", "user", "content", prompt)
+                        ),
+                        "stream", false,
+                        "format", "json"
+                );
+            } else if ("OPENAI".equalsIgnoreCase(provider)) {
                 url = "https://api.openai.com/v1/chat/completions";
                 requestBody = Map.of(
                         "model", model != null ? model : "gpt-4o-mini",
@@ -253,7 +271,9 @@ public class AiEnrichmentService {
             JsonNode root = objectMapper.readTree(response.getBody());
             String content;
 
-            if ("OPENAI".equalsIgnoreCase(provider)) {
+            if ("OLLAMA_LOCAL".equalsIgnoreCase(provider)) {
+                content = root.path("message").path("content").asText();
+            } else if ("OPENAI".equalsIgnoreCase(provider)) {
                 content = root.path("choices").path(0).path("message").path("content").asText();
             } else {
                 content = root.path("content").path(0).path("text").asText();
