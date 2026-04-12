@@ -18,6 +18,12 @@
         <spring-cloud.version>2023.0.0-RC1</spring-cloud.version>
     </properties>
     <dependencies>
+        <!-- VISNEX Common Library -->
+        <dependency>
+            <groupId>com.visnex</groupId>
+            <artifactId>visnex-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- Web + Security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

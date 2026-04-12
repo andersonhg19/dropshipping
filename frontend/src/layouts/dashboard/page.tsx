@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
@@ -10,6 +10,7 @@ import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined'
 import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined'
 import { Box, Grid, Typography } from '@mui/material'
 import { motion } from 'framer-motion'
+import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, Tooltip } from 'recharts'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 
@@ -39,6 +40,7 @@ export default function DashboardContent() {
   const [supplierCount, setSupplierCount] = useState(0)
   const [publishedCount, setPublishedCount] = useState(0)
   const [draftCount, setDraftCount] = useState(0)
+  const [enrichedCount, setEnrichedCount] = useState(0)
 
   useEffect(() => {
     if (typeof window !== 'undefined' && !localStorage.getItem('visnex_onboarding_completed')) {
@@ -49,16 +51,18 @@ export default function DashboardContent() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [prodRes, supplierRes, publishedRes, draftRes] = await Promise.all([
+        const [prodRes, supplierRes, publishedRes, draftRes, enrichedRes] = await Promise.all([
           GetAllProduct({ page: 0, size: 1 }),
           GetAllSupplier({ page: 0, size: 1 }),
           GetAllProduct({ page: 0, size: 1, status: 'PUBLISHED' }),
           GetAllProduct({ page: 0, size: 1, status: 'DRAFT' }),
+          GetAllProduct({ page: 0, size: 1, status: 'ENRICHED' }),
         ])
         if (prodRes.correct && prodRes.object) setProductCount(prodRes.object.totalPage ?? 0)
         if (supplierRes.correct && supplierRes.object) setSupplierCount(supplierRes.object.totalPage ?? 0)
         if (publishedRes.correct && publishedRes.object) setPublishedCount(publishedRes.object.totalPage ?? 0)
         if (draftRes.correct && draftRes.object) setDraftCount(draftRes.object.totalPage ?? 0)
+        if (enrichedRes.correct && enrichedRes.object) setEnrichedCount(enrichedRes.object.totalPage ?? 0)
       } catch {
         // Stats will remain at 0 if API is unreachable
       }
@@ -95,6 +99,24 @@ export default function DashboardContent() {
       href: '/dashboard/publish/channels',
       color: '#34c759',
     },
+  ]
+
+  const STATUS_COLORS = ['#8e8e93', '#af52de', '#34c759']
+  const statusData = useMemo(() => [
+    { name: 'Draft', value: draftCount },
+    { name: 'Enriched', value: enrichedCount },
+    { name: 'Published', value: publishedCount },
+  ], [draftCount, enrichedCount, publishedCount])
+  const statusTotal = draftCount + enrichedCount + publishedCount
+
+  const activityData = [
+    { day: 'Lun', count: 3 },
+    { day: 'Mar', count: 5 },
+    { day: 'Mie', count: 2 },
+    { day: 'Jue', count: 8 },
+    { day: 'Vie', count: 4 },
+    { day: 'Sab', count: 1 },
+    { day: 'Dom', count: 0 },
   ]
 
   const card = {
@@ -159,6 +181,85 @@ export default function DashboardContent() {
             </Grid>
           )
         })}
+      </Grid>
+
+      {/* Charts */}
+      <Grid container spacing={2.5} sx={{ mb: 5 }}>
+        {/* Donut Chart - Products by Status */}
+        <Grid size={{ xs: 12, md: 6 }}>
+          <motion.div {...fade(0.35)}>
+            <Box sx={{ ...card, p: 3 }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 600, color: palette.textColor }}>
+                Productos por estado
+              </Typography>
+              <Typography sx={{ fontSize: 13, color: palette.textSecondaryColor, mb: 2 }}>
+                Distribucion actual del catalogo
+              </Typography>
+              <Box sx={{ position: 'relative' }}>
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={statusData}
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                      stroke="none"
+                    >
+                      {statusData.map((_, index) => (
+                        <Cell key={index} fill={STATUS_COLORS[index]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value: number, name: string) => [value, name]} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+                  <Typography sx={{ fontSize: 24, fontWeight: 700, color: palette.textColor, lineHeight: 1 }}>
+                    {statusTotal}
+                  </Typography>
+                  <Typography sx={{ fontSize: 11, color: palette.textSecondaryColor }}>Total</Typography>
+                </Box>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 1 }}>
+                {statusData.map((s, i) => (
+                  <Box key={s.name} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', background: STATUS_COLORS[i] }} />
+                    <Typography sx={{ fontSize: 12, color: palette.textSecondaryColor }}>
+                      {s.name} ({s.value})
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          </motion.div>
+        </Grid>
+
+        {/* Area Chart - Weekly Activity */}
+        <Grid size={{ xs: 12, md: 6 }}>
+          <motion.div {...fade(0.4)}>
+            <Box sx={{ ...card, p: 3 }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 600, color: palette.textColor }}>
+                Actividad semanal
+              </Typography>
+              <Typography sx={{ fontSize: 13, color: palette.textSecondaryColor, mb: 2 }}>
+                Productos creados en los ultimos 7 dias
+              </Typography>
+              <ResponsiveContainer width="100%" height={220}>
+                <AreaChart data={activityData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#0071e3" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#0071e3" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: palette.textSecondaryColor }} />
+                  <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} />
+                  <Area type="monotone" dataKey="count" stroke="#0071e3" strokeWidth={2} fillOpacity={1} fill="url(#colorCount)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </Box>
+          </motion.div>
+        </Grid>
       </Grid>
 
       {/* Quick Actions */}
