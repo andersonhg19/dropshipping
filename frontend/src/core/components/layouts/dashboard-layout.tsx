@@ -80,7 +80,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
         logo: (
           <div style={{ width: '80px', height: '80px', position: 'relative' }}>
             <Image
-              src="/logo/logo-oscuro.png"
+              src="/logo/visnex-dark.svg"
               alt="Platform logo"
               width={80}
               height={80}

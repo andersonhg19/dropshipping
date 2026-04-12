@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
   const { appBarBg, appBarShadow, textColor } = usePaletteVars()
 
   // Selección dinámica del logo según modo de tema
-  const logoSrc = muiTheme.palette.mode === 'dark' ? '/logo/logo-claro.png' : '/logo/logo-oscuro.png'
+  const logoSrc = muiTheme.palette.mode === 'dark' ? '/logo/visnex-light.svg' : '/logo/visnex-dark.svg'
 
   return (
     <AppBar

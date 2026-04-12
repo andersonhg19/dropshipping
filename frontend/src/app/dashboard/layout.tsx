@@ -34,7 +34,7 @@ function ThemedDashboard({ children }: { children: React.ReactNode }) {
   const { mode } = useTheme()
   const muiTheme = useMuiTheme()
   const currentTheme = mode === 'dark' ? theme.dark : theme.light
-  const logoSrc = muiTheme.palette.mode === 'dark' ? '/logo/logo-claro.png' : '/logo/logo-oscuro.png'
+  const logoSrc = muiTheme.palette.mode === 'dark' ? '/logo/visnex-light.svg' : '/logo/visnex-dark.svg'
 
   // Escuchar cambios en el usuario para recalcular la navegación
   const user = useAtomValue(UserAtom)
