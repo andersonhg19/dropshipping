@@ -37,6 +37,7 @@ import { getKeyApi } from '@utils/utilities'
 import { GetAllProduct } from '@api/commerce/product/get-all-product-api'
 import { SaveProductApi } from '@api/commerce/product/save-product-api'
 
+import Breadcrumbs from '@components/atoms/breadcrumbs'
 import ConfirmDialog from '@components/atoms/confirm-dialog'
 import ExportButtons from '@components/atoms/export-buttons'
 
@@ -83,6 +84,12 @@ const ProductLayoutForm = () => {
 
   // Selection
   const [selected, setSelected] = useState<Set<string>>(new Set())
+
+  // Loading action state
+  const [loadingAction, setLoadingAction] = useState<string | null>(null)
+
+  // Sort
+  const [sortBy, setSortBy] = useState('title')
 
   // Confirm dialog
   const [confirmOpen, setConfirmOpen] = useState(false)
@@ -185,6 +192,7 @@ const ProductLayoutForm = () => {
 
   /* ---- Enrich (AI) ---- */
   const handleEnrich = async (productId: string) => {
+    setLoadingAction('enrich-' + productId)
     try {
       const token = await getKeyApi()
       const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
@@ -202,11 +210,14 @@ const ProductLayoutForm = () => {
       }
     } catch {
       setSnack('Error de conexion al enriquecer')
+    } finally {
+      setLoadingAction(null)
     }
   }
 
   /* ---- Publish ---- */
   const handlePublish = async (productId: string) => {
+    setLoadingAction('publish-' + productId)
     try {
       const token = await getKeyApi()
       const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
@@ -224,6 +235,8 @@ const ProductLayoutForm = () => {
       }
     } catch {
       setSnack('Error de conexion al publicar')
+    } finally {
+      setLoadingAction(null)
     }
   }
 
@@ -287,6 +300,7 @@ const ProductLayoutForm = () => {
 
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, md: 4 }, py: { xs: 3, md: 5 }, pb: selected.size > 0 ? 12 : 5 }}>
+      <Breadcrumbs />
       {/* --- Header --- */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 2 }}>
         <Typography sx={{ fontSize: { xs: 28, md: 34 }, fontWeight: 700, letterSpacing: '-0.02em' }}>
@@ -326,6 +340,18 @@ const ProductLayoutForm = () => {
             }}
           />
         </Box>
+        <TextField
+          select size="small" value={sortBy}
+          onChange={(e) => { setSortBy(e.target.value); fetchData(0, search, statusFilter) }}
+          sx={{ minWidth: 150, '& .MuiOutlinedInput-root': { borderRadius: 99 } }}
+          aria-label="Ordenar por"
+        >
+          <MenuItem value="title">Nombre A-Z</MenuItem>
+          <MenuItem value="-title">Nombre Z-A</MenuItem>
+          <MenuItem value="-basePrice">Precio mayor</MenuItem>
+          <MenuItem value="basePrice">Precio menor</MenuItem>
+          <MenuItem value="-creation">Mas reciente</MenuItem>
+        </TextField>
         {rows.length > 0 && (
           <Box
             onClick={toggleSelectAll}
@@ -460,9 +486,10 @@ const ProductLayoutForm = () => {
                       aria-label={`Enriquecer producto ${row.title || 'Sin titulo'}`}
                       startIcon={<Sparkles size={14} aria-hidden="true" />}
                       onClick={(e) => { e.stopPropagation(); handleEnrich(row.id) }}
+                      disabled={loadingAction === 'enrich-' + row.id}
                       sx={actionBtn('#8B5CF6', '#7C3AED')}
                     >
-                      Enriquecer con IA
+                      {loadingAction === 'enrich-' + row.id ? 'Enriqueciendo...' : 'Enriquecer con IA'}
                     </Button>
                   )}
                   {row.status === 'ENRICHED' && (
@@ -471,9 +498,10 @@ const ProductLayoutForm = () => {
                       aria-label={`Publicar producto ${row.title || 'Sin titulo'}`}
                       startIcon={<Upload size={14} aria-hidden="true" />}
                       onClick={(e) => { e.stopPropagation(); handlePublish(row.id) }}
+                      disabled={loadingAction === 'publish-' + row.id}
                       sx={actionBtn('#10B981', '#059669')}
                     >
-                      Publicar
+                      {loadingAction === 'publish-' + row.id ? 'Publicando...' : 'Publicar'}
                     </Button>
                   )}
                   {row.status === 'PUBLISHED' && (

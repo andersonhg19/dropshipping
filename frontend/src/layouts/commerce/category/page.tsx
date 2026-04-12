@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 
 import { usePaletteVars } from '@hooks/ui/use-palette-vars'
+import Breadcrumbs from '@components/atoms/breadcrumbs'
 import { GetAllCategory } from '@api/commerce/category/get-all-category-api'
 import { SaveCategoryApi } from '@api/commerce/category/save-category-api'
 import ConfirmDialog from '@components/atoms/confirm-dialog'
@@ -98,6 +99,7 @@ export default function CategoryLayoutForm() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 900, mx: 'auto' }}>
+      <Breadcrumbs />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
           <Typography sx={{ fontSize: { xs: 24, md: 32 }, fontWeight: 700, letterSpacing: -0.5 }}>

@@ -6,6 +6,7 @@ import { Alert, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogT
 import { Globe, Plus, Trash2, Wifi, WifiOff } from 'lucide-react'
 import { motion } from 'framer-motion'
 
+import Breadcrumbs from '@components/atoms/breadcrumbs'
 import { GetAllPublishChannel } from '@api/commerce/publish-channel/get-all-publish-channel-api'
 import { SavePublishChannelApi } from '@api/commerce/publish-channel/save-publish-channel-api'
 import ConfirmDialog from '@components/atoms/confirm-dialog'
@@ -73,6 +74,7 @@ export default function PublishChannelLayoutForm() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 900, mx: 'auto' }}>
+      <Breadcrumbs />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
           <Typography sx={{ fontSize: { xs: 24, md: 32 }, fontWeight: 700, letterSpacing: '-0.02em' }}>Canales de Publicacion</Typography>

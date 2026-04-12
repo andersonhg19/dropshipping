@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import theme from 'theme'
 
 import CustomLoader from '@components/atoms/custom-loading/custom-loading'
+import ErrorBoundary from '@components/atoms/error-boundary'
 import GridExportDrawer from '@components/molecules/grid-export-drawer'
 import DashboardHeaderAccount from '@components/molecules/menu/dashboard-header-account'
 import DashboardHeaderActions from '@components/molecules/menu/dashboard-header-actions'
@@ -86,7 +87,7 @@ function ThemedDashboard({ children }: { children: React.ReactNode }) {
               sidebarFooter: SidebarSimpleFooter,
             }}
           >
-            <PageContainer sx={{ px: { xs: 1.5, sm: 2, md: 3 } }}>{children}</PageContainer>
+            <PageContainer sx={{ px: { xs: 1.5, sm: 2, md: 3 } }}><ErrorBoundary>{children}</ErrorBoundary></PageContainer>
           </DashboardLayout>
           <GridExportDrawer />
         </GridExportProvider>

@@ -20,6 +20,7 @@ import {
 import { AnimatePresence, motion } from 'framer-motion'
 import { Globe, MapPin, Package, Plus, Star, Trash2, Truck } from 'lucide-react'
 
+import Breadcrumbs from '@components/atoms/breadcrumbs'
 import { GetAllSupplier } from '@api/acquisition/supplier/get-all-supplier-api'
 import { SaveSupplierApi } from '@api/acquisition/supplier/save-supplier-api'
 import ConfirmDialog from '@components/atoms/confirm-dialog'
@@ -126,6 +127,7 @@ const SupplierLayoutForm = () => {
 
   return (
     <Box sx={{ maxWidth: 960, mx: 'auto', px: { xs: 2, md: 0 }, py: 4 }}>
+      <Breadcrumbs />
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography sx={{ fontSize: { xs: 28, md: 34 }, fontWeight: 700, letterSpacing: '-0.02em' }}>

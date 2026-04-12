@@ -6,6 +6,7 @@ import { Box, Button, InputAdornment, Skeleton, Snackbar, TextField, Typography 
 import { Calculator, Save } from 'lucide-react'
 import { motion } from 'framer-motion'
 
+import Breadcrumbs from '@components/atoms/breadcrumbs'
 import { GetAllPricingConfig } from '@api/commerce/pricing-config/get-all-pricing-config-api'
 import { SavePricingConfigApi } from '@api/commerce/pricing-config/save-pricing-config-api'
 
@@ -96,6 +97,7 @@ export default function PricingLayoutForm() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 900, mx: 'auto' }}>
+      <Breadcrumbs />
       <Box sx={{ mb: 4 }}>
         <Typography sx={{ fontSize: { xs: 24, md: 32 }, fontWeight: 700, letterSpacing: '-0.02em' }}>
           Configuracion de Precios

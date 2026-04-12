@@ -6,6 +6,7 @@ import { Box, Button, Chip, LinearProgress, Skeleton, Typography } from '@mui/ma
 import { CheckCircle, FileSpreadsheet, Upload, XCircle, Clock } from 'lucide-react'
 import { motion } from 'framer-motion'
 
+import Breadcrumbs from '@components/atoms/breadcrumbs'
 import { GetAllImportJob } from '@api/acquisition/import-job/get-all-import-job-api'
 import { getKeyApi } from '@utils/utilities'
 
@@ -48,6 +49,7 @@ export default function ImportLayoutForm() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 900, mx: 'auto' }}>
+      <Breadcrumbs />
       <Box sx={{ mb: 4 }}>
         <Typography sx={{ fontSize: { xs: 24, md: 32 }, fontWeight: 700, letterSpacing: '-0.02em' }}>
           Importar Productos
