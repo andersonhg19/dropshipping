@@ -22,7 +22,10 @@ import com.visnex.commerceservice.repository.ProductRepository;
 import com.visnex.commerceservice.security.ConnectInternalApi;
 import com.visnex.commerceservice.service.ProductService;
 import com.visnex.commerceservice.util.CompletionUtils;
+import com.visnex.commerceservice.util.PricingCalculator;
 import com.visnex.commerceservice.util.ValidationUtils;
+import com.visnex.commerceservice.entity.PricingConfig;
+import com.visnex.commerceservice.repository.PricingConfigRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +39,7 @@ import java.util.Set;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
+    private final PricingConfigRepository pricingConfigRepository;
     private final ProductMapper mapper;
     private final ValidationUtils validation;
     private final ConnectInternalApi connectInternalApi;
@@ -100,6 +104,15 @@ public class ProductServiceImpl implements ProductService {
             if (dto.getId() == null) {
                 Product entity = mapper.toEntity(dto);
                 if (entity.getActive() == null) entity.setActive(true);
+                // Auto-apply pricing if basePrice is set and PricingConfig exists
+                if (entity.getBasePrice() != null && entity.getCompanyId() != null) {
+                    try {
+                        pricingConfigRepository.findAll().stream()
+                            .filter(c -> entity.getCompanyId().equals(c.getCompanyId()) && Boolean.TRUE.equals(c.getActive()))
+                            .findFirst()
+                            .ifPresent(config -> PricingCalculator.applyPricing(entity, config));
+                    } catch (Exception e) { /* pricing is best-effort, don't block save */ }
+                }
                 Product created = repository.save(entity);
                 ResultProductDTO result = mapper.toDTO(created);
                 completionUtils.enrich(result, lng);

@@ -1,27 +1,43 @@
 'use client'
 
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   MenuItem,
   Skeleton,
+  Snackbar,
   TextField,
   Typography,
 } from '@mui/material'
 import { AnimatePresence, motion } from 'framer-motion'
-import { PackageOpen, Plus, Search } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  PackageOpen,
+  Plus,
+  Search,
+  Sparkles,
+  Trash2,
+  Upload,
+} from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { usePaletteVars } from '@hooks/ui/use-palette-vars'
+import { getKeyApi } from '@utils/utilities'
 
 import { GetAllProduct } from '@api/commerce/product/get-all-product-api'
 import { SaveProductApi } from '@api/commerce/product/save-product-api'
+
+import ConfirmDialog from '@components/atoms/confirm-dialog'
+import ExportButtons from '@components/atoms/export-buttons'
 
 interface ProductRow {
   id: string; title: string; description: string
@@ -42,6 +58,7 @@ const STATUS_COLORS: Record<string, string> = {
   PUBLISHED: '#10B981', ARCHIVED: '#EF4444',
 }
 const APPLE_BLUE = '#0071e3'
+const PAGE_SIZE = 12
 
 const MotionBox = motion.create(Box)
 
@@ -56,23 +73,72 @@ const ProductLayoutForm = () => {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('ALL')
   const [saveError, setSaveError] = useState('')
+  const [snack, setSnack] = useState('')
 
-  const fetchData = useCallback(async () => {
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
+
+  // Selection
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+
+  // Confirm dialog
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmMsg, setConfirmMsg] = useState('')
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => () => {})
+
+  // Debounce ref
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  /* ---- Fetch data (server-side filtering + pagination) ---- */
+  const fetchData = useCallback(async (page = 0, searchTerm = '', status = 'ALL') => {
     setLoading(true)
     try {
-      const res = await GetAllProduct({ page: 0, size: 100 })
-      if (res.correct && res.object) setRows(res.object.list || [])
-    } finally { setLoading(false) }
+      const filter: Record<string, any> = {
+        page,
+        size: PAGE_SIZE,
+        active: true,
+      }
+      if (searchTerm.trim()) filter.title = searchTerm.trim()
+      if (status !== 'ALL') filter.status = status
+
+      const res = await GetAllProduct(filter)
+      if (res.correct && res.object) {
+        setRows(res.object.list || [])
+        setTotalPages(res.object.totalPage ?? 1)
+        setCurrentPage(page)
+      }
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
-  useEffect(() => { fetchData() }, [fetchData])
+  useEffect(() => { fetchData(0, search, statusFilter) }, [fetchData])
 
-  const filtered = rows.filter((r) => {
-    if (statusFilter !== 'ALL' && r.status !== statusFilter) return false
-    if (search && !r.title.toLowerCase().includes(search.toLowerCase())) return false
-    return true
-  })
+  /* ---- Search with debounce ---- */
+  const handleSearchChange = (value: string) => {
+    setSearch(value)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      setSelected(new Set())
+      fetchData(0, value, statusFilter)
+    }, 500)
+  }
 
+  const handleStatusFilter = (s: string) => {
+    setStatusFilter(s)
+    setSelected(new Set())
+    fetchData(0, search, s)
+  }
+
+  /* ---- Pagination ---- */
+  const goPage = (page: number) => {
+    if (page < 0 || page >= totalPages) return
+    setSelected(new Set())
+    fetchData(page, search, statusFilter)
+  }
+
+  /* ---- Save / Edit ---- */
   const handleSave = async () => {
     setSaveError('')
     if (!editItem.title || editItem.title.trim() === '') {
@@ -84,8 +150,14 @@ const ProductLayoutForm = () => {
       return
     }
     const res = await SaveProductApi(editItem)
-    if (res.correct) { setSaveError(''); setOpenDialog(false); fetchData() }
-    else { setSaveError(res.message || 'Error al guardar el producto.') }
+    if (res.correct) {
+      setSaveError('')
+      setOpenDialog(false)
+      setSnack(editItem.id ? 'Producto actualizado' : 'Producto creado')
+      fetchData(currentPage, search, statusFilter)
+    } else {
+      setSaveError(res.message || 'Error al guardar el producto.')
+    }
   }
 
   const openNew = () => { setSaveError(''); setEditItem({ ...emptyForm }); setOpenDialog(true) }
@@ -93,30 +165,145 @@ const ProductLayoutForm = () => {
   const set = (field: keyof ProductRow, val: string | number) =>
     setEditItem((prev) => ({ ...prev, [field]: val }))
 
+  /* ---- Soft Delete ---- */
+  const handleDelete = (row: ProductRow) => {
+    setConfirmMsg(`Eliminar "${row.title}"? Esta accion desactivara el producto.`)
+    setConfirmAction(() => async () => {
+      const res = await SaveProductApi({ ...row, active: false })
+      if (res.correct) {
+        setSnack('Producto eliminado')
+        fetchData(currentPage, search, statusFilter)
+      } else {
+        setSnack(res.message || 'Error al eliminar')
+      }
+      setConfirmOpen(false)
+    })
+    setConfirmOpen(true)
+  }
+
+  /* ---- Enrich (AI) ---- */
+  const handleEnrich = async (productId: string) => {
+    try {
+      const token = await getKeyApi()
+      const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
+      const resp = await fetch(`${BASE_URL}/COMMERCE-SERVICE/vn-api/v2/ai-enrichment/enrich`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, 'lng': 'es' },
+        body: JSON.stringify({ productId: Number(productId), idCompany: 1 }),
+      })
+      const data = await resp.json()
+      if (data.correct) {
+        setSnack('Producto enriquecido con IA')
+        fetchData(currentPage, search, statusFilter)
+      } else {
+        setSnack(data.message || 'Error al enriquecer')
+      }
+    } catch {
+      setSnack('Error de conexion al enriquecer')
+    }
+  }
+
+  /* ---- Publish ---- */
+  const handlePublish = async (productId: string) => {
+    try {
+      const token = await getKeyApi()
+      const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
+      const resp = await fetch(`${BASE_URL}/COMMERCE-SERVICE/vn-api/v2/woocommerce/publish`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, 'lng': 'es' },
+        body: JSON.stringify({ productId: Number(productId), channelId: 1 }),
+      })
+      const data = await resp.json()
+      if (data.correct) {
+        setSnack('Producto publicado')
+        fetchData(currentPage, search, statusFilter)
+      } else {
+        setSnack(data.message || 'Error al publicar')
+      }
+    } catch {
+      setSnack('Error de conexion al publicar')
+    }
+  }
+
+  /* ---- Selection ---- */
+  const toggleSelect = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const toggleSelectAll = () => {
+    if (selected.size === rows.length) setSelected(new Set())
+    else setSelected(new Set(rows.map((r) => r.id)))
+  }
+
+  /* ---- Batch actions ---- */
+  const batchEnrich = async () => {
+    setSnack('Enriqueciendo productos...')
+    for (const id of selected) await handleEnrich(id)
+    setSelected(new Set())
+    setSnack('Enriquecimiento por lotes completado')
+  }
+
+  const batchPublish = async () => {
+    setSnack('Publicando productos...')
+    for (const id of selected) await handlePublish(id)
+    setSelected(new Set())
+    setSnack('Publicacion por lotes completada')
+  }
+
+  const batchDelete = () => {
+    setConfirmMsg(`Eliminar ${selected.size} producto(s) seleccionado(s)?`)
+    setConfirmAction(() => async () => {
+      for (const id of selected) {
+        const row = rows.find((r) => r.id === id)
+        if (row) await SaveProductApi({ ...row, active: false })
+      }
+      setSelected(new Set())
+      setSnack(`${selected.size} producto(s) eliminado(s)`)
+      fetchData(currentPage, search, statusFilter)
+      setConfirmOpen(false)
+    })
+    setConfirmOpen(true)
+  }
+
+  /* ---- Styles ---- */
   const pill = {
     display: 'inline-flex', alignItems: 'center', borderRadius: '999px',
     fontSize: '13px', fontWeight: 600, cursor: 'pointer', transition: 'all .2s',
     px: 2, py: 0.5, userSelect: 'none' as const,
   }
 
+  const actionBtn = (bg: string, hover: string) => ({
+    bgcolor: bg, color: '#fff', borderRadius: '999px', textTransform: 'none' as const,
+    fontWeight: 600, fontSize: 12, px: 1.5, py: 0.5, minWidth: 0,
+    '&:hover': { bgcolor: hover },
+  })
+
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, md: 4 }, py: { xs: 3, md: 5 } }}>
+    <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, md: 4 }, py: { xs: 3, md: 5 }, pb: selected.size > 0 ? 12 : 5 }}>
       {/* --- Header --- */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 2 }}>
         <Typography sx={{ fontSize: { xs: 28, md: 34 }, fontWeight: 700, letterSpacing: '-0.02em' }}>
           {t('lbl_products')}
         </Typography>
-        <Button
-          onClick={openNew}
-          startIcon={<Plus size={18} />}
-          sx={{
-            bgcolor: APPLE_BLUE, color: '#fff', borderRadius: '999px',
-            textTransform: 'none', fontWeight: 600, px: 3, py: 1,
-            '&:hover': { bgcolor: '#005ecb' },
-          }}
-        >
-          {t('lbl_add_new')}
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+          <ExportButtons filters={{ status: statusFilter !== 'ALL' ? statusFilter : undefined, title: search || undefined }} />
+          <Button
+            onClick={openNew}
+            startIcon={<Plus size={18} />}
+            sx={{
+              bgcolor: APPLE_BLUE, color: '#fff', borderRadius: '999px',
+              textTransform: 'none', fontWeight: 600, px: 3, py: 1,
+              '&:hover': { bgcolor: '#005ecb' },
+            }}
+          >
+            {t('lbl_add_new')}
+          </Button>
+        </Box>
       </Box>
 
       {/* --- Filters --- */}
@@ -127,19 +314,27 @@ const ProductLayoutForm = () => {
         }}>
           <Search size={18} color="#86868b" />
           <input
-            placeholder={t('lbl_search') || 'Search...'}
+            placeholder={t('lbl_search') || 'Buscar...'}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             style={{
               border: 'none', outline: 'none', background: 'transparent',
               padding: '8px', fontSize: '14px', width: '100%', color: 'inherit',
             }}
           />
         </Box>
+        {rows.length > 0 && (
+          <Box
+            onClick={toggleSelectAll}
+            sx={{ ...pill, bgcolor: selected.size === rows.length ? '#1d1d1f' : 'action.hover', color: selected.size === rows.length ? '#fff' : 'text.secondary', '&:hover': { opacity: 0.85 } }}
+          >
+            {selected.size === rows.length ? 'Deseleccionar' : 'Seleccionar todo'}
+          </Box>
+        )}
         {['ALL', ...STATUS_OPTIONS].map((s) => (
           <Box
             key={s}
-            onClick={() => setStatusFilter(s)}
+            onClick={() => handleStatusFilter(s)}
             sx={{
               ...pill,
               bgcolor: statusFilter === s ? (s === 'ALL' ? '#1d1d1f' : STATUS_COLORS[s]) : 'action.hover',
@@ -147,7 +342,7 @@ const ProductLayoutForm = () => {
               '&:hover': { opacity: 0.85 },
             }}
           >
-            {s === 'ALL' ? t('lbl_all') || 'All' : s.charAt(0) + s.slice(1).toLowerCase()}
+            {s === 'ALL' ? t('lbl_all') || 'Todos' : s.charAt(0) + s.slice(1).toLowerCase()}
           </Box>
         ))}
       </Box>
@@ -156,43 +351,69 @@ const ProductLayoutForm = () => {
       {loading ? (
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: 'repeat(3, 1fr)' }, gap: 3 }}>
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} variant="rounded" height={260} sx={{ borderRadius: '16px' }} />
+            <Skeleton key={i} variant="rounded" height={300} sx={{ borderRadius: '16px' }} />
           ))}
         </Box>
-      ) : filtered.length === 0 ? (
+      ) : rows.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 12, color: 'text.secondary' }}>
           <PackageOpen size={56} strokeWidth={1.2} style={{ marginBottom: 16 }} />
           <Typography sx={{ fontSize: 18, fontWeight: 600 }}>
-            {t('lbl_no_data') || 'No products found'}
+            {t('lbl_no_data') || 'No se encontraron productos'}
           </Typography>
           <Typography sx={{ fontSize: 14, mt: 0.5, color: 'text.disabled' }}>
-            {t('lbl_try_different_filter') || 'Try a different filter or create a new product'}
+            {t('lbl_try_different_filter') || 'Intenta con otro filtro o crea un nuevo producto'}
           </Typography>
         </Box>
       ) : (
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: 'repeat(3, 1fr)', xl: 'repeat(4, 1fr)' }, gap: 3 }}>
           <AnimatePresence>
-            {filtered.map((row, i) => (
+            {rows.map((row, i) => (
               <MotionBox
                 key={row.id || i}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.35, delay: i * 0.05 }}
-                onClick={() => openEdit(row)}
+                transition={{ duration: 0.35, delay: i * 0.04 }}
                 sx={{
-                  bgcolor: 'background.paper', borderRadius: '16px', overflow: 'hidden', cursor: 'pointer',
-                  boxShadow: '0 1px 3px rgba(0,0,0,.08)', transition: 'transform .25s, box-shadow .25s',
-                  '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 8px 24px rgba(0,0,0,.12)' },
+                  bgcolor: 'background.paper', borderRadius: '16px', overflow: 'hidden', position: 'relative',
+                  boxShadow: selected.has(row.id) ? `0 0 0 2px ${APPLE_BLUE}` : '0 1px 3px rgba(0,0,0,.08)',
+                  transition: 'transform .25s, box-shadow .25s',
+                  '&:hover': { transform: 'translateY(-2px)', boxShadow: selected.has(row.id) ? `0 4px 16px rgba(0,113,227,.25)` : '0 8px 24px rgba(0,0,0,.12)' },
                 }}
               >
+                {/* Checkbox (top-left) */}
+                <Checkbox
+                  checked={selected.has(row.id)}
+                  onChange={() => toggleSelect(row.id)}
+                  size="small"
+                  sx={{ position: 'absolute', top: 4, left: 4, zIndex: 2, bgcolor: 'rgba(255,255,255,.85)', borderRadius: '8px', '&:hover': { bgcolor: 'rgba(255,255,255,.95)' } }}
+                />
+
+                {/* Delete button (top-right) */}
+                <Box
+                  onClick={(e) => { e.stopPropagation(); handleDelete(row) }}
+                  sx={{
+                    position: 'absolute', top: 8, right: 8, zIndex: 2,
+                    width: 28, height: 28, borderRadius: '8px',
+                    bgcolor: 'rgba(255,255,255,.85)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', transition: 'all .2s',
+                    '&:hover': { bgcolor: '#fef2f2', color: '#ef4444' },
+                  }}
+                >
+                  <Trash2 size={14} />
+                </Box>
+
                 {/* Image placeholder */}
-                <Box sx={{ bgcolor: 'action.hover', height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box
+                  onClick={() => openEdit(row)}
+                  sx={{ bgcolor: 'action.hover', height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                >
                   <PackageOpen size={40} color="#c7c7cc" strokeWidth={1.3} />
                 </Box>
-                <Box sx={{ p: 2.5 }}>
+
+                <Box sx={{ p: 2.5 }} onClick={() => openEdit(row)} style={{ cursor: 'pointer' }}>
                   <Typography sx={{ fontWeight: 700, fontSize: 16, mb: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {row.title || 'Untitled'}
+                    {row.title || 'Sin titulo'}
                   </Typography>
                   <Typography sx={{ fontSize: 15, fontWeight: 600, color: row.sellingPrice > 0 ? '#1b8a4a' : 'text.disabled', mb: 1 }}>
                     {row.sellingPrice > 0 ? `$${row.sellingPrice.toFixed(2)}` : 'Sin precio'}
@@ -212,13 +433,131 @@ const ProductLayoutForm = () => {
                     )}
                   </Box>
                 </Box>
+
+                {/* Action buttons based on status */}
+                <Box sx={{ px: 2.5, pb: 2, display: 'flex', gap: 1 }}>
+                  {row.status === 'DRAFT' && (
+                    <Button
+                      size="small"
+                      startIcon={<Sparkles size={14} />}
+                      onClick={(e) => { e.stopPropagation(); handleEnrich(row.id) }}
+                      sx={actionBtn('#8B5CF6', '#7C3AED')}
+                    >
+                      Enriquecer con IA
+                    </Button>
+                  )}
+                  {row.status === 'ENRICHED' && (
+                    <Button
+                      size="small"
+                      startIcon={<Upload size={14} />}
+                      onClick={(e) => { e.stopPropagation(); handlePublish(row.id) }}
+                      sx={actionBtn('#10B981', '#059669')}
+                    >
+                      Publicar
+                    </Button>
+                  )}
+                  {row.status === 'PUBLISHED' && (
+                    <Button
+                      size="small"
+                      startIcon={<ExternalLink size={14} />}
+                      onClick={(e) => e.stopPropagation()}
+                      href={process.env.NEXT_PUBLIC_STORE_URL || '#'}
+                      target="_blank"
+                      component="a"
+                      sx={actionBtn('#3B82F6', '#2563EB')}
+                    >
+                      Ver en tienda
+                    </Button>
+                  )}
+                </Box>
               </MotionBox>
             ))}
           </AnimatePresence>
         </Box>
       )}
 
-      {/* --- Dialog --- */}
+      {/* --- Pagination --- */}
+      {!loading && totalPages > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, mt: 5 }}>
+          <Button
+            onClick={() => goPage(currentPage - 1)}
+            disabled={currentPage === 0}
+            startIcon={<ChevronLeft size={16} />}
+            sx={{
+              borderRadius: '999px', textTransform: 'none', fontWeight: 600, fontSize: 13,
+              border: '1px solid', borderColor: 'divider', color: 'text.secondary', px: 2.5,
+              '&:hover': { borderColor: APPLE_BLUE, color: APPLE_BLUE },
+              '&:disabled': { opacity: 0.4 },
+            }}
+          >
+            Anterior
+          </Button>
+          <Typography sx={{ fontSize: 14, fontWeight: 500, color: 'text.secondary' }}>
+            Pagina {currentPage + 1} de {totalPages}
+          </Typography>
+          <Button
+            onClick={() => goPage(currentPage + 1)}
+            disabled={currentPage >= totalPages - 1}
+            endIcon={<ChevronRight size={16} />}
+            sx={{
+              borderRadius: '999px', textTransform: 'none', fontWeight: 600, fontSize: 13,
+              border: '1px solid', borderColor: 'divider', color: 'text.secondary', px: 2.5,
+              '&:hover': { borderColor: APPLE_BLUE, color: APPLE_BLUE },
+              '&:disabled': { opacity: 0.4 },
+            }}
+          >
+            Siguiente
+          </Button>
+        </Box>
+      )}
+
+      {/* --- Batch action bar --- */}
+      <AnimatePresence>
+        {selected.size > 0 && (
+          <MotionBox
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            transition={{ duration: 0.25 }}
+            sx={{
+              position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
+              bgcolor: '#1d1d1f', color: '#fff', borderRadius: '16px',
+              px: 3, py: 1.5, display: 'flex', alignItems: 'center', gap: 2,
+              boxShadow: '0 12px 40px rgba(0,0,0,.3)', zIndex: 1300,
+            }}
+          >
+            <Typography sx={{ fontSize: 13, fontWeight: 600, mr: 1 }}>
+              {selected.size} seleccionado(s)
+            </Typography>
+            <Button
+              size="small"
+              startIcon={<Sparkles size={14} />}
+              onClick={batchEnrich}
+              sx={{ ...actionBtn('#8B5CF6', '#7C3AED'), fontSize: 12 }}
+            >
+              Enriquecer
+            </Button>
+            <Button
+              size="small"
+              startIcon={<Upload size={14} />}
+              onClick={batchPublish}
+              sx={{ ...actionBtn('#10B981', '#059669'), fontSize: 12 }}
+            >
+              Publicar
+            </Button>
+            <Button
+              size="small"
+              startIcon={<Trash2 size={14} />}
+              onClick={batchDelete}
+              sx={{ ...actionBtn('#EF4444', '#DC2626'), fontSize: 12 }}
+            >
+              Eliminar
+            </Button>
+          </MotionBox>
+        )}
+      </AnimatePresence>
+
+      {/* --- Edit/Create Dialog --- */}
       <Dialog
         open={openDialog} onClose={() => setOpenDialog(false)}
         maxWidth="sm" fullWidth
@@ -253,6 +592,28 @@ const ProductLayoutForm = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* --- Confirm Dialog --- */}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Confirmar"
+        message={confirmMsg}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        destructive
+        onConfirm={confirmAction}
+        onCancel={() => setConfirmOpen(false)}
+      />
+
+      {/* --- Snackbar --- */}
+      <Snackbar
+        open={!!snack}
+        autoHideDuration={3000}
+        onClose={() => setSnack('')}
+        message={snack}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        sx={{ '& .MuiSnackbarContent-root': { borderRadius: '12px', fontWeight: 500 } }}
+      />
     </Box>
   )
 }
