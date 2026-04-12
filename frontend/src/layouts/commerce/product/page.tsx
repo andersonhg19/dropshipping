@@ -55,6 +55,7 @@ const ProductLayoutForm = () => {
   const [editItem, setEditItem] = useState<ProductRow>(emptyForm)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('ALL')
+  const [saveError, setSaveError] = useState('')
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -73,12 +74,22 @@ const ProductLayoutForm = () => {
   })
 
   const handleSave = async () => {
+    setSaveError('')
+    if (!editItem.title || editItem.title.trim() === '') {
+      setSaveError('El titulo del producto es obligatorio.')
+      return
+    }
+    if (editItem.basePrice < 0) {
+      setSaveError('El precio base no puede ser negativo.')
+      return
+    }
     const res = await SaveProductApi(editItem)
-    if (res.correct) { setOpenDialog(false); fetchData() }
+    if (res.correct) { setSaveError(''); setOpenDialog(false); fetchData() }
+    else { setSaveError(res.message || 'Error al guardar el producto.') }
   }
 
-  const openNew = () => { setEditItem({ ...emptyForm }); setOpenDialog(true) }
-  const openEdit = (row: ProductRow) => { setEditItem({ ...row }); setOpenDialog(true) }
+  const openNew = () => { setSaveError(''); setEditItem({ ...emptyForm }); setOpenDialog(true) }
+  const openEdit = (row: ProductRow) => { setSaveError(''); setEditItem({ ...row }); setOpenDialog(true) }
   const set = (field: keyof ProductRow, val: string | number) =>
     setEditItem((prev) => ({ ...prev, [field]: val }))
 
@@ -227,6 +238,11 @@ const ProductLayoutForm = () => {
             {STATUS_OPTIONS.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
           </TextField>
           <TextField label={t('lbl_category')} value={editItem.idCategory} onChange={(e) => set('idCategory', e.target.value)} fullWidth size="small" />
+          {saveError && (
+            <Typography sx={{ color: '#ef4444', fontSize: 13, fontWeight: 500, mt: 0.5 }}>
+              {saveError}
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5 }}>
           <Button onClick={() => setOpenDialog(false)} sx={{ borderRadius: '999px', textTransform: 'none', color: '#6e6e73' }}>

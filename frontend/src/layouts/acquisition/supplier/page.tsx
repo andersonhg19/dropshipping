@@ -66,6 +66,7 @@ const SupplierLayoutForm = () => {
   const [loading, setLoading] = useState(true)
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState<SupplierRow>(emptyForm)
+  const [saveError, setSaveError] = useState('')
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -80,8 +81,14 @@ const SupplierLayoutForm = () => {
   useEffect(() => { fetchData() }, [fetchData])
 
   const handleSave = async () => {
+    setSaveError('')
+    if (!form.name || form.name.trim() === '') {
+      setSaveError('El nombre del proveedor es obligatorio.')
+      return
+    }
     const res = await SaveSupplierApi(form)
-    if (res.correct) { setOpen(false); fetchData() }
+    if (res.correct) { setSaveError(''); setOpen(false); fetchData() }
+    else { setSaveError(res.message || 'Error al guardar el proveedor.') }
   }
 
   const upd = (field: keyof SupplierRow, val: string | number) =>
@@ -95,7 +102,7 @@ const SupplierLayoutForm = () => {
           Proveedores
         </Typography>
         <Button
-          onClick={() => { setForm({ ...emptyForm }); setOpen(true) }}
+          onClick={() => { setSaveError(''); setForm({ ...emptyForm }); setOpen(true) }}
           startIcon={<Plus size={16} />}
           sx={{
             borderRadius: 99, px: 3, py: 1, fontWeight: 600, fontSize: 14,
@@ -141,7 +148,7 @@ const SupplierLayoutForm = () => {
               transition={{ duration: 0.25, delay: i * 0.04 }}
             >
               <Box
-                onClick={() => { setForm({ ...s }); setOpen(true) }}
+                onClick={() => { setSaveError(''); setForm({ ...s }); setOpen(true) }}
                 sx={{
                   display: 'flex', alignItems: 'center', gap: 2.5, mb: 1.5,
                   p: 2.5, borderRadius: 4, cursor: 'pointer',
@@ -230,6 +237,11 @@ const SupplierLayoutForm = () => {
             <TextField label="Envio max (dias)" type="number" value={form.shippingDaysMax}
               onChange={(e) => upd('shippingDaysMax', Number(e.target.value))} fullWidth size="small" />
           </Box>
+          {saveError && (
+            <Typography sx={{ color: '#ef4444', fontSize: 13, fontWeight: 500, mt: 0.5 }}>
+              {saveError}
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5 }}>
           <Button onClick={() => setOpen(false)} sx={{ borderRadius: 2, textTransform: 'none', color: '#6b7280' }}>

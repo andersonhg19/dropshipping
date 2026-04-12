@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
@@ -14,6 +14,9 @@ import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 
 import { usePaletteVars } from '@hooks/ui/use-palette-vars'
+
+import { GetAllProduct } from '@api/commerce/product/get-all-product-api'
+import { GetAllSupplier } from '@api/acquisition/supplier/get-all-supplier-api'
 
 const fade = (delay: number) => ({
   initial: { opacity: 0, y: 20 },
@@ -29,11 +32,36 @@ export default function DashboardContent() {
   const palette = usePaletteVars()
   const router = useRouter()
 
+  const [productCount, setProductCount] = useState(0)
+  const [supplierCount, setSupplierCount] = useState(0)
+  const [publishedCount, setPublishedCount] = useState(0)
+  const [draftCount, setDraftCount] = useState(0)
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [prodRes, supplierRes, publishedRes, draftRes] = await Promise.all([
+          GetAllProduct({ page: 0, size: 1 }),
+          GetAllSupplier({ page: 0, size: 1 }),
+          GetAllProduct({ page: 0, size: 1, status: 'PUBLISHED' }),
+          GetAllProduct({ page: 0, size: 1, status: 'DRAFT' }),
+        ])
+        if (prodRes.correct && prodRes.object) setProductCount(prodRes.object.totalPage ?? 0)
+        if (supplierRes.correct && supplierRes.object) setSupplierCount(supplierRes.object.totalPage ?? 0)
+        if (publishedRes.correct && publishedRes.object) setPublishedCount(publishedRes.object.totalPage ?? 0)
+        if (draftRes.correct && draftRes.object) setDraftCount(draftRes.object.totalPage ?? 0)
+      } catch {
+        // Stats will remain at 0 if API is unreachable
+      }
+    }
+    fetchStats()
+  }, [])
+
   const stats = [
-    { label: t('lbl_products'), value: 0, icon: InventoryOutlinedIcon, color: '#0071e3' },
-    { label: t('lbl_supplier'), value: 0, icon: LocalShippingOutlinedIcon, color: '#34c759' },
-    { label: t('lbl_publish'), value: 0, icon: PublishOutlinedIcon, color: '#af52de' },
-    { label: t('lbl_trending'), value: 0, icon: ScheduleOutlinedIcon, color: '#ff9f0a' },
+    { label: t('lbl_products'), value: productCount, icon: InventoryOutlinedIcon, color: '#0071e3' },
+    { label: t('lbl_supplier'), value: supplierCount, icon: LocalShippingOutlinedIcon, color: '#34c759' },
+    { label: t('lbl_publish'), value: publishedCount, icon: PublishOutlinedIcon, color: '#af52de' },
+    { label: t('lbl_trending'), value: draftCount, icon: ScheduleOutlinedIcon, color: '#ff9f0a' },
   ]
 
   const actions = [
@@ -48,7 +76,7 @@ export default function DashboardContent() {
       title: 'Enriquecer con IA',
       desc: 'Mejora titulos, descripciones y SEO',
       icon: AutoAwesomeOutlinedIcon,
-      href: '/dashboard/commerce/products',
+      href: '/dashboard/enrichment/config',
       color: '#af52de',
     },
     {
