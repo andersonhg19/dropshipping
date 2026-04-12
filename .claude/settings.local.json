@@ -29,7 +29,9 @@
       "Bash(grep:*)",
       "Bash(python3:*)",
       "Bash(python:*)",
-      "Bash(ls -lt /c/Users/ander/Pictures/Screenshots/*.png)"
+      "Bash(ls -lt /c/Users/ander/Pictures/Screenshots/*.png)",
+      "Bash(bash test-data/create-100-products.sh)",
+      "Bash(git add:*)"
     ]
   }
 }
