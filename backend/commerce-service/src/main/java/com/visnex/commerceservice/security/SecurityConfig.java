@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/v2/prompt-template/**").hasAuthority(ADMIN)
                         .requestMatchers("/v2/woocommerce/**").hasAuthority(ADMIN)
                         .requestMatchers("/v2/ai-enrichment/**").hasAuthority(ADMIN)
+                        .requestMatchers("/v2/export/**").hasAuthority(ADMIN)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
