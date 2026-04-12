@@ -595,7 +595,7 @@ const ProductLayoutForm = () => {
           </TextField>
           <TextField label={t('lbl_category')} value={editItem.idCategory} onChange={(e) => set('idCategory', e.target.value)} fullWidth size="small" />
           {saveError && (
-            <Typography sx={{ color: '#ef4444', fontSize: 13, fontWeight: 500, mt: 0.5 }}>
+            <Typography role="alert" sx={{ color: '#ef4444', fontSize: 13, fontWeight: 500, mt: 0.5 }}>
               {saveError}
             </Typography>
           )}

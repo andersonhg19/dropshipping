@@ -164,7 +164,7 @@ const SupplierLayoutForm = () => {
 
       {/* Supplier cards */}
       <AnimatePresence>
-        {!loading && rows.map((s, i) => {
+        {!loading && <Box role="list">{rows.map((s, i) => {
           const cfg = getType(s.type)
           const Icon = cfg.icon
           const avg = Math.round((s.shippingDaysMin + s.shippingDaysMax) / 2)
@@ -172,12 +172,14 @@ const SupplierLayoutForm = () => {
           return (
             <motion.div
               key={s.id || i}
+              role="listitem"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.25, delay: i * 0.04 }}
             >
               <Box
+                aria-label={`Proveedor: ${s.name}, tipo: ${cfg.label}`}
                 onClick={() => { setSaveError(''); setForm({ ...s }); setOpen(true) }}
                 sx={{
                   display: 'flex', alignItems: 'center', gap: 2.5, mb: 1.5,
@@ -247,7 +249,7 @@ const SupplierLayoutForm = () => {
               </Box>
             </motion.div>
           )
-        })}
+        })}</Box>}
       </AnimatePresence>
 
       {/* Pagination */}
