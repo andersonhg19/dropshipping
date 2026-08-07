@@ -92,6 +92,28 @@ public class Product {
     @Column(name = "id_supplier")
     private Long idSupplier;
 
+    // ---- Inventario y origen de despacho --------------------------------
+    // Estos tres campos faltaban, y sin ellos no se podia ni saber si un
+    // producto estaba agotado ni a quien pedirselo. Se vendian agotados sin
+    // enterarse, que en contraentrega es una perdida directa: ya se pago la
+    // pauta que trajo al cliente.
+
+    /** Identificador del producto en el proveedor. Necesario para pedirlo. */
+    @Column(name = "supplier_sku", length = 100)
+    private String supplierSku;
+
+    /** Existencias conocidas. null = el proveedor no informa stock. */
+    @Column(name = "stock_quantity")
+    private Integer stockQuantity;
+
+    /**
+     * Quien despacha: DROPI (local contraentrega), CJ (internacional) u OWN
+     * (inventario propio). Es lo que permite que el router de pedidos divida
+     * una orden por origen.
+     */
+    @Column(name = "fulfillment_origin", length = 30)
+    private String fulfillmentOrigin;
+
     @Column(nullable = false, columnDefinition = "boolean default true")
     private Boolean active = true;
 
