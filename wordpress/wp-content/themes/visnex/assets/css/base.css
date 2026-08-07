@@ -1,0 +1,114 @@
+/* ==========================================================================
+   VISNEX — Base: tipografia, elementos y layout general
+   ========================================================================== */
+
+html { -webkit-text-size-adjust: 100%; }
+
+body,
+body.visnex-store {
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-base);
+  line-height: var(--vn-leading-normal);
+  color: var(--vn-text);
+  background: var(--vn-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* El navegador ya no salta al hacer anclas si hay cabecera fija. */
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--vn-header-height) + var(--vn-space-4)); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--vn-font-sans);
+  color: var(--vn-text);
+  line-height: var(--vn-leading-tight);
+  letter-spacing: var(--vn-tracking-tight);
+  margin: 0 0 var(--vn-space-4);
+}
+
+h1 { font-size: var(--vn-text-4xl); font-weight: var(--vn-weight-bold); }
+h2 { font-size: var(--vn-text-3xl); font-weight: var(--vn-weight-semibold); }
+h3 { font-size: var(--vn-text-xl); font-weight: var(--vn-weight-semibold); }
+h4 { font-size: var(--vn-text-lg); font-weight: var(--vn-weight-semibold); }
+
+p { margin: 0 0 var(--vn-space-4); }
+
+a { color: var(--vn-text); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--vn-gray-700); }
+
+img { max-width: 100%; height: auto; }
+
+hr { border: 0; border-top: 1px solid var(--vn-border); margin: var(--vn-space-8) 0; }
+
+/* Utilidad de contenedor */
+.vn-container {
+  width: 100%;
+  max-width: var(--vn-container-max);
+  margin-inline: auto;
+  padding-inline: var(--vn-space-5);
+}
+.vn-container--text { max-width: var(--vn-container-text); }
+.vn-container--form { max-width: var(--vn-container-form); }
+
+/* ==========================================================================
+   PAGINAS DE CONTENIDO (legales, informativas)
+   --------------------------------------------------------------------------
+   Antes las paginas legales no existian (8 href="#" muertos). Ahora existen y
+   se leen bien: medida de lectura acotada y jerarquia clara.
+   ========================================================================== */
+
+.vn-legal {
+  max-width: var(--vn-container-text);
+  margin: 0 auto;
+  padding: var(--vn-space-9) var(--vn-space-5) var(--vn-space-11);
+}
+
+.vn-legal h1 {
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-text-3xl);
+  font-weight: var(--vn-weight-normal);
+  margin-bottom: var(--vn-space-3);
+}
+
+.vn-legal__updated {
+  font-size: var(--vn-text-sm);
+  color: var(--vn-text-muted);
+  margin-bottom: var(--vn-space-8);
+  padding-bottom: var(--vn-space-5);
+  border-bottom: 1px solid var(--vn-border);
+}
+
+.vn-legal h2 {
+  font-size: var(--vn-text-xl);
+  font-weight: var(--vn-weight-semibold);
+  margin-top: var(--vn-space-8);
+  margin-bottom: var(--vn-space-3);
+}
+
+.vn-legal p,
+.vn-legal li { line-height: var(--vn-leading-relaxed); color: var(--vn-gray-700); }
+.vn-legal ul, .vn-legal ol { padding-left: var(--vn-space-5); margin-bottom: var(--vn-space-4); }
+.vn-legal li { margin-bottom: var(--vn-space-2); }
+
+.vn-legal table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--vn-space-5) 0;
+  font-size: var(--vn-text-sm);
+}
+.vn-legal th, .vn-legal td {
+  border: 1px solid var(--vn-border);
+  padding: var(--vn-space-3);
+  text-align: left;
+}
+.vn-legal th { background: var(--vn-bg-alt); font-weight: var(--vn-weight-semibold); }
+
+.vn-legal__callout {
+  background: var(--vn-bg-alt);
+  border-left: 3px solid var(--vn-black);
+  border-radius: 0 var(--vn-radius-md) var(--vn-radius-md) 0;
+  padding: var(--vn-space-5);
+  margin: var(--vn-space-6) 0;
+}
+.vn-legal__callout p:last-child { margin-bottom: 0; }

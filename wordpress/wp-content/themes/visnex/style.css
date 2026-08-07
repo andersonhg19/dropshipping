@@ -1,0 +1,32 @@
+/*
+Theme Name:   VISNEX
+Theme URI:    https://visnex.co
+Description:  Tema hijo de Storefront para VISNEX. Sustituye al mu-plugin monolitico de 1.512 lineas que inyectaba CSS inline en wp_head con 232 !important. Aqui el CSS esta versionado, es cacheable, se compone de tokens y — sobre todo — cubre el embudo de pago (carrito, checkout y mi cuenta), que antes no tenia ni un solo selector. Incluye ademas la plantilla de landing de conversion contraentrega para trafico pagado.
+Author:       Anderson Herrera
+Author URI:   https://visnex.co
+Template:     storefront
+Version:      1.0.0
+Requires PHP: 8.0
+License:      GPL-2.0-or-later
+License URI:  https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain:  visnex
+Tags:         e-commerce, colombia, contraentrega
+*/
+
+/*
+ * Este archivo se queda deliberadamente vacio de reglas.
+ *
+ * Los estilos viven en assets/css/ y los encola functions.php en orden
+ * explicito de cascada:
+ *
+ *   1. tokens.css       fuente unica de verdad (color, tipografia, espacio)
+ *   2. base.css         elementos y paginas de contenido
+ *   3. components.css   botones, formularios, badges
+ *   4. home.css         la home premium (heredada del mu-plugin, conservada)
+ *   5. shop.css         archivo, filtros, ficha de producto, resenas
+ *   6. funnel.css       carrito, checkout, mi cuenta  <- el hueco que existia
+ *   7. landing-cod.css  landing de conversion contraentrega
+ *
+ * Cargarlos por separado permite condicionar: la landing COD no se descarga en
+ * la home, y el CSS del embudo no se descarga en la portada.
+ */

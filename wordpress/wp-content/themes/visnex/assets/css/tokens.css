@@ -1,0 +1,139 @@
+/* ==========================================================================
+   VISNEX — Design tokens
+   --------------------------------------------------------------------------
+   Fuente unica de verdad del diseno. Ningun otro archivo define colores,
+   tamanos ni tiempos a mano: todos consumen estas variables.
+
+   Esto es lo que faltaba antes: los valores estaban repetidos como literales
+   por todo un archivo de 1.500 lineas, asi que cambiar el gris de los precios
+   obligaba a buscar y reemplazar a ciegas.
+   ========================================================================== */
+
+:root {
+  /* --- Color: marca ---------------------------------------------------- */
+  --vn-black:        #0A0A0A;
+  --vn-white:        #FFFFFF;
+  --vn-off-white:    #FAFAFA;
+
+  /* --- Color: neutros --------------------------------------------------- */
+  --vn-gray-100:     #F5F5F7;
+  --vn-gray-200:     #E8E8ED;
+  --vn-gray-300:     #D2D2D7;
+  --vn-gray-400:     #A1A1A6;
+  --vn-gray-500:     #6E6E73;  /* subido desde #86868B: aquel fallaba WCAG AA */
+  --vn-gray-700:     #424245;
+  --vn-gray-900:     #1D1D1F;
+
+  /* --- Color: semanticos ------------------------------------------------ */
+  --vn-text:         var(--vn-gray-900);
+  --vn-text-muted:   var(--vn-gray-500);
+  --vn-text-invert:  var(--vn-white);
+  --vn-bg:           var(--vn-white);
+  --vn-bg-alt:       var(--vn-off-white);
+  --vn-bg-dark:      var(--vn-black);
+  --vn-border:       var(--vn-gray-200);
+  --vn-border-strong:var(--vn-gray-300);
+
+  /* --- Color: estado ---------------------------------------------------- */
+  --vn-success:      #1B7F4F;
+  --vn-success-bg:   #E8F5EE;
+  --vn-warning:      #8A5A00;
+  --vn-warning-bg:   #FFF6E5;
+  --vn-danger:       #B3261E;
+  --vn-danger-bg:    #FDECEA;
+  --vn-info:         #0B5FBF;
+  --vn-info-bg:      #E8F1FD;
+
+  /* --- Color: confianza (contraentrega) --------------------------------- */
+  /* El verde de WhatsApp se usa solo en los CTA de contacto, nunca como
+     color de marca: en Colombia es una senal de "me pueden responder". */
+  --vn-whatsapp:     #128C7E;
+  --vn-whatsapp-dark:#075E54;
+
+  /* --- Tipografia ------------------------------------------------------- */
+  --vn-font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --vn-font-serif:   'Playfair Display', Georgia, 'Times New Roman', serif;
+
+  /* Escala modular 1.25 sobre base 16px (el spec pedia 16, habia 14). */
+  --vn-text-xs:      0.75rem;   /* 12px */
+  --vn-text-sm:      0.875rem;  /* 14px */
+  --vn-text-base:    1rem;      /* 16px */
+  --vn-text-lg:      1.125rem;  /* 18px */
+  --vn-text-xl:      1.375rem;  /* 22px */
+  --vn-text-2xl:     1.75rem;   /* 28px */
+  --vn-text-3xl:     2.25rem;   /* 36px */
+  --vn-text-4xl:     3rem;      /* 48px */
+  --vn-text-5xl:     4rem;      /* 64px */
+
+  --vn-weight-light:    300;
+  --vn-weight-normal:   400;
+  --vn-weight-medium:   500;
+  --vn-weight-semibold: 600;
+  --vn-weight-bold:     700;
+
+  --vn-leading-tight:   1.15;
+  --vn-leading-snug:    1.35;
+  --vn-leading-normal:  1.6;
+  --vn-leading-relaxed: 1.75;
+
+  --vn-tracking-tighter: -0.03em;
+  --vn-tracking-tight:   -0.015em;
+  --vn-tracking-normal:  0;
+  --vn-tracking-wide:    0.04em;
+  --vn-tracking-wider:   0.12em;
+  --vn-tracking-widest:  0.22em;
+
+  /* --- Espaciado (escala de 4px) ---------------------------------------- */
+  --vn-space-1:   0.25rem;
+  --vn-space-2:   0.5rem;
+  --vn-space-3:   0.75rem;
+  --vn-space-4:   1rem;
+  --vn-space-5:   1.5rem;
+  --vn-space-6:   2rem;
+  --vn-space-7:   2.5rem;
+  --vn-space-8:   3rem;
+  --vn-space-9:   4rem;
+  --vn-space-10:  5rem;
+  --vn-space-11:  6rem;
+  --vn-space-12:  8rem;
+
+  /* --- Layout ----------------------------------------------------------- */
+  --vn-container-max:   1440px;
+  --vn-container-text:  680px;   /* medida de lectura comoda */
+  --vn-container-form:  560px;
+  --vn-header-height:   72px;
+
+  /* --- Bordes y sombras -------------------------------------------------- */
+  --vn-radius-sm:   4px;
+  --vn-radius-md:   8px;
+  --vn-radius-lg:   16px;
+  --vn-radius-full: 999px;
+
+  --vn-shadow-sm:  0 1px 2px rgba(0,0,0,.05);
+  --vn-shadow-md:  0 2px 8px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --vn-shadow-lg:  0 8px 30px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.04);
+  --vn-shadow-xl:  0 20px 60px rgba(0,0,0,.12);
+
+  /* --- Movimiento -------------------------------------------------------- */
+  --vn-ease:        cubic-bezier(0.4, 0, 0.2, 1);
+  --vn-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --vn-duration-fast:   150ms;
+  --vn-duration-base:   300ms;
+  --vn-duration-slow:   600ms;
+
+  /* --- Capas ------------------------------------------------------------- */
+  --vn-z-sticky:  100;
+  --vn-z-header:  200;
+  --vn-z-overlay: 300;
+  --vn-z-modal:   400;
+  --vn-z-toast:   500;
+}
+
+/* Quien pide menos movimiento, recibe menos movimiento. No es opcional. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --vn-duration-fast: 1ms;
+    --vn-duration-base: 1ms;
+    --vn-duration-slow: 1ms;
+  }
+}

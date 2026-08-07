@@ -1,0 +1,283 @@
+/* ==========================================================================
+   VISNEX — Componentes base
+   --------------------------------------------------------------------------
+   Botones, formularios, badges. Todo consume tokens; cero literales magicos.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. BOTONES
+   ========================================================================== */
+
+.vn-btn,
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button,
+.woocommerce #respond input#submit,
+.woocommerce a.button.alt,
+.woocommerce button.button.alt,
+.woocommerce input.button.alt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--vn-space-2);
+  padding: var(--vn-space-3) var(--vn-space-6);
+  min-height: 48px;               /* objetivo tactil comodo en movil */
+  border: 1px solid var(--vn-black);
+  border-radius: var(--vn-radius-full);
+  background: var(--vn-black);
+  color: var(--vn-white);
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-wide);
+  line-height: 1;
+  text-decoration: none;
+  text-transform: none;
+  cursor: pointer;
+  transition: transform var(--vn-duration-fast) var(--vn-ease),
+              background var(--vn-duration-fast) var(--vn-ease),
+              color var(--vn-duration-fast) var(--vn-ease),
+              box-shadow var(--vn-duration-fast) var(--vn-ease);
+}
+
+.vn-btn:hover,
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.woocommerce input.button:hover,
+.woocommerce #respond input#submit:hover,
+.woocommerce a.button.alt:hover,
+.woocommerce button.button.alt:hover,
+.woocommerce input.button.alt:hover {
+  background: var(--vn-gray-900);
+  color: var(--vn-white);
+  transform: translateY(-1px);
+  box-shadow: var(--vn-shadow-md);
+}
+
+.vn-btn:active,
+.woocommerce a.button:active,
+.woocommerce button.button:active { transform: translateY(0); box-shadow: none; }
+
+/* El foco de teclado NUNCA se elimina: se hace visible. */
+.vn-btn:focus-visible,
+.woocommerce a.button:focus-visible,
+.woocommerce button.button:focus-visible,
+.woocommerce input.button:focus-visible,
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--vn-black);
+  outline-offset: 2px;
+}
+
+.vn-btn[disabled],
+.woocommerce button.button[disabled],
+.woocommerce button.button:disabled,
+.woocommerce input.button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- Variantes ----------------------------------------------------------- */
+.vn-btn--secondary,
+.woocommerce a.button.vn-btn--secondary {
+  background: transparent;
+  color: var(--vn-black);
+  border-color: var(--vn-border-strong);
+}
+.vn-btn--secondary:hover,
+.woocommerce a.button.vn-btn--secondary:hover {
+  background: var(--vn-gray-100);
+  color: var(--vn-black);
+  border-color: var(--vn-black);
+}
+
+.vn-btn--white {
+  background: var(--vn-white);
+  color: var(--vn-black);
+  border-color: var(--vn-white);
+}
+.vn-btn--white:hover { background: var(--vn-gray-100); color: var(--vn-black); }
+
+.vn-btn--ghost {
+  background: transparent;
+  color: var(--vn-white);
+  border-color: rgba(255,255,255,.6);
+}
+.vn-btn--ghost:hover { background: rgba(255,255,255,.12); color: var(--vn-white); }
+
+.vn-btn--lg { min-height: 56px; padding: var(--vn-space-4) var(--vn-space-8); font-size: var(--vn-text-base); }
+.vn-btn--block { width: 100%; }
+
+.vn-btn--whatsapp {
+  background: var(--vn-whatsapp);
+  border-color: var(--vn-whatsapp);
+  color: var(--vn-white);
+}
+.vn-btn--whatsapp:hover { background: var(--vn-whatsapp-dark); border-color: var(--vn-whatsapp-dark); }
+
+/* ==========================================================================
+   2. FORMULARIOS
+   ========================================================================== */
+
+.woocommerce form .form-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vn-space-2);
+  margin: 0 0 var(--vn-space-4);
+  padding: 0;
+}
+
+.woocommerce form .form-row label,
+.vn-field__label {
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-medium);
+  color: var(--vn-text);
+  line-height: var(--vn-leading-snug);
+}
+
+.woocommerce form .form-row .required {
+  color: var(--vn-danger);
+  text-decoration: none;
+  border: 0;
+}
+
+/* Un solo selector para todos los campos: antes cada uno heredaba lo que
+   Storefront quisiera darle. */
+.woocommerce form .form-row input.input-text,
+.woocommerce form .form-row textarea,
+.woocommerce form .form-row select,
+.woocommerce .select2-container .select2-selection--single,
+.vn-input,
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="password"],
+input[type="search"],
+select,
+textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: var(--vn-space-3) var(--vn-space-4);
+  border: 1px solid var(--vn-border-strong);
+  border-radius: var(--vn-radius-md);
+  background: var(--vn-bg);
+  color: var(--vn-text);
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-base);   /* 16px: por debajo, iOS hace zoom al enfocar */
+  line-height: var(--vn-leading-snug);
+  transition: border-color var(--vn-duration-fast) var(--vn-ease),
+              box-shadow var(--vn-duration-fast) var(--vn-ease);
+  box-shadow: none;
+}
+
+textarea { min-height: 120px; resize: vertical; }
+
+.woocommerce form .form-row input.input-text:focus,
+.woocommerce form .form-row textarea:focus,
+.woocommerce form .form-row select:focus,
+.vn-input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--vn-black);
+  box-shadow: 0 0 0 3px var(--vn-gray-200);
+  outline: none;
+}
+
+::placeholder { color: var(--vn-gray-400); opacity: 1; }
+
+/* Filas de dos columnas */
+.woocommerce form .form-row-first,
+.woocommerce form .form-row-last {
+  width: 100%;
+  float: none;
+}
+
+@media (min-width: 640px) {
+  .woocommerce form .form-row-first,
+  .woocommerce form .form-row-last {
+    display: inline-flex;
+    width: calc(50% - var(--vn-space-2));
+    vertical-align: top;
+  }
+  .woocommerce form .form-row-first { margin-right: var(--vn-space-3); }
+}
+
+/* Texto de ayuda bajo el campo */
+.vn-field__hint {
+  font-size: var(--vn-text-xs);
+  color: var(--vn-text-muted);
+  line-height: var(--vn-leading-snug);
+}
+
+/* Checkbox y radio */
+.woocommerce form .form-row.woocommerce-validated input[type="checkbox"],
+input[type="checkbox"],
+input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  min-height: 0;
+  accent-color: var(--vn-black);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   3. BADGES Y ETIQUETAS
+   ========================================================================== */
+
+.vn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vn-space-1);
+  padding: var(--vn-space-1) var(--vn-space-3);
+  border-radius: var(--vn-radius-full);
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-wide);
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.vn-badge--success { background: var(--vn-success-bg); color: var(--vn-success); }
+.vn-badge--warning { background: var(--vn-warning-bg); color: var(--vn-warning); }
+.vn-badge--danger  { background: var(--vn-danger-bg);  color: var(--vn-danger); }
+.vn-badge--dark    { background: var(--vn-black);      color: var(--vn-white); }
+
+/* ==========================================================================
+   4. ACCESIBILIDAD
+   ========================================================================== */
+
+/* Salto al contenido para quien navega con teclado o lector de pantalla. */
+.vn-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: var(--vn-z-toast);
+  padding: var(--vn-space-3) var(--vn-space-5);
+  background: var(--vn-black);
+  color: var(--vn-white);
+  border-radius: 0 0 var(--vn-radius-md) 0;
+  font-size: var(--vn-text-sm);
+  text-decoration: none;
+}
+.vn-skip-link:focus {
+  left: 0;
+  color: var(--vn-white);
+}
+
+.vn-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

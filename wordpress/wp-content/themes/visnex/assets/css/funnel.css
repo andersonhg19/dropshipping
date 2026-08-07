@@ -1,0 +1,759 @@
+/* ==========================================================================
+   VISNEX — EMBUDO DE PAGO: carrito, checkout, mi cuenta, pedido recibido
+   --------------------------------------------------------------------------
+   Este archivo existe porque antes no habia NADA.
+
+   El mu-plugin de 1.512 lineas no tenia ni un solo selector para
+   .woocommerce-cart, .woocommerce-checkout ni .woocommerce-MyAccount. El
+   cliente navegaba una tienda que parecia Gucci y aterrizaba en el Storefront
+   gris de fabrica justo en el momento de pagar — el peor sitio posible para
+   romper la ilusion, y mas en Colombia, donde la desconfianza en la compra
+   online es la objecion numero uno.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. INDICADOR DE PASOS
+   ========================================================================== */
+
+.vn-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--vn-space-2);
+  margin: 0 auto var(--vn-space-8);
+  padding: 0;
+  max-width: 640px;
+  list-style: none;
+}
+
+.vn-steps__item {
+  display: flex;
+  align-items: center;
+  gap: var(--vn-space-2);
+  font-size: var(--vn-text-sm);
+  color: var(--vn-text-muted);
+  letter-spacing: var(--vn-tracking-wide);
+}
+
+.vn-steps__num {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--vn-radius-full);
+  border: 1px solid var(--vn-border-strong);
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-semibold);
+  flex-shrink: 0;
+}
+
+.vn-steps__item--active { color: var(--vn-text); font-weight: var(--vn-weight-semibold); }
+.vn-steps__item--active .vn-steps__num {
+  background: var(--vn-black);
+  border-color: var(--vn-black);
+  color: var(--vn-white);
+}
+
+.vn-steps__item--done .vn-steps__num {
+  background: var(--vn-success);
+  border-color: var(--vn-success);
+  color: var(--vn-white);
+}
+
+.vn-steps__sep {
+  flex: 1;
+  height: 1px;
+  background: var(--vn-border);
+  min-width: 20px;
+}
+
+@media (max-width: 600px) {
+  .vn-steps__label { display: none; }
+  .vn-steps { gap: var(--vn-space-1); }
+}
+
+/* ==========================================================================
+   2. CARRITO
+   ========================================================================== */
+
+.woocommerce-cart .site-main,
+.woocommerce-checkout .site-main,
+.woocommerce-account .site-main {
+  max-width: var(--vn-container-max);
+  margin: 0 auto;
+  padding: var(--vn-space-8) var(--vn-space-5) var(--vn-space-10);
+}
+
+.woocommerce-cart .entry-title,
+.woocommerce-checkout .entry-title,
+.woocommerce-account .entry-title {
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-text-3xl);
+  font-weight: var(--vn-weight-normal);
+  letter-spacing: var(--vn-tracking-tight);
+  text-align: center;
+  margin-bottom: var(--vn-space-6);
+}
+
+/* --- Layout de dos columnas: articulos + resumen sticky ------------------ */
+.woocommerce-cart .woocommerce {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: var(--vn-space-8);
+  align-items: start;
+}
+
+.woocommerce-cart .woocommerce-notices-wrapper { grid-column: 1 / -1; }
+.woocommerce-cart form.woocommerce-cart-form { min-width: 0; }
+
+.woocommerce-cart .cart-collaterals {
+  position: sticky;
+  top: calc(var(--vn-header-height) + var(--vn-space-4));
+  width: 100%;
+}
+
+@media (max-width: 980px) {
+  .woocommerce-cart .woocommerce { grid-template-columns: 1fr; }
+  .woocommerce-cart .cart-collaterals { position: static; }
+}
+
+/* --- Tabla de articulos: en escritorio, tabla; en movil, tarjetas -------- */
+.woocommerce-cart table.shop_table {
+  width: 100%;
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-lg);
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  background: var(--vn-bg);
+}
+
+.woocommerce-cart table.shop_table thead th {
+  background: var(--vn-bg-alt);
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-wider);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+  padding: var(--vn-space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--vn-border);
+}
+
+.woocommerce-cart table.shop_table td {
+  padding: var(--vn-space-5) var(--vn-space-4);
+  border-bottom: 1px solid var(--vn-border);
+  vertical-align: middle;
+}
+
+.woocommerce-cart table.shop_table tr:last-child td { border-bottom: 0; }
+
+.woocommerce-cart .product-thumbnail img {
+  width: 84px;
+  height: 112px;
+  object-fit: cover;
+  border-radius: var(--vn-radius-md);
+  display: block;
+}
+
+.woocommerce-cart .product-name a {
+  font-weight: var(--vn-weight-medium);
+  color: var(--vn-text);
+  text-decoration: none;
+  line-height: var(--vn-leading-snug);
+}
+.woocommerce-cart .product-name a:hover { text-decoration: underline; }
+
+.woocommerce-cart .product-price,
+.woocommerce-cart .product-subtotal {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.woocommerce-cart .product-subtotal { font-weight: var(--vn-weight-semibold); }
+
+/* --- Selector de cantidad ------------------------------------------------ */
+.woocommerce .quantity {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--vn-border-strong);
+  border-radius: var(--vn-radius-full);
+  overflow: hidden;
+  background: var(--vn-bg);
+}
+
+.woocommerce .quantity input.qty {
+  width: 56px;
+  height: 40px;
+  border: 0;
+  text-align: center;
+  font-size: var(--vn-text-base);
+  font-variant-numeric: tabular-nums;
+  background: transparent;
+  -moz-appearance: textfield;
+}
+.woocommerce .quantity input.qty::-webkit-outer-spin-button,
+.woocommerce .quantity input.qty::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* --- Quitar articulo: destructivo, por tanto discreto hasta el hover ----- */
+.woocommerce-cart td.product-remove a.remove {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--vn-radius-full);
+  color: var(--vn-text-muted);
+  font-size: 20px;
+  line-height: 1;
+  text-decoration: none;
+  transition: background var(--vn-duration-fast) var(--vn-ease),
+              color var(--vn-duration-fast) var(--vn-ease);
+}
+.woocommerce-cart td.product-remove a.remove:hover {
+  background: var(--vn-danger-bg);
+  color: var(--vn-danger);
+}
+
+/* --- Acciones del carrito ------------------------------------------------ */
+.woocommerce-cart .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vn-space-3);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--vn-space-5) var(--vn-space-4);
+  background: var(--vn-bg-alt);
+}
+
+.woocommerce-cart .coupon {
+  display: flex;
+  gap: var(--vn-space-2);
+  flex: 1 1 320px;
+}
+
+.woocommerce-cart .coupon input#coupon_code {
+  flex: 1;
+  min-width: 0;
+}
+
+/* --- Resumen del pedido -------------------------------------------------- */
+.woocommerce-cart .cart_totals {
+  background: var(--vn-bg);
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-lg);
+  padding: var(--vn-space-6);
+  box-shadow: var(--vn-shadow-md);
+}
+
+.woocommerce-cart .cart_totals h2 {
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-wider);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+  margin: 0 0 var(--vn-space-5);
+}
+
+.woocommerce-cart .cart_totals table { width: 100%; border: 0; }
+.woocommerce-cart .cart_totals th,
+.woocommerce-cart .cart_totals td {
+  padding: var(--vn-space-3) 0;
+  border: 0;
+  border-bottom: 1px solid var(--vn-border);
+  font-size: var(--vn-text-sm);
+}
+.woocommerce-cart .cart_totals th {
+  text-align: left;
+  font-weight: var(--vn-weight-normal);
+  color: var(--vn-text-muted);
+}
+.woocommerce-cart .cart_totals td {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.woocommerce-cart .cart_totals .order-total th,
+.woocommerce-cart .cart_totals .order-total td {
+  border-bottom: 0;
+  padding-top: var(--vn-space-4);
+  font-size: var(--vn-text-lg);
+  font-weight: var(--vn-weight-bold);
+  color: var(--vn-text);
+}
+
+.woocommerce-cart .wc-proceed-to-checkout { padding-top: var(--vn-space-5); }
+.woocommerce-cart .wc-proceed-to-checkout a.checkout-button {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+/* --- Carrito vacio: no dejar al usuario en un callejon sin salida -------- */
+.woocommerce-cart .cart-empty {
+  text-align: center;
+  font-size: var(--vn-text-xl);
+  color: var(--vn-text-muted);
+  padding: var(--vn-space-10) 0 var(--vn-space-4);
+}
+.woocommerce-cart .return-to-shop { text-align: center; padding-bottom: var(--vn-space-10); }
+
+/* --- Movil: la tabla se convierte en tarjetas --------------------------- */
+@media (max-width: 720px) {
+  .woocommerce-cart table.shop_table thead { display: none; }
+  .woocommerce-cart table.shop_table,
+  .woocommerce-cart table.shop_table tbody,
+  .woocommerce-cart table.shop_table tr { display: block; width: 100%; }
+
+  .woocommerce-cart table.shop_table tr.cart_item {
+    display: grid;
+    grid-template-columns: 84px 1fr auto;
+    grid-template-areas:
+      "thumb name    remove"
+      "thumb qty     subtotal";
+    gap: var(--vn-space-2) var(--vn-space-4);
+    padding: var(--vn-space-4);
+    border-bottom: 1px solid var(--vn-border);
+    align-items: center;
+  }
+
+  .woocommerce-cart table.shop_table tr.cart_item td {
+    display: block;
+    padding: 0;
+    border: 0;
+  }
+
+  .woocommerce-cart .product-thumbnail { grid-area: thumb; }
+  .woocommerce-cart .product-name      { grid-area: name; }
+  .woocommerce-cart .product-remove    { grid-area: remove; justify-self: end; }
+  .woocommerce-cart .product-quantity  { grid-area: qty; }
+  .woocommerce-cart .product-subtotal  { grid-area: subtotal; justify-self: end; }
+  /* El precio unitario se omite en movil: el subtotal es lo que importa. */
+  .woocommerce-cart .product-price     { display: none; }
+
+  .woocommerce-cart td.product-quantity::before { content: none; }
+  .woocommerce-cart .actions { flex-direction: column; align-items: stretch; }
+  .woocommerce-cart .coupon { flex-direction: column; }
+}
+
+/* ==========================================================================
+   3. CHECKOUT
+   ========================================================================== */
+
+.woocommerce-checkout form.checkout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: var(--vn-space-8);
+  align-items: start;
+}
+
+.woocommerce-checkout #customer_details { min-width: 0; }
+
+.woocommerce-checkout #order_review_heading,
+.woocommerce-checkout #order_review {
+  grid-column: 2;
+}
+
+.woocommerce-checkout #order_review_heading {
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-wider);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+  margin: 0 0 var(--vn-space-3);
+}
+
+@media (max-width: 980px) {
+  .woocommerce-checkout form.checkout { grid-template-columns: 1fr; }
+  .woocommerce-checkout #order_review_heading,
+  .woocommerce-checkout #order_review { grid-column: 1; }
+}
+
+/* --- Bloques del formulario --------------------------------------------- */
+.woocommerce-checkout .woocommerce-billing-fields,
+.woocommerce-checkout .woocommerce-shipping-fields,
+.woocommerce-checkout .woocommerce-additional-fields {
+  background: var(--vn-bg);
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-lg);
+  padding: var(--vn-space-6);
+  margin-bottom: var(--vn-space-5);
+}
+
+.woocommerce-checkout h3 {
+  font-size: var(--vn-text-lg);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-tight);
+  margin: 0 0 var(--vn-space-5);
+  padding-bottom: var(--vn-space-3);
+  border-bottom: 1px solid var(--vn-border);
+}
+
+/* --- Resumen del pedido, sticky ----------------------------------------- */
+.woocommerce-checkout #order_review {
+  position: sticky;
+  top: calc(var(--vn-header-height) + var(--vn-space-4));
+  background: var(--vn-bg);
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-lg);
+  padding: var(--vn-space-6);
+  box-shadow: var(--vn-shadow-md);
+}
+
+@media (max-width: 980px) {
+  .woocommerce-checkout #order_review { position: static; }
+}
+
+.woocommerce-checkout table.shop_table { width: 100%; border: 0; }
+.woocommerce-checkout table.shop_table th,
+.woocommerce-checkout table.shop_table td {
+  padding: var(--vn-space-3) 0;
+  border: 0;
+  border-bottom: 1px solid var(--vn-border);
+  font-size: var(--vn-text-sm);
+}
+.woocommerce-checkout table.shop_table thead th {
+  font-size: var(--vn-text-xs);
+  letter-spacing: var(--vn-tracking-wider);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+}
+.woocommerce-checkout table.shop_table td { text-align: right; font-variant-numeric: tabular-nums; }
+.woocommerce-checkout table.shop_table td.product-name { text-align: left; }
+
+.woocommerce-checkout table.shop_table tfoot .order-total th,
+.woocommerce-checkout table.shop_table tfoot .order-total td {
+  border-bottom: 0;
+  padding-top: var(--vn-space-4);
+  font-size: var(--vn-text-lg);
+  font-weight: var(--vn-weight-bold);
+}
+
+/* --- Metodos de pago ----------------------------------------------------- */
+.woocommerce-checkout ul.wc_payment_methods {
+  list-style: none;
+  margin: var(--vn-space-5) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--vn-space-2);
+}
+
+.woocommerce-checkout ul.wc_payment_methods li {
+  border: 1px solid var(--vn-border-strong);
+  border-radius: var(--vn-radius-md);
+  padding: var(--vn-space-4);
+  transition: border-color var(--vn-duration-fast) var(--vn-ease),
+              background var(--vn-duration-fast) var(--vn-ease);
+}
+
+.woocommerce-checkout ul.wc_payment_methods li:hover { border-color: var(--vn-gray-400); }
+
+/* El metodo seleccionado se marca de forma inequivoca: en contraentrega, la
+   duda sobre "como voy a pagar" es lo que hace abandonar el pedido. */
+.woocommerce-checkout ul.wc_payment_methods li:has(input:checked) {
+  border-color: var(--vn-black);
+  background: var(--vn-bg-alt);
+  box-shadow: 0 0 0 1px var(--vn-black);
+}
+
+.woocommerce-checkout ul.wc_payment_methods label {
+  display: flex;
+  align-items: center;
+  gap: var(--vn-space-3);
+  font-weight: var(--vn-weight-medium);
+  cursor: pointer;
+  margin: 0;
+}
+
+.woocommerce-checkout .payment_box {
+  margin-top: var(--vn-space-3);
+  padding: var(--vn-space-4);
+  background: var(--vn-bg-alt);
+  border-radius: var(--vn-radius-md);
+  font-size: var(--vn-text-sm);
+  color: var(--vn-text-muted);
+  line-height: var(--vn-leading-normal);
+}
+.woocommerce-checkout .payment_box p:last-child { margin-bottom: 0; }
+
+/* --- Boton de pagar: el mas importante de todo el sitio ------------------ */
+.woocommerce-checkout #place_order {
+  width: 100%;
+  margin-top: var(--vn-space-5);
+  font-size: var(--vn-text-base);
+  padding: var(--vn-space-4) var(--vn-space-6);
+}
+
+/* --- Barra de confianza bajo el boton ------------------------------------ */
+.vn-checkout-trust {
+  display: grid;
+  gap: var(--vn-space-3);
+  margin-top: var(--vn-space-5);
+  padding-top: var(--vn-space-5);
+  border-top: 1px solid var(--vn-border);
+}
+
+.vn-checkout-trust__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--vn-space-3);
+  font-size: var(--vn-text-sm);
+  color: var(--vn-text-muted);
+  line-height: var(--vn-leading-snug);
+}
+
+.vn-checkout-trust__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--vn-success);
+}
+
+/* --- Aviso de contraentrega ---------------------------------------------- */
+.vn-cod-notice {
+  display: flex;
+  gap: var(--vn-space-3);
+  padding: var(--vn-space-4);
+  margin-bottom: var(--vn-space-5);
+  background: var(--vn-success-bg);
+  border: 1px solid rgba(27, 127, 79, .25);
+  border-radius: var(--vn-radius-md);
+  font-size: var(--vn-text-sm);
+  line-height: var(--vn-leading-normal);
+  color: var(--vn-gray-900);
+}
+.vn-cod-notice strong { display: block; margin-bottom: 2px; }
+
+/* ==========================================================================
+   4. PEDIDO RECIBIDO (gracias)
+   ========================================================================== */
+
+.woocommerce-order {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.woocommerce-order .woocommerce-notice--success {
+  text-align: center;
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-text-2xl);
+  font-weight: var(--vn-weight-normal);
+  padding: var(--vn-space-8) var(--vn-space-5);
+  background: var(--vn-success-bg);
+  border: 0;
+  border-radius: var(--vn-radius-lg);
+  margin-bottom: var(--vn-space-8);
+}
+.woocommerce-order .woocommerce-notice--success::before { content: none; }
+
+.woocommerce-order ul.woocommerce-order-overview {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--vn-space-4);
+  margin: 0 0 var(--vn-space-8);
+  padding: 0;
+  border: 0;
+}
+
+.woocommerce-order ul.woocommerce-order-overview li {
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-md);
+  padding: var(--vn-space-4);
+  text-align: center;
+  font-size: var(--vn-text-xs);
+  letter-spacing: var(--vn-tracking-wide);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+}
+.woocommerce-order ul.woocommerce-order-overview li strong {
+  display: block;
+  margin-top: var(--vn-space-2);
+  font-size: var(--vn-text-lg);
+  text-transform: none;
+  letter-spacing: var(--vn-tracking-normal);
+  color: var(--vn-text);
+}
+
+/* Siguiente paso claro: en contraentrega el cliente necesita saber que le van
+   a llamar antes de que llegue el domiciliario. */
+.vn-order-next {
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-lg);
+  padding: var(--vn-space-6);
+  margin-bottom: var(--vn-space-8);
+}
+.vn-order-next__title {
+  font-size: var(--vn-text-lg);
+  font-weight: var(--vn-weight-semibold);
+  margin: 0 0 var(--vn-space-4);
+}
+.vn-order-next__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--vn-space-4); }
+.vn-order-next__step {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: var(--vn-space-3);
+  align-items: start;
+  font-size: var(--vn-text-sm);
+  line-height: var(--vn-leading-normal);
+  color: var(--vn-text-muted);
+}
+.vn-order-next__num {
+  display: grid;
+  place-items: center;
+  width: 28px; height: 28px;
+  border-radius: var(--vn-radius-full);
+  background: var(--vn-black);
+  color: var(--vn-white);
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-semibold);
+}
+.vn-order-next__step strong { display: block; color: var(--vn-text); }
+
+/* ==========================================================================
+   5. MI CUENTA
+   ========================================================================== */
+
+.woocommerce-account .woocommerce {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: var(--vn-space-8);
+  align-items: start;
+}
+
+.woocommerce-account .woocommerce-notices-wrapper { grid-column: 1 / -1; }
+
+.woocommerce-account nav.woocommerce-MyAccount-navigation ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--vn-space-1);
+}
+
+.woocommerce-account nav.woocommerce-MyAccount-navigation li a {
+  display: block;
+  padding: var(--vn-space-3) var(--vn-space-4);
+  border-radius: var(--vn-radius-md);
+  font-size: var(--vn-text-sm);
+  color: var(--vn-text-muted);
+  text-decoration: none;
+  transition: background var(--vn-duration-fast) var(--vn-ease),
+              color var(--vn-duration-fast) var(--vn-ease);
+}
+.woocommerce-account nav.woocommerce-MyAccount-navigation li a:hover {
+  background: var(--vn-gray-100);
+  color: var(--vn-text);
+}
+.woocommerce-account nav.woocommerce-MyAccount-navigation li.is-active a {
+  background: var(--vn-black);
+  color: var(--vn-white);
+  font-weight: var(--vn-weight-medium);
+}
+
+.woocommerce-account .woocommerce-MyAccount-content {
+  background: var(--vn-bg);
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-lg);
+  padding: var(--vn-space-6);
+  min-width: 0;
+}
+
+.woocommerce-account .woocommerce-MyAccount-content table.shop_table {
+  width: 100%;
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-md);
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+}
+.woocommerce-account .woocommerce-MyAccount-content table.shop_table th {
+  background: var(--vn-bg-alt);
+  font-size: var(--vn-text-xs);
+  letter-spacing: var(--vn-tracking-wide);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+  padding: var(--vn-space-3) var(--vn-space-4);
+  text-align: left;
+}
+.woocommerce-account .woocommerce-MyAccount-content table.shop_table td {
+  padding: var(--vn-space-4);
+  border-top: 1px solid var(--vn-border);
+  font-size: var(--vn-text-sm);
+}
+
+/* --- Login y registro: dos columnas ------------------------------------- */
+.woocommerce-account:not(.logged-in) .woocommerce > .u-columns,
+.woocommerce-account .woocommerce > .u-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--vn-space-6);
+  grid-column: 1 / -1;
+}
+
+.woocommerce-account .col-1,
+.woocommerce-account .col-2 {
+  width: 100%;
+  max-width: none;
+  float: none;
+  background: var(--vn-bg);
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-lg);
+  padding: var(--vn-space-6);
+}
+
+@media (max-width: 860px) {
+  .woocommerce-account .woocommerce { grid-template-columns: 1fr; }
+  .woocommerce-account nav.woocommerce-MyAccount-navigation ul {
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    overflow-x: auto;
+    padding-bottom: var(--vn-space-2);
+  }
+}
+
+/* ==========================================================================
+   6. AVISOS DE WOOCOMMERCE
+   ========================================================================== */
+
+.woocommerce-message,
+.woocommerce-info,
+.woocommerce-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--vn-space-3);
+  padding: var(--vn-space-4) var(--vn-space-5);
+  margin: 0 0 var(--vn-space-5);
+  border-radius: var(--vn-radius-md);
+  border: 1px solid transparent;
+  border-left-width: 3px;
+  font-size: var(--vn-text-sm);
+  line-height: var(--vn-leading-normal);
+  background-image: none;
+  list-style: none;
+}
+
+.woocommerce-message::before,
+.woocommerce-info::before,
+.woocommerce-error::before { content: none; }
+
+.woocommerce-message { background: var(--vn-success-bg); border-left-color: var(--vn-success); color: var(--vn-gray-900); }
+.woocommerce-info    { background: var(--vn-info-bg);    border-left-color: var(--vn-info);    color: var(--vn-gray-900); }
+.woocommerce-error   { background: var(--vn-danger-bg);  border-left-color: var(--vn-danger);  color: var(--vn-gray-900); }
+
+.woocommerce-message .button,
+.woocommerce-info .button { margin-left: auto; flex-shrink: 0; }
+
+/* Errores de validacion por campo */
+.woocommerce form .form-row.woocommerce-invalid input.input-text,
+.woocommerce form .form-row.woocommerce-invalid select {
+  border-color: var(--vn-danger);
+  box-shadow: 0 0 0 3px var(--vn-danger-bg);
+}
+.woocommerce form .form-row.woocommerce-validated input.input-text {
+  border-color: var(--vn-success);
+}

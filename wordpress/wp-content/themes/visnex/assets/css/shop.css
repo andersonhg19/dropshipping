@@ -1,0 +1,474 @@
+/* ==========================================================================
+   VISNEX — Tienda: archivo, filtros, ficha de producto
+   --------------------------------------------------------------------------
+   Aqui se corrigen tres cosas que el mu-plugin dejaba rotas:
+     1. No habia busqueda ni filtros de talla/color (en moda no se compra sin
+        filtrar) y ademas se habia ocultado la ordenacion sin reemplazo.
+     2. Las resenas estaban en display:none — se elimino la prueba social justo
+        donde mas pesa.
+     3. El precio usaba #86868B sobre blanco, que falla WCAG AA.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. CABECERA DE ARCHIVO Y HERRAMIENTAS
+   ========================================================================== */
+
+.vn-shop-head {
+  max-width: var(--vn-container-max);
+  margin: 0 auto;
+  padding: var(--vn-space-8) var(--vn-space-5) var(--vn-space-5);
+  text-align: center;
+}
+
+.vn-shop-head__title {
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-text-3xl);
+  font-weight: var(--vn-weight-normal);
+  letter-spacing: var(--vn-tracking-tight);
+  margin-bottom: var(--vn-space-2);
+}
+.vn-shop-head__desc { color: var(--vn-text-muted); max-width: var(--vn-container-text); margin: 0 auto; }
+
+/* --- Barra de herramientas: buscar + ordenar + contador ------------------ */
+.vn-shop-tools {
+  max-width: var(--vn-container-max);
+  margin: 0 auto var(--vn-space-6);
+  padding: 0 var(--vn-space-5);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vn-space-3);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vn-shop-search {
+  position: relative;
+  flex: 1 1 260px;
+  max-width: 380px;
+}
+.vn-shop-search input {
+  padding-left: var(--vn-space-9);
+  border-radius: var(--vn-radius-full);
+}
+.vn-shop-search svg {
+  position: absolute;
+  left: var(--vn-space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px; height: 18px;
+  color: var(--vn-text-muted);
+  pointer-events: none;
+}
+
+/* La ordenacion vuelve a existir, con estilo propio. */
+.woocommerce .woocommerce-ordering select,
+.vn-shop-tools select {
+  width: auto;
+  min-width: 200px;
+  border-radius: var(--vn-radius-full);
+  padding-right: var(--vn-space-8);
+}
+
+.woocommerce .woocommerce-result-count {
+  margin: 0;
+  font-size: var(--vn-text-sm);
+  color: var(--vn-text-muted);
+}
+
+/* --- Filtros de talla y color ------------------------------------------- */
+.vn-filters {
+  max-width: var(--vn-container-max);
+  margin: 0 auto var(--vn-space-6);
+  padding: 0 var(--vn-space-5);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vn-space-5);
+  align-items: flex-start;
+}
+
+.vn-filter-group { display: flex; align-items: center; gap: var(--vn-space-3); flex-wrap: wrap; }
+
+.vn-filter-group__label {
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-wider);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+}
+
+.vn-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 36px;
+  padding: 0 var(--vn-space-3);
+  border: 1px solid var(--vn-border-strong);
+  border-radius: var(--vn-radius-full);
+  background: var(--vn-bg);
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-medium);
+  color: var(--vn-text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--vn-duration-fast) var(--vn-ease);
+}
+.vn-chip:hover { border-color: var(--vn-black); color: var(--vn-text); }
+.vn-chip[aria-pressed="true"],
+.vn-chip.is-active {
+  background: var(--vn-black);
+  border-color: var(--vn-black);
+  color: var(--vn-white);
+}
+
+/* Muestras de color: circulo con el color real, no una palabra. */
+.vn-swatch {
+  width: 32px; height: 32px;
+  min-width: 32px;
+  padding: 0;
+  border-radius: var(--vn-radius-full);
+  border: 1px solid var(--vn-border-strong);
+  position: relative;
+  cursor: pointer;
+  transition: transform var(--vn-duration-fast) var(--vn-ease);
+}
+.vn-swatch:hover { transform: scale(1.1); }
+.vn-swatch[aria-pressed="true"]::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid var(--vn-black);
+  border-radius: var(--vn-radius-full);
+}
+
+/* Filtros activos, con opcion de quitarlos */
+.vn-active-filters { display: flex; flex-wrap: wrap; gap: var(--vn-space-2); align-items: center; }
+.vn-active-filters__clear {
+  font-size: var(--vn-text-sm);
+  color: var(--vn-text-muted);
+  text-decoration: underline;
+  background: none; border: 0; cursor: pointer;
+}
+
+/* ==========================================================================
+   2. REJILLA Y TARJETA DE PRODUCTO
+   ========================================================================== */
+
+.woocommerce ul.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--vn-space-6) var(--vn-space-5);
+  margin: 0 auto;
+  padding: 0 var(--vn-space-5);
+  max-width: var(--vn-container-max);
+  list-style: none;
+}
+.woocommerce ul.products::before,
+.woocommerce ul.products::after { content: none; }
+
+.woocommerce ul.products li.product {
+  width: 100% !important;   /* Storefront fija anchos en % via float; hay que ganarle */
+  margin: 0 !important;
+  float: none !important;
+  clear: none !important;
+  text-align: left;
+  position: relative;
+}
+
+.woocommerce ul.products li.product a.woocommerce-LoopProduct-link { display: block; text-decoration: none; }
+
+/* Contenedor de imagen con relacion fija: sin saltos de layout al cargar. */
+.vn-card__media,
+.woocommerce ul.products li.product a img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--vn-radius-md);
+  background: var(--vn-gray-100);
+  margin-bottom: var(--vn-space-3);
+  display: block;
+  transition: opacity var(--vn-duration-base) var(--vn-ease);
+}
+
+/* Cambio a la segunda imagen al pasar el raton: en moda sube el clic. */
+.vn-card__media-wrap { position: relative; overflow: hidden; border-radius: var(--vn-radius-md); }
+.vn-card__media--hover {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+}
+.vn-card__media-wrap:hover .vn-card__media--hover { opacity: 1; }
+@media (hover: none) { .vn-card__media--hover { display: none; } }
+
+.woocommerce ul.products li.product .woocommerce-loop-product__title {
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-medium);
+  line-height: var(--vn-leading-snug);
+  color: var(--vn-text);
+  padding: 0;
+  margin: 0 0 var(--vn-space-1);
+}
+
+/* Precio con contraste que SI pasa WCAG AA (antes #86868B sobre blanco). */
+.woocommerce ul.products li.product .price,
+.woocommerce div.product p.price,
+.woocommerce div.product span.price {
+  color: var(--vn-text);
+  font-size: var(--vn-text-base);
+  font-weight: var(--vn-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.woocommerce ul.products li.product .price del,
+.woocommerce div.product p.price del {
+  color: var(--vn-text-muted);
+  font-weight: var(--vn-weight-normal);
+  margin-right: var(--vn-space-2);
+}
+.woocommerce ul.products li.product .price ins { text-decoration: none; }
+
+/* Estrellas visibles en la tarjeta */
+.woocommerce ul.products li.product .star-rating {
+  font-size: var(--vn-text-xs);
+  color: #E8A33D;
+  margin: var(--vn-space-1) 0;
+  float: none;
+}
+
+.woocommerce span.onsale {
+  position: absolute;
+  top: var(--vn-space-3);
+  left: var(--vn-space-3);
+  z-index: 2;
+  min-height: 0;
+  min-width: 0;
+  padding: var(--vn-space-1) var(--vn-space-3);
+  border-radius: var(--vn-radius-full);
+  background: var(--vn-black);
+  color: var(--vn-white);
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-wide);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.woocommerce ul.products li.product a.add_to_cart_button,
+.woocommerce ul.products li.product a.button {
+  margin-top: var(--vn-space-3);
+  width: 100%;
+}
+
+/* ==========================================================================
+   3. FICHA DE PRODUCTO (PDP)
+   ========================================================================== */
+
+.woocommerce div.product {
+  max-width: var(--vn-container-max);
+  margin: 0 auto;
+  padding: var(--vn-space-8) var(--vn-space-5);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--vn-space-6);
+}
+
+@media (min-width: 900px) {
+  .woocommerce div.product {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
+    gap: var(--vn-space-8);
+    align-items: start;
+  }
+  .woocommerce div.product .woocommerce-product-gallery { grid-column: 1; grid-row: 1 / span 2; }
+  .woocommerce div.product .summary {
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: calc(var(--vn-header-height) + var(--vn-space-4));
+  }
+  .woocommerce div.product .woocommerce-tabs,
+  .woocommerce div.product .related,
+  .woocommerce div.product .upsells { grid-column: 1 / -1; }
+}
+
+.woocommerce div.product .woocommerce-product-gallery { width: 100%; float: none; margin: 0; }
+.woocommerce div.product .summary { width: 100%; float: none; margin: 0; }
+
+.woocommerce div.product .product_title {
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-text-3xl);
+  font-weight: var(--vn-weight-normal);
+  letter-spacing: var(--vn-tracking-tight);
+  margin-bottom: var(--vn-space-3);
+}
+
+.woocommerce div.product p.price { font-size: var(--vn-text-2xl); margin-bottom: var(--vn-space-5); }
+
+/* Selector de tallas de verdad, no un <select> gris. */
+.vn-sizes { display: flex; flex-wrap: wrap; gap: var(--vn-space-2); margin-bottom: var(--vn-space-2); }
+.vn-sizes__label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-medium);
+  margin-bottom: var(--vn-space-3);
+}
+.vn-sizes__guide { font-size: var(--vn-text-sm); color: var(--vn-text-muted); text-decoration: underline; }
+.vn-size {
+  min-width: 48px; min-height: 44px;
+  border: 1px solid var(--vn-border-strong);
+  border-radius: var(--vn-radius-md);
+  background: var(--vn-bg);
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-medium);
+  cursor: pointer;
+  transition: all var(--vn-duration-fast) var(--vn-ease);
+}
+.vn-size:hover { border-color: var(--vn-black); }
+.vn-size[aria-pressed="true"] { background: var(--vn-black); border-color: var(--vn-black); color: var(--vn-white); }
+.vn-size[disabled] {
+  opacity: .4;
+  cursor: not-allowed;
+  background: repeating-linear-gradient(45deg, transparent, transparent 4px, var(--vn-gray-200) 4px, var(--vn-gray-200) 5px);
+}
+
+.woocommerce div.product form.cart { margin-bottom: var(--vn-space-6); }
+.woocommerce div.product form.cart div.quantity { margin-right: var(--vn-space-3); }
+.woocommerce div.product form.cart .button { min-width: 200px; }
+
+/* Acordeones de detalle */
+.vn-accordion { border-top: 1px solid var(--vn-border); }
+.vn-accordion details { border-bottom: 1px solid var(--vn-border); }
+.vn-accordion summary {
+  padding: var(--vn-space-4) 0;
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.vn-accordion summary::-webkit-details-marker { display: none; }
+.vn-accordion summary::after { content: '+'; font-size: var(--vn-text-lg); font-weight: var(--vn-weight-light); }
+.vn-accordion details[open] summary::after { content: '\2212'; }
+.vn-accordion details > div {
+  padding-bottom: var(--vn-space-5);
+  font-size: var(--vn-text-sm);
+  line-height: var(--vn-leading-relaxed);
+  color: var(--vn-gray-700);
+}
+
+/* ==========================================================================
+   4. RESENAS — vuelven a ser visibles
+   ========================================================================== */
+
+.woocommerce div.product #reviews,
+.woocommerce div.product .woocommerce-Reviews,
+.woocommerce #review_form_wrapper,
+.woocommerce .comment-form-rating {
+  display: block;   /* estaban ocultas con display:none */
+}
+
+.woocommerce #reviews {
+  padding-top: var(--vn-space-8);
+  border-top: 1px solid var(--vn-border);
+}
+
+.woocommerce #reviews h2 {
+  font-size: var(--vn-text-xl);
+  font-weight: var(--vn-weight-semibold);
+  margin-bottom: var(--vn-space-6);
+}
+
+.woocommerce #reviews ol.commentlist { list-style: none; margin: 0 0 var(--vn-space-8); padding: 0; display: grid; gap: var(--vn-space-4); }
+
+.woocommerce #reviews ol.commentlist li .comment_container {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: var(--vn-space-4);
+  background: var(--vn-bg);
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-lg);
+  padding: var(--vn-space-5);
+}
+.woocommerce #reviews ol.commentlist li img.avatar {
+  position: static;
+  width: 48px; height: 48px;
+  border-radius: var(--vn-radius-full);
+  border: 0;
+  padding: 0;
+  float: none;
+}
+.woocommerce #reviews ol.commentlist li .comment-text {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+}
+.woocommerce #reviews .star-rating { color: #E8A33D; float: none; margin-bottom: var(--vn-space-2); }
+.woocommerce #reviews .woocommerce-review__author { font-weight: var(--vn-weight-semibold); font-size: var(--vn-text-sm); }
+.woocommerce #reviews .woocommerce-review__published-date { font-size: var(--vn-text-xs); color: var(--vn-text-muted); }
+
+.woocommerce #review_form_wrapper {
+  background: var(--vn-bg-alt);
+  border-radius: var(--vn-radius-lg);
+  padding: var(--vn-space-6);
+}
+.woocommerce p.stars a { color: #E8A33D; }
+
+/* Estado vacio: invita a ser el primero en vez de dejar un hueco. */
+.woocommerce #reviews .woocommerce-noreviews {
+  padding: var(--vn-space-6);
+  background: var(--vn-bg-alt);
+  border-radius: var(--vn-radius-lg);
+  text-align: center;
+  color: var(--vn-text-muted);
+}
+
+/* ==========================================================================
+   5. PAGINACION
+   ========================================================================== */
+
+.woocommerce nav.woocommerce-pagination { padding: var(--vn-space-8) 0; }
+.woocommerce nav.woocommerce-pagination ul {
+  border: 0;
+  display: inline-flex;
+  gap: var(--vn-space-2);
+}
+.woocommerce nav.woocommerce-pagination ul li { border: 0; margin: 0; overflow: visible; }
+.woocommerce nav.woocommerce-pagination ul li a,
+.woocommerce nav.woocommerce-pagination ul li span {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 var(--vn-space-3);
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-md);
+  font-size: var(--vn-text-sm);
+  background: var(--vn-bg);
+  color: var(--vn-text);
+}
+.woocommerce nav.woocommerce-pagination ul li span.current {
+  background: var(--vn-black);
+  border-color: var(--vn-black);
+  color: var(--vn-white);
+}
+.woocommerce nav.woocommerce-pagination ul li a:hover { border-color: var(--vn-black); background: var(--vn-bg); }
+
+/* ==========================================================================
+   6. ESTADO VACIO DE BUSQUEDA
+   ========================================================================== */
+
+.vn-empty {
+  max-width: var(--vn-container-text);
+  margin: 0 auto;
+  padding: var(--vn-space-10) var(--vn-space-5);
+  text-align: center;
+}
+.vn-empty__title { font-size: var(--vn-text-xl); font-weight: var(--vn-weight-semibold); margin-bottom: var(--vn-space-3); }
+.vn-empty__text { color: var(--vn-text-muted); margin-bottom: var(--vn-space-6); }

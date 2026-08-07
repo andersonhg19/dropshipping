@@ -15,9 +15,17 @@ frontend/tsconfig.tsbuildinfo
 frontend/graph.svg
 
 # ==================== Docker / WordPress ====================
+# WordPress core, plugins de terceros y uploads NO se versionan: se instalan.
+# Lo que SI es nuestro (tema hijo, mu-plugins, plugins propios) se versiona.
 wordpress/db-data/
-wordpress/wp-content/
+wordpress/wp-content/*
 !wordpress/wp-content/mu-plugins/
+!wordpress/wp-content/themes/
+wordpress/wp-content/themes/*
+!wordpress/wp-content/themes/visnex/
+!wordpress/wp-content/plugins/
+wordpress/wp-content/plugins/*
+!wordpress/wp-content/plugins/visnex-colombia/
 !wordpress/config/
 
 # ==================== IDE ====================

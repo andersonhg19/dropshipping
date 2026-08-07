@@ -1,0 +1,829 @@
+/* ==========================================================================
+   VISNEX — Home premium
+   --------------------------------------------------------------------------
+   Heredado del mu-plugin visnex-style.php v3.0 y CONSERVADO a proposito: la
+   home ya estaba bien resuelta y es el activo de confianza de la marca.
+
+   Que cambio al traerlo aqui:
+     - Deja de inyectarse inline en wp_head: ahora es un archivo versionado,
+       cacheable y minificable.
+     - Las secciones de botones, ficha de producto, rejilla de productos y
+       archivo se ELIMINARON de aqui porque ahora viven en components.css y
+       shop.css, escritas con tokens y sin pelearse con Storefront.
+     - Los tokens :root se eliminaron: la fuente unica de verdad es tokens.css.
+
+   Regla de negocio asociada: esta home es para trafico de MARCA. El trafico
+   PAGADO no llega aqui nunca — va a la landing COD (landing-cod.css).
+   ========================================================================== */
+
+
+/* ===================================================
+   ANNOUNCEMENT BAR
+   =================================================== */
+.vn-announcement {
+    height: 36px;
+    background: var(--vn-black);
+    color: var(--vn-white);
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-xs);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 10001;
+}
+
+.vn-announcement__close {
+    position: absolute;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 0.5rem;
+    line-height: 1;
+    transition: color 0.3s;
+}
+
+.vn-announcement__close:hover {
+    color: var(--vn-white);
+}
+
+
+/* ===================================================
+   HEADER / NAVIGATION (Apple-style blur glass)
+   =================================================== */
+.site-header,
+#masthead {
+    background: rgba(255,255,255,0.72) !important;
+    backdrop-filter: saturate(180%) blur(20px) !important;
+    -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 9999 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    transition: box-shadow 0.3s ease !important;
+}
+
+/* Shadow on scroll (added via JS) */
+.site-header.vn-scrolled {
+    box-shadow: 0 1px 12px rgba(0,0,0,0.08) !important;
+}
+
+.site-branding {
+    padding: 10px 0 !important;
+}
+
+/* Logo: VISNEX uppercase with wide tracking */
+.site-title a,
+.beta .site-title a {
+    font-family: var(--vn-font-primary) !important;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    letter-spacing: 0.2em !important;
+    text-transform: uppercase !important;
+    color: var(--vn-black) !important;
+    text-decoration: none !important;
+}
+
+.site-description {
+    display: none !important;
+}
+
+/* Nav items: 11px uppercase with wide spacing */
+.main-navigation ul li a,
+.storefront-primary-navigation ul li a {
+    font-family: var(--vn-font-primary) !important;
+    font-size: var(--vn-text-xs) !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.15em !important;
+    text-transform: uppercase !important;
+    color: var(--vn-gray-900) !important;
+    padding: 12px 14px !important;
+    transition: color 0.3s ease !important;
+    text-decoration: none !important;
+}
+
+.main-navigation ul li a:hover,
+.storefront-primary-navigation ul li a:hover {
+    color: var(--vn-accent) !important;
+}
+
+
+/* ===================================================
+   HIDE ALL WP CLUTTER
+   =================================================== */
+.storefront-breadcrumb,
+.woocommerce-breadcrumb,
+.woocommerce-result-count,
+.woocommerce-ordering,
+.storefront-sorting,
+#secondary,
+.widget-area,
+aside,
+.sidebar,
+.entry-title,
+.page-title,
+.page .entry-header,
+.hentry .entry-header {
+    display: none !important;
+}
+
+
+/* ===================================================
+   FULL WIDTH LAYOUT
+   =================================================== */
+.col-full,
+.site-main,
+.content-area {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+}
+
+.site-content {
+    margin-top: 0 !important;
+}
+
+.hentry {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* ===================================================
+   HERO SECTION (100vh, Ken Burns, Playfair Display)
+   =================================================== */
+.vn-hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+.vn-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: vnKenBurns 20s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes vnKenBurns {
+    0%   { transform: scale(1); }
+    100% { transform: scale(1.1); }
+}
+
+.vn-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.55) 0%,
+        rgba(0,0,0,0.2) 40%,
+        transparent 70%
+    );
+    z-index: 1;
+}
+
+.vn-hero__content {
+    position: relative;
+    z-index: 2;
+    color: var(--vn-white);
+    padding: 0 var(--vn-container-pad) 8vh;
+    max-width: 900px;
+}
+
+.vn-hero__title {
+    font-family: var(--vn-font-editorial);
+    font-size: var(--vn-text-7xl);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.1;
+    letter-spacing: -0.022em;
+    color: var(--vn-white);
+    margin: 0 0 1.25rem;
+}
+
+.vn-hero__subtitle {
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-lg);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.vn-hero__ctas {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Primary CTA: white pill */
+.vn-btn--white {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--vn-white);
+    color: var(--vn-black);
+    padding: 14px 36px;
+    border-radius: var(--vn-radius-pill);
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-base);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: var(--vn-transition);
+}
+
+.vn-btn--white:hover {
+    background: var(--vn-gray-200);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255,255,255,0.2);
+    color: var(--vn-black);
+}
+
+/* Ghost text link CTA */
+.vn-btn--ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.8);
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-base);
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 14px 8px;
+}
+
+.vn-btn--ghost:hover {
+    color: var(--vn-white);
+}
+
+
+/* ===================================================
+   SECTIONS - Shared layout
+   =================================================== */
+.vn-section {
+    padding: clamp(3.5rem, 8vw, 6rem) var(--vn-container-pad);
+    max-width: var(--vn-container-max);
+    margin: 0 auto;
+}
+
+.vn-section--full {
+    max-width: 100%;
+}
+
+.vn-section--offwhite {
+    background: var(--vn-off-white);
+}
+
+.vn-section__header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.vn-section__title {
+    font-family: var(--vn-font-primary);
+    font-size: clamp(1.5rem, 3vw, var(--vn-text-4xl));
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    color: var(--vn-gray-900);
+    margin: 0 0 0.5rem;
+    line-height: 1.2;
+}
+
+.vn-section__subtitle {
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-md);
+    font-weight: 300;
+    color: var(--vn-gray-500);
+    margin: 0;
+    letter-spacing: 0.02em;
+}
+
+
+/* ===================================================
+   CATEGORIES SECTION (3 cards, 3:4 ratio)
+   =================================================== */
+.vn-categories {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+}
+
+.vn-category-card {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: var(--vn-radius-lg);
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    transition: transform 0.5s var(--vn-ease), box-shadow 0.5s var(--vn-ease);
+}
+
+.vn-category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--vn-shadow-xl);
+}
+
+.vn-category-card__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--vn-ease-out);
+}
+
+.vn-category-card:hover .vn-category-card__img {
+    transform: scale(1.05);
+}
+
+.vn-category-card__overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.6));
+    padding: 3rem 1.75rem 1.75rem;
+    z-index: 2;
+}
+
+.vn-category-card__name {
+    color: var(--vn-white);
+    font-family: var(--vn-font-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin: 0 0 0.25rem;
+}
+
+.vn-category-card__cta {
+    color: rgba(255,255,255,0.6);
+    font-size: var(--vn-text-xs);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+
+/* ===================================================
+   EDITORIAL SPLIT (Brand Story)
+   =================================================== */
+.vn-editorial {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 70vh;
+    overflow: hidden;
+}
+
+.vn-editorial__image {
+    overflow: hidden;
+}
+
+.vn-editorial__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 4 / 5;
+    border-radius: 0;
+    transition: transform 0.8s ease;
+}
+
+.vn-editorial:hover .vn-editorial__image img {
+    transform: scale(1.03);
+}
+
+.vn-editorial__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(2.5rem, 6vw, 5rem) clamp(2rem, 5vw, 4rem);
+    background: var(--vn-gray-100);
+}
+
+.vn-editorial__label {
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-xs);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--vn-fashion);
+    margin-bottom: 1rem;
+}
+
+.vn-editorial__title {
+    font-family: var(--vn-font-editorial);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.2;
+    color: var(--vn-gray-900);
+    margin: 0 0 1.25rem;
+}
+
+.vn-editorial__text {
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-base);
+    color: var(--vn-gray-700);
+    line-height: 1.75;
+    margin-bottom: 2rem;
+}
+
+.vn-editorial__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-base);
+    font-weight: 500;
+    color: var(--vn-gray-900);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: gap 0.3s ease, color 0.3s ease;
+}
+
+.vn-editorial__link:hover {
+    gap: 0.8rem;
+    color: var(--vn-accent);
+}
+
+
+/* ===================================================
+   TRUST BAR (4 icons)
+   =================================================== */
+.vn-trust {
+    padding: 2.5rem var(--vn-container-pad);
+    background: var(--vn-off-white);
+    border-top: 1px solid var(--vn-gray-200);
+    border-bottom: 1px solid var(--vn-gray-200);
+}
+
+.vn-trust__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    max-width: var(--vn-container-max);
+    margin: 0 auto;
+    text-align: center;
+}
+
+.vn-trust__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.vn-trust__icon {
+    width: 28px;
+    height: 28px;
+    stroke: var(--vn-gray-900);
+    stroke-width: 1.5;
+    fill: none;
+}
+
+.vn-trust__title {
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--vn-gray-900);
+}
+
+.vn-trust__desc {
+    font-size: 0.625rem;
+    color: var(--vn-gray-500);
+    letter-spacing: 0.05em;
+}
+
+
+/* ===================================================
+   NEWSLETTER (Dark section)
+   =================================================== */
+.vn-newsletter {
+    padding: clamp(4rem, 8vw, 6rem) var(--vn-container-pad);
+    background: var(--vn-black);
+    text-align: center;
+}
+
+.vn-newsletter__title {
+    font-family: var(--vn-font-editorial);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--vn-white);
+    margin: 0 0 0.75rem;
+    line-height: 1.2;
+}
+
+.vn-newsletter__subtitle {
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-md);
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+}
+
+.vn-newsletter__form {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 460px;
+    margin: 0 auto;
+    align-items: stretch;
+}
+
+.vn-newsletter__input {
+    flex: 1;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: var(--vn-radius-pill);
+    color: var(--vn-white);
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-base);
+    padding: 12px 20px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.vn-newsletter__input:focus {
+    border-color: var(--vn-white);
+}
+
+.vn-newsletter__input::placeholder {
+    color: rgba(255,255,255,0.4);
+}
+
+.vn-newsletter__btn {
+    background: var(--vn-white);
+    color: var(--vn-black);
+    border: none;
+    border-radius: var(--vn-radius-pill);
+    padding: 12px 28px;
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-sm);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+}
+
+.vn-newsletter__btn:hover {
+    opacity: 0.85;
+}
+
+
+/* ===================================================
+   FOOTER (4 columns, dark)
+   =================================================== */
+.site-footer,
+.storefront-footer {
+    background: var(--vn-black) !important;
+    color: rgba(255,255,255,0.5) !important;
+    padding: 0 !important;
+}
+
+.vn-footer {
+    padding: 4rem var(--vn-container-pad) 1.5rem;
+    max-width: var(--vn-container-max);
+    margin: 0 auto;
+}
+
+.vn-footer__grid {
+    display: grid;
+    grid-template-columns: 1.5fr repeat(3, 1fr);
+    gap: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.vn-footer__brand-desc {
+    font-size: var(--vn-text-sm);
+    color: rgba(255,255,255,0.4);
+    line-height: 1.7;
+    margin-top: 0.75rem;
+}
+
+.vn-footer__brand-name {
+    font-family: var(--vn-font-primary);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--vn-white);
+}
+
+.vn-footer__col-title {
+    font-family: var(--vn-font-primary);
+    font-size: var(--vn-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--vn-white);
+    margin-bottom: 1.25rem;
+}
+
+.vn-footer__link {
+    display: block;
+    font-size: var(--vn-text-sm);
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    padding: 0.3rem 0;
+    transition: color 0.3s ease;
+}
+
+.vn-footer__link:hover {
+    color: var(--vn-white);
+}
+
+.vn-footer__bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 1.5rem;
+    text-align: center;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.05em;
+}
+
+/* Hide default Storefront footer info */
+.site-info,
+.site-footer .site-info {
+    display: none !important;
+}
+
+.site-footer a {
+    color: rgba(255,255,255,0.5) !important;
+}
+
+
+/* ===================================================
+   ANIMATIONS (Intersection Observer)
+   =================================================== */
+.vn-animate-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s var(--vn-ease-out);
+}
+
+.vn-animate-in.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger children */
+.vn-stagger > .vn-animate-in:nth-child(1) { transition-delay: 0ms; }
+.vn-stagger > .vn-animate-in:nth-child(2) { transition-delay: 80ms; }
+.vn-stagger > .vn-animate-in:nth-child(3) { transition-delay: 160ms; }
+.vn-stagger > .vn-animate-in:nth-child(4) { transition-delay: 240ms; }
+
+/* Hero entrance */
+@keyframes vnFadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.vn-hero__content > * {
+    animation: vnFadeUp 0.8s ease forwards;
+}
+
+.vn-hero__title  { animation-delay: 0.2s; opacity: 0; }
+.vn-hero__subtitle { animation-delay: 0.5s; opacity: 0; }
+.vn-hero__ctas   { animation-delay: 0.8s; opacity: 0; }
+
+
+/* ===================================================
+   REDUCED MOTION
+   =================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    .vn-animate-in { opacity: 1; transform: none; }
+    .vn-hero__content > * { opacity: 1; }
+    .vn-hero__bg { animation: none; }
+}
+
+
+/* ===================================================
+   RESPONSIVE
+   =================================================== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .woocommerce ul.products {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+/* Mobile landscape / Tablet small */
+@media (max-width: 768px) {
+    .vn-hero {
+        height: 85vh;
+        min-height: 500px;
+    }
+
+    .vn-hero__title {
+        font-size: var(--vn-text-5xl);
+    }
+
+    .vn-categories {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .vn-categories .vn-category-card {
+        aspect-ratio: 16 / 9;
+    }
+
+    .woocommerce ul.products {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem !important;
+    }
+
+    .vn-editorial {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+
+    .vn-editorial__image img {
+        aspect-ratio: 16 / 9;
+    }
+
+    .vn-trust__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .vn-footer__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .vn-newsletter__form {
+        flex-direction: column;
+    }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+    .vn-hero__title {
+        font-size: 2.5rem;
+    }
+
+    .vn-hero__ctas {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .woocommerce ul.products {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+    }
+
+    .vn-footer__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .vn-announcement {
+        font-size: 0.55rem;
+        letter-spacing: 0.05em;
+    }
+}
+
+
+/* ===================================================

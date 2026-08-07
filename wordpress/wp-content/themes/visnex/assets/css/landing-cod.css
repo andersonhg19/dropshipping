@@ -1,0 +1,456 @@
+/* ==========================================================================
+   VISNEX — LANDING DE CONVERSION CONTRAENTREGA (COD)
+   --------------------------------------------------------------------------
+   Esta es la pagina a la que apunta el trafico PAGADO. Es un producto de
+   diseno distinto a la home, a proposito:
+
+     Home premium          -> trafico de marca, storytelling, hero de 100vh
+     Landing COD (esta)    -> trafico frio desde un anuncio, movil, 8 segundos
+
+   Por eso aqui NO hay hero editorial: el precio, la foto y el formulario van
+   arriba del pliegue. La regla operativa es que ningun anuncio apunta nunca a
+   la home.
+
+   Movil primero de verdad: en Colombia el trafico de Meta a tiendas COD es
+   mayoritariamente movil, asi que el layout base es de una columna y las dos
+   columnas son la excepcion en pantallas grandes.
+   ========================================================================== */
+
+.vn-lp {
+  --vn-lp-accent: var(--vn-black);
+  font-family: var(--vn-font-sans);
+  color: var(--vn-text);
+}
+
+/* Sin cabecera pesada ni menu: cada enlace de salida es una fuga de conversion. */
+.page-template-landing-cod .site-header,
+.page-template-landing-cod .vn-announcement,
+.page-template-landing-cod .storefront-breadcrumb,
+.page-template-landing-cod .vn-footer .vn-footer__grid { display: none; }
+
+.page-template-landing-cod .site-content,
+.page-template-landing-cod .content-area,
+.page-template-landing-cod .site-main { margin: 0; padding: 0; max-width: none; width: 100%; }
+
+/* --- Barra minima de marca: da confianza sin ofrecer salidas ------------- */
+.vn-lp__bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--vn-space-3);
+  padding: var(--vn-space-3) var(--vn-space-5);
+  background: var(--vn-black);
+  color: var(--vn-white);
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-widest);
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   1. BLOQUE PRINCIPAL — todo lo que decide la venta, arriba
+   ========================================================================== */
+
+.vn-lp__hero {
+  display: grid;
+  gap: var(--vn-space-6);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--vn-space-6) var(--vn-space-5) var(--vn-space-8);
+}
+
+@media (min-width: 900px) {
+  .vn-lp__hero {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: var(--vn-space-8);
+    align-items: start;
+    padding-top: var(--vn-space-8);
+  }
+}
+
+/* --- Galeria ------------------------------------------------------------- */
+.vn-lp__gallery { min-width: 0; }
+
+.vn-lp__main-img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--vn-radius-lg);
+  background: var(--vn-gray-100);
+  display: block;
+}
+
+.vn-lp__thumbs {
+  display: flex;
+  gap: var(--vn-space-2);
+  margin-top: var(--vn-space-3);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: var(--vn-space-1);
+}
+.vn-lp__thumbs::-webkit-scrollbar { display: none; }
+
+.vn-lp__thumb {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: var(--vn-radius-md);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color var(--vn-duration-fast) var(--vn-ease);
+}
+.vn-lp__thumb[aria-current="true"],
+.vn-lp__thumb:hover { border-color: var(--vn-black); }
+
+/* --- Informacion y compra ------------------------------------------------ */
+.vn-lp__info { min-width: 0; }
+
+.vn-lp__title {
+  font-size: var(--vn-text-2xl);
+  font-weight: var(--vn-weight-bold);
+  line-height: var(--vn-leading-tight);
+  letter-spacing: var(--vn-tracking-tight);
+  margin: 0 0 var(--vn-space-3);
+}
+@media (min-width: 900px) { .vn-lp__title { font-size: var(--vn-text-3xl); } }
+
+/* Prueba social ANTES del precio: en trafico frio, la credibilidad tiene que
+   llegar antes que la cifra. */
+.vn-lp__social {
+  display: flex;
+  align-items: center;
+  gap: var(--vn-space-2);
+  margin-bottom: var(--vn-space-4);
+  font-size: var(--vn-text-sm);
+  color: var(--vn-text-muted);
+}
+.vn-lp__stars { color: #E8A33D; letter-spacing: 2px; font-size: var(--vn-text-base); }
+
+/* --- Precio -------------------------------------------------------------- */
+.vn-lp__price-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--vn-space-3);
+  margin-bottom: var(--vn-space-2);
+}
+
+.vn-lp__price {
+  font-size: var(--vn-text-4xl);
+  font-weight: var(--vn-weight-bold);
+  letter-spacing: var(--vn-tracking-tighter);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.vn-lp__price-old {
+  font-size: var(--vn-text-xl);
+  color: var(--vn-text-muted);
+  text-decoration: line-through;
+  font-variant-numeric: tabular-nums;
+}
+
+.vn-lp__discount {
+  background: var(--vn-danger);
+  color: var(--vn-white);
+  padding: var(--vn-space-1) var(--vn-space-3);
+  border-radius: var(--vn-radius-full);
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-bold);
+}
+
+.vn-lp__price-note {
+  font-size: var(--vn-text-sm);
+  color: var(--vn-success);
+  font-weight: var(--vn-weight-semibold);
+  margin-bottom: var(--vn-space-5);
+}
+
+/* --- Beneficios ---------------------------------------------------------- */
+.vn-lp__benefits {
+  list-style: none;
+  margin: 0 0 var(--vn-space-6);
+  padding: 0;
+  display: grid;
+  gap: var(--vn-space-3);
+}
+
+.vn-lp__benefit {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: var(--vn-space-3);
+  align-items: start;
+  font-size: var(--vn-text-base);
+  line-height: var(--vn-leading-snug);
+}
+.vn-lp__benefit svg { width: 22px; height: 22px; color: var(--vn-success); margin-top: 1px; }
+
+/* --- Escasez: honesta o no se pone -------------------------------------- */
+.vn-lp__scarcity {
+  display: flex;
+  align-items: center;
+  gap: var(--vn-space-2);
+  padding: var(--vn-space-3) var(--vn-space-4);
+  background: var(--vn-warning-bg);
+  border-radius: var(--vn-radius-md);
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-semibold);
+  color: var(--vn-warning);
+  margin-bottom: var(--vn-space-5);
+}
+.vn-lp__scarcity-dot {
+  width: 8px; height: 8px;
+  border-radius: var(--vn-radius-full);
+  background: var(--vn-warning);
+  flex-shrink: 0;
+  animation: vn-pulse 2s var(--vn-ease) infinite;
+}
+@keyframes vn-pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .vn-lp__scarcity-dot { animation: none; } }
+
+/* ==========================================================================
+   2. FORMULARIO CONTRAENTREGA — el corazon de la pagina
+   --------------------------------------------------------------------------
+   Cuatro campos y nada mas. Cada campo extra es gente que se cae.
+   Sin cuenta, sin correo obligatorio, sin contrasena.
+   ========================================================================== */
+
+.vn-cod-form {
+  background: var(--vn-bg);
+  border: 2px solid var(--vn-black);
+  border-radius: var(--vn-radius-lg);
+  padding: var(--vn-space-6);
+  box-shadow: var(--vn-shadow-lg);
+}
+
+.vn-cod-form__title {
+  font-size: var(--vn-text-lg);
+  font-weight: var(--vn-weight-bold);
+  margin: 0 0 var(--vn-space-1);
+}
+
+.vn-cod-form__sub {
+  font-size: var(--vn-text-sm);
+  color: var(--vn-text-muted);
+  margin: 0 0 var(--vn-space-5);
+}
+
+.vn-cod-form__fields { display: grid; gap: var(--vn-space-4); }
+
+.vn-cod-form__field { display: grid; gap: var(--vn-space-2); }
+
+.vn-cod-form__field label {
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-medium);
+}
+
+.vn-cod-form__error {
+  font-size: var(--vn-text-xs);
+  color: var(--vn-danger);
+  min-height: 1em;
+}
+.vn-cod-form__field[data-invalid="true"] input,
+.vn-cod-form__field[data-invalid="true"] select {
+  border-color: var(--vn-danger);
+  box-shadow: 0 0 0 3px var(--vn-danger-bg);
+}
+
+/* Cantidad */
+.vn-cod-form__qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--vn-border-strong);
+  border-radius: var(--vn-radius-full);
+  overflow: hidden;
+}
+.vn-cod-form__qty button {
+  width: 44px; height: 44px;
+  border: 0;
+  background: transparent;
+  font-size: var(--vn-text-lg);
+  cursor: pointer;
+  color: var(--vn-text);
+}
+.vn-cod-form__qty button:hover { background: var(--vn-gray-100); }
+.vn-cod-form__qty input {
+  width: 48px; height: 44px; min-height: 0;
+  border: 0; text-align: center;
+  font-weight: var(--vn-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  padding: 0;
+}
+
+/* Resumen antes de confirmar: nadie compra sin saber el total. */
+.vn-cod-form__summary {
+  margin-top: var(--vn-space-5);
+  padding-top: var(--vn-space-4);
+  border-top: 1px dashed var(--vn-border-strong);
+  display: grid;
+  gap: var(--vn-space-2);
+  font-size: var(--vn-text-sm);
+}
+.vn-cod-form__line { display: flex; justify-content: space-between; color: var(--vn-text-muted); }
+.vn-cod-form__line--total {
+  font-size: var(--vn-text-lg);
+  font-weight: var(--vn-weight-bold);
+  color: var(--vn-text);
+  padding-top: var(--vn-space-2);
+  border-top: 1px solid var(--vn-border);
+}
+.vn-cod-form__line span:last-child { font-variant-numeric: tabular-nums; }
+
+.vn-cod-form__submit {
+  width: 100%;
+  margin-top: var(--vn-space-5);
+  min-height: 56px;
+  font-size: var(--vn-text-base);
+}
+.vn-cod-form__submit[aria-busy="true"] { opacity: .7; pointer-events: none; }
+
+.vn-cod-form__legal {
+  margin-top: var(--vn-space-3);
+  font-size: var(--vn-text-xs);
+  color: var(--vn-text-muted);
+  text-align: center;
+  line-height: var(--vn-leading-snug);
+}
+
+/* --- Sellos de confianza bajo el boton ---------------------------------- */
+.vn-lp__trust {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--vn-space-3);
+  margin-top: var(--vn-space-5);
+  padding-top: var(--vn-space-5);
+  border-top: 1px solid var(--vn-border);
+  text-align: center;
+}
+.vn-lp__trust-item { font-size: var(--vn-text-xs); color: var(--vn-text-muted); line-height: var(--vn-leading-snug); }
+.vn-lp__trust-item svg { width: 22px; height: 22px; color: var(--vn-text); margin-bottom: var(--vn-space-1); }
+.vn-lp__trust-item strong { display: block; color: var(--vn-text); font-size: var(--vn-text-xs); }
+
+/* ==========================================================================
+   3. SECCIONES DE APOYO (bajo el pliegue)
+   ========================================================================== */
+
+.vn-lp__section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--vn-space-8) var(--vn-space-5);
+}
+.vn-lp__section--alt { max-width: none; background: var(--vn-bg-alt); }
+.vn-lp__section--alt > * { max-width: 900px; margin-inline: auto; }
+
+.vn-lp__section-title {
+  font-size: var(--vn-text-2xl);
+  font-weight: var(--vn-weight-bold);
+  text-align: center;
+  letter-spacing: var(--vn-tracking-tight);
+  margin-bottom: var(--vn-space-6);
+}
+
+/* --- Resenas ------------------------------------------------------------- */
+.vn-lp__reviews { display: grid; gap: var(--vn-space-4); }
+@media (min-width: 760px) { .vn-lp__reviews { grid-template-columns: repeat(3, 1fr); } }
+
+.vn-lp__review {
+  background: var(--vn-bg);
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-lg);
+  padding: var(--vn-space-5);
+}
+.vn-lp__review-stars { color: #E8A33D; letter-spacing: 2px; margin-bottom: var(--vn-space-3); }
+.vn-lp__review-text { font-size: var(--vn-text-sm); line-height: var(--vn-leading-normal); margin-bottom: var(--vn-space-4); }
+.vn-lp__review-author { font-size: var(--vn-text-xs); color: var(--vn-text-muted); font-weight: var(--vn-weight-semibold); }
+
+/* --- Preguntas frecuentes: mata objeciones antes de que se vayan -------- */
+.vn-lp__faq { display: grid; gap: var(--vn-space-2); }
+
+.vn-lp__faq details {
+  background: var(--vn-bg);
+  border: 1px solid var(--vn-border);
+  border-radius: var(--vn-radius-md);
+  overflow: hidden;
+}
+.vn-lp__faq summary {
+  padding: var(--vn-space-4) var(--vn-space-5);
+  font-weight: var(--vn-weight-semibold);
+  font-size: var(--vn-text-base);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--vn-space-4);
+  align-items: center;
+}
+.vn-lp__faq summary::-webkit-details-marker { display: none; }
+.vn-lp__faq summary::after {
+  content: '+';
+  font-size: var(--vn-text-xl);
+  font-weight: var(--vn-weight-light);
+  flex-shrink: 0;
+  transition: transform var(--vn-duration-base) var(--vn-ease);
+}
+.vn-lp__faq details[open] summary::after { transform: rotate(45deg); }
+.vn-lp__faq details > div {
+  padding: 0 var(--vn-space-5) var(--vn-space-5);
+  font-size: var(--vn-text-sm);
+  line-height: var(--vn-leading-relaxed);
+  color: var(--vn-gray-700);
+}
+
+/* ==========================================================================
+   4. BARRA FIJA DE COMPRA EN MOVIL
+   --------------------------------------------------------------------------
+   Cuando el formulario sale de pantalla, el precio y el boton viajan con el
+   usuario. Sin esto, quien baja a leer las resenas tiene que volver a subir.
+   ========================================================================== */
+
+.vn-lp__sticky {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: var(--vn-z-sticky);
+  display: flex;
+  align-items: center;
+  gap: var(--vn-space-4);
+  padding: var(--vn-space-3) var(--vn-space-4);
+  padding-bottom: max(var(--vn-space-3), env(safe-area-inset-bottom));
+  background: rgba(255,255,255,.97);
+  backdrop-filter: saturate(180%) blur(16px);
+  border-top: 1px solid var(--vn-border);
+  transform: translateY(110%);
+  transition: transform var(--vn-duration-base) var(--vn-ease-out);
+}
+.vn-lp__sticky.is-visible { transform: translateY(0); }
+
+.vn-lp__sticky-price {
+  font-size: var(--vn-text-lg);
+  font-weight: var(--vn-weight-bold);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.vn-lp__sticky .vn-btn { flex: 1; min-height: 48px; }
+
+@media (min-width: 900px) { .vn-lp__sticky { display: none; } }
+
+/* ==========================================================================
+   5. CONFIRMACION
+   ========================================================================== */
+
+.vn-lp__done {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: var(--vn-space-10) var(--vn-space-5);
+  text-align: center;
+}
+.vn-lp__done-icon {
+  width: 72px; height: 72px;
+  margin: 0 auto var(--vn-space-5);
+  display: grid; place-items: center;
+  border-radius: var(--vn-radius-full);
+  background: var(--vn-success-bg);
+  color: var(--vn-success);
+}
+.vn-lp__done-title { font-size: var(--vn-text-2xl); font-weight: var(--vn-weight-bold); margin-bottom: var(--vn-space-3); }
+.vn-lp__done-text { color: var(--vn-text-muted); line-height: var(--vn-leading-relaxed); }
