@@ -18,6 +18,13 @@ public class WooCommerceController {
         Long channelId = Long.valueOf(body.get("channelId").toString());
         return wooCommerceService.publishProduct(productId, channelId, lng);
     }
+    @PostMapping("/update")
+    @Operation(summary = "Re-sync an already published product to WooCommerce (PUT)")
+    public ResultDTO update(@RequestBody Map<String, Object> body, @RequestHeader(name = "lng", defaultValue = "es") String lng) {
+        Long productId = Long.valueOf(body.get("productId").toString());
+        Long channelId = Long.valueOf(body.get("channelId").toString());
+        return wooCommerceService.updateProduct(productId, channelId, lng);
+    }
     @PostMapping("/publish-batch")
     @Operation(summary = "Publish multiple products")
     public ResultDTO publishBatch(@RequestBody Map<String, Object> body, @RequestHeader(name = "lng", defaultValue = "es") String lng) {

@@ -15,8 +15,13 @@ public class AppConfig {
     private String secretKey;
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+    public RestTemplate restTemplate(org.springframework.boot.web.client.RestTemplateBuilder builder) {
+        // Sin timeouts, una llamada a un servicio que no responde deja el hilo
+        // colgado indefinidamente y agota el pool de Tomcat.
+        return builder
+                .setConnectTimeout(java.time.Duration.ofSeconds(5))
+                .setReadTimeout(java.time.Duration.ofSeconds(30))
+                .build();
     }
 
     @Bean

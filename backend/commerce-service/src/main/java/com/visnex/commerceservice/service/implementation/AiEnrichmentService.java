@@ -9,7 +9,7 @@ import com.visnex.commerceservice.entity.PromptTemplate;
 import com.visnex.commerceservice.repository.EnrichmentConfigRepository;
 import com.visnex.commerceservice.repository.ProductRepository;
 import com.visnex.commerceservice.repository.PromptTemplateRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -23,14 +23,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class AiEnrichmentService {
 
     private final ProductRepository productRepository;
     private final EnrichmentConfigRepository enrichmentConfigRepository;
     private final PromptTemplateRepository promptTemplateRepository;
     private final ObjectMapper objectMapper;
+    /** Timeout de lectura largo (120s): generar texto con Ollama local es lento. */
     private final RestTemplate restTemplate;
+
+    public AiEnrichmentService(ProductRepository productRepository,
+                               EnrichmentConfigRepository enrichmentConfigRepository,
+                               PromptTemplateRepository promptTemplateRepository,
+                               ObjectMapper objectMapper,
+                               @Qualifier("aiRestTemplate") RestTemplate restTemplate) {
+        this.productRepository = productRepository;
+        this.enrichmentConfigRepository = enrichmentConfigRepository;
+        this.promptTemplateRepository = promptTemplateRepository;
+        this.objectMapper = objectMapper;
+        this.restTemplate = restTemplate;
+    }
 
     // Bug #20: Rate limiting - max 5 concurrent enrichments
     private static final AtomicInteger concurrentEnrichments = new AtomicInteger(0);

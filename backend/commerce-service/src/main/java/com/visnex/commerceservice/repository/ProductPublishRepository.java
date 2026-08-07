@@ -8,5 +8,18 @@ import java.util.Optional;
 
 @Repository
 public interface ProductPublishRepository extends JpaRepository<ProductPublish, Long>, CustomProductPublishRepository {
+
     Optional<ProductPublish> findFirstByIdProductAndIdChannelAndActive(Long idProduct, Long idChannel, Boolean active);
+
+    /**
+     * Busca una publicacion EXITOSA del producto en el canal.
+     *
+     * Este es el metodo que debe usarse para decidir si un producto ya esta
+     * publicado. El anterior (findFirstByIdProductAndIdChannelAndActive) tambien
+     * encontraba los intentos FALLIDOS, que se guardan con active=true, y por eso
+     * un unico fallo de red dejaba el producto imposible de republicar para
+     * siempre: el reintento respondia "already published".
+     */
+    Optional<ProductPublish> findFirstByIdProductAndIdChannelAndSyncStatusAndActive(
+            Long idProduct, Long idChannel, String syncStatus, Boolean active);
 }

@@ -25,7 +25,11 @@ Este archivo proporciona orientacion a Claude Code cuando trabaja con este repos
 3. Si es **nuevo**: crear archivo de seguimiento en `C:\Users\ander\Documents\proyectos en curso\Bopos-core\`
 4. Leer el archivo de seguimiento para retomar contexto
 
-**Archivo de seguimiento actual:** `C:\Users\ander\Documents\proyectos en curso\Bopos-core\dropshipping-saas-changelog.md`
+**Archivo de seguimiento actual:** `seguimiento/bitacora.md` (dentro del repo, versionado)
+**Plan de trabajo vigente:** `seguimiento/ANALISIS_Y_PLAN_2026-08-06.md`
+
+> La ruta anterior (`Bopos-core/dropshipping-saas-changelog.md`) apuntaba a un archivo que
+> nunca existio. La bitacora vive ahora dentro del repo para que no se pierda.
 
 ---
 
