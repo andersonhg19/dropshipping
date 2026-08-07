@@ -71,3 +71,69 @@ contenedores apagados). Se retomó con un análisis completo verificado contra e
 - `visnex-common` sigue muerto (1 import, ~35 clases duplicadas). Sin decidir.
 - `discovery-service` y `language-service`: propuesto quitar/congelar, sin ejecutar.
 - `AuditLogClient` no propaga el JWT: por eso `/audit-log/create` sigue abierto en la red interna.
+
+---
+
+## 2026-08-07 (cont.) — Fases 4, 2 y 3: diseño, importación y núcleo de negocio
+
+### Fase 4 — Diseño completo ✅ (prioridad declarada del usuario)
+
+- **Tema hijo `visnex`** de Storefront. El CSS pasa de inyectarse inline en `wp_head`
+  (1.512 líneas) a 7 archivos versionados y cargados condicionalmente por página.
+- **`!important`: de 232 a 52.** Los 47 que estaban en clases propias `.vn-*` — donde nadie
+  compite — se eliminaron programáticamente.
+- **`funnel.css`**: 700 líneas para carrito, checkout y mi-cuenta, que antes tenían **cero**
+  selectores.
+- **Hallazgo importante:** WooCommerce 10.6 servía carrito y checkout **por bloques**, y los
+  bloques no disparan los hooks PHP ni respetan `woocommerce_checkout_fields`. Ninguna
+  personalización llegaba a ejecutarse. Se cambió a shortcode clásico.
+- **Landing COD** (`page-landing-cod.php`): destino del tráfico pagado, con reglas opuestas a
+  la home. Crea pedidos reales de WooCommerce con anti-duplicado y captura de UTM.
+- **5 páginas legales** creadas automáticamente al activar el tema (Ley 1480/2011 y 1581/2012).
+- **Bug que costó tiempo:** `$product` es el nombre que WooCommerce usa como global en el
+  ámbito de plantilla y **se pierde al pasar por `get_header()`**. Renombrado a `$vn_product`.
+
+### Fase 4b — Pagos y envíos Colombia ✅
+
+Decidido con datos de la API oficial de WordPress.org, no con blogs:
+
+| Plugin | Instalaciones | Rating | Actualizado |
+|---|---|---|---|
+| Mercado Pago | 100.000 | 3,9★ (691) | hace días |
+| Wompi | 6.000 | 2,3★ (solo 4 reseñas) | may-2026 |
+| Coordinadora | 600 | 2,5★ | jul-2026 |
+| Mipaquete | 200 | 2,9★ | **mar-2025** |
+
+- Mercado Pago y Wompi instalados y activos (pendientes de credenciales).
+- **Plugin propio `visnex-colombia`**: pasarela COD con límites y exclusión por ciudad,
+  método de envío por zonas desde Bogotá (sin convenio con transportadora ni API externa),
+  y módulo de confirmación por WhatsApp.
+- **Verificado en la tienda real**: matriz de 8 destinos correcta, envío gratis con exclusión
+  de zonas caras, y un pedido creado de punta a punta desde la landing.
+
+### Fase 2 — Asistente de importación ✅
+
+El backend ya sabía importar; faltaba la pantalla. Ahora hay 3 pasos con auto-mapeo por
+nombre de columna, vista previa de 5 filas ya emparejadas, y avisos de campo duplicado.
+
+### Fase 3 — Núcleo de negocio (parcial) 🔶
+
+- **Máquina de estados** `OrderStatus` con transiciones como datos, no como strings.
+  La regla que no se puede saltar: `NUEVA → ENVIADA_PROVEEDOR` está **prohibida**.
+- Entidades `SalesOrder` / `SalesOrderItem` (se llama SalesOrder porque ORDER es reservada en SQL).
+- **`SupplierAdapter` + `DropiAdapter`**. Aviso: la API de Dropi no tiene documentación pública;
+  los endpoints deben verificarse contra la documentación real antes de operar con dinero.
+  Lo que sí está cerrado es la forma: contrato, mapeo, manejo de errores y tests.
+- **Webhook de WooCommerce** con verificación HMAC en tiempo constante e idempotencia.
+- **Métrica de CPA real** = CPA reportado ÷ tasa de entrega. Es la que decide si la operación
+  gana o pierde plata, y ningún panel de dropshipping la muestra.
+
+**Tests: de 1 archivo a 86 tests en verde.**
+
+### Pendiente
+
+- Scheduler de sincronización de stock y auto-despublicar en stock 0.
+- Bandeja de órdenes en el panel Next.js (el backend ya expone la API).
+- Router de fulfillment que envíe automáticamente a Dropi al confirmar.
+- Flyway (sigue `ddl-auto=update`).
+- Credenciales reales de Mercado Pago / Wompi / Dropi.

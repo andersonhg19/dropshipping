@@ -41,6 +41,11 @@ public class SecurityConfig {
                         .requestMatchers("/v2/ai-enrichment/**").hasAuthority(ADMIN)
                         .requestMatchers("/v2/export/**").hasAuthority(ADMIN)
                         .requestMatchers("/v2/bulk-pricing/**").hasAuthority(ADMIN)
+                        .requestMatchers("/v2/order/**").hasAuthority(ADMIN)
+                        // El webhook de WooCommerce no lleva JWT: lo autentica
+                        // la firma HMAC del cuerpo, que se verifica en el
+                        // controlador. Ver WooCommerceWebhookController.
+                        .requestMatchers("/v2/webhook/woocommerce/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
