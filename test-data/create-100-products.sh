@@ -1,7 +1,7 @@
 #!/bin/bash
 # VISNEX - Create 100 premium fashion products in WooCommerce
-WC_KEY="ck_6ba33a8e17b5e30b310ef6283e47d2c33299b690"
-WC_SECRET="cs_6ffb9521bed3a25b4d61133a4d6127a4d6686d4b"
+WC_KEY="${WC_CONSUMER_KEY:?Falta WC_CONSUMER_KEY}"
+WC_SECRET="${WC_CONSUMER_SECRET:?Falta WC_CONSUMER_SECRET}"
 WC_URL="http://localhost:8850/wp-json/wc/v3"
 AUTH="-u $WC_KEY:$WC_SECRET"
 

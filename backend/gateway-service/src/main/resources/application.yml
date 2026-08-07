@@ -6,7 +6,8 @@ logging:
     org:
       springframework:
         web:
-          cors: DEBUG
+          cors: INFO
+
 spring:
   application:
     name: gateway-service
@@ -17,20 +18,28 @@ spring:
       globalCors:
         corsConfigurations:
           '[/**]':
-            allowedOriginPatterns:
-              - "*"
+            # ANTES: allowedOriginPatterns "*" junto a allowCredentials true.
+            # Esa combinacion permite que CUALQUIER sitio web haga peticiones
+            # autenticadas contra la API con las credenciales del usuario.
+            # Ahora la lista es explicita y se configura por entorno.
+            allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:3001,http://localhost:8850}
             allowedHeaders:
-              - "*"
+              - Authorization
+              - Content-Type
+              - lng
+              - Accept
+              - Origin
+              - X-Requested-With
             exposedHeaders:
-              - "*"
+              - Content-Disposition
             allowedMethods:
               - GET
               - POST
               - PUT
+              - DELETE
               - OPTIONS
             allowCredentials: true
             maxAge: 3600
-
 
 eureka:
   instance:

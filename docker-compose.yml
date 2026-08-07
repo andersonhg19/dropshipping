@@ -2,6 +2,15 @@
 # Docker Compose UNIFICADO - VISNEX Platform
 # Levanta TODO: infra + WordPress + backend + frontend
 # Uso: docker-compose --env-file ./backend/.env up --build -d
+# ------------------------------------------------------------
+# SEGURIDAD (2026-08-07):
+#  - Ningun secreto tiene valor por defecto. Se usa ${VAR:?mensaje} para que
+#    el arranque FALLE si falta, en vez de arrancar con una clave conocida.
+#  - Los puertos de los microservicios y las bases de datos se publican SOLO
+#    en 127.0.0.1: siguen accesibles para desarrollo local, pero no quedan
+#    expuestos a la red (wifi, LAN). Solo el gateway, el frontend y WordPress
+#    escuchan en todas las interfaces.
+#  - Copia backend/.env.example a backend/.env y rellenalo antes de levantar.
 # ============================================================
 
 networks:
@@ -18,17 +27,17 @@ services:
   postgres:
     image: postgres:14
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
+      POSTGRES_USER: ${POSTGRES_USER:?falta POSTGRES_USER en backend/.env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?falta POSTGRES_PASSWORD en backend/.env}
     ports:
-      - "5433:5432"
+      - "127.0.0.1:5433:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./backend/init-db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - visnex-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -37,14 +46,14 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-vnroot2026}
-      MYSQL_DATABASE: wordpress_vn
-      MYSQL_USER: ${MYSQL_USER:-vn_user}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-vnpass2026}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?falta MYSQL_ROOT_PASSWORD en backend/.env}
+      MYSQL_DATABASE: ${WORDPRESS_DB_NAME:-wordpress_vn}
+      MYSQL_USER: ${WORDPRESS_DB_USER:?falta WORDPRESS_DB_USER en backend/.env}
+      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD:?falta WORDPRESS_DB_PASSWORD en backend/.env}
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
-      - "3307:3306"
+      - "127.0.0.1:3307:3306"
     networks:
       - visnex-network
     command: '--default-authentication-plugin=mysql_native_password'
@@ -56,18 +65,20 @@ services:
 
   # ==================== WORDPRESS ====================
   wordpress:
-    image: wordpress:latest
+    image: wordpress:6.7-php8.3-apache
     restart: unless-stopped
     depends_on:
       mysql:
         condition: service_healthy
     environment:
       WORDPRESS_DB_HOST: mysql:3306
-      WORDPRESS_DB_USER: ${MYSQL_USER:-vn_user}
-      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD:-vnpass2026}
-      WORDPRESS_DB_NAME: wordpress_vn
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-wordpress_vn}
       WORDPRESS_TABLE_PREFIX: vn_
-      WORDPRESS_DEBUG: 1
+      # 0 en cualquier entorno que no sea depuracion activa: con 1, los avisos
+      # de PHP se imprimen en la pagina y se ven en la tienda.
+      WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-0}
     volumes:
       - ./wordpress/wp-content:/var/www/html/wp-content
       - ./wordpress/config/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
@@ -77,16 +88,16 @@ services:
       - visnex-network
 
   phpmyadmin:
-    image: phpmyadmin:latest
+    image: phpmyadmin:5.2
     restart: unless-stopped
     depends_on:
       - mysql
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-vnroot2026}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-      - "8851:80"
+      - "127.0.0.1:8851:80"
     networks:
       - visnex-network
 
@@ -96,7 +107,7 @@ services:
     build:
       context: ./backend/discovery-service
     ports:
-      - "8840:8840"
+      - "127.0.0.1:8840:8840"
     networks:
       - visnex-network
     healthcheck:
@@ -114,6 +125,10 @@ services:
     depends_on:
       discovery-service:
         condition: service_healthy
+    environment:
+      SECRET: ${SECRET:?falta SECRET en backend/.env}
+      EXP_TIME: ${EXP_TIME:-86400000}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3001,http://localhost:8850}
     networks:
       - visnex-network
 
@@ -123,7 +138,7 @@ services:
     build:
       context: ./backend/auth-service
     ports:
-      - "8842:8842"
+      - "127.0.0.1:8842:8842"
     depends_on:
       discovery-service:
         condition: service_healthy
@@ -131,10 +146,10 @@ services:
         condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/auth_db
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
-      SECRET: ${SECRET:-visnex@secret.key}
-      EXP_TIME: ${EXP_TIME:-864000000}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SECRET: ${SECRET:?falta SECRET en backend/.env}
+      EXP_TIME: ${EXP_TIME:-86400000}
     networks:
       - visnex-network
 
@@ -143,7 +158,7 @@ services:
     build:
       context: ./backend/language-service
     ports:
-      - "8843:8843"
+      - "127.0.0.1:8843:8843"
     depends_on:
       discovery-service:
         condition: service_healthy
@@ -151,10 +166,10 @@ services:
         condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/lang_db
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
-      SECRET: ${SECRET:-visnex@secret.key}
-      EXP_TIME: ${EXP_TIME:-864000000}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SECRET: ${SECRET:?falta SECRET en backend/.env}
+      EXP_TIME: ${EXP_TIME:-86400000}
     networks:
       - visnex-network
 
@@ -163,7 +178,7 @@ services:
     build:
       context: ./backend/administration-service
     ports:
-      - "8844:8844"
+      - "127.0.0.1:8844:8844"
     depends_on:
       discovery-service:
         condition: service_healthy
@@ -171,10 +186,10 @@ services:
         condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/admin_db
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
-      SECRET: ${SECRET:-visnex@secret.key}
-      EXP_TIME: ${EXP_TIME:-864000000}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SECRET: ${SECRET:?falta SECRET en backend/.env}
+      EXP_TIME: ${EXP_TIME:-86400000}
     networks:
       - visnex-network
 
@@ -182,8 +197,10 @@ services:
     image: vn-audit
     build:
       context: ./backend/audit-service
-    ports:
-      - "8845:8845"
+    # Sin `ports`: solo alcanzable dentro de la red de Docker. El log de
+    # auditoria no tiene por que ser accesible desde el host.
+    expose:
+      - "8845"
     depends_on:
       discovery-service:
         condition: service_healthy
@@ -191,10 +208,10 @@ services:
         condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/audit_db
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
-      SECRET: ${SECRET:-visnex@secret.key}
-      EXP_TIME: ${EXP_TIME:-864000000}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SECRET: ${SECRET:?falta SECRET en backend/.env}
+      EXP_TIME: ${EXP_TIME:-86400000}
     networks:
       - visnex-network
 
@@ -203,7 +220,7 @@ services:
     build:
       context: ./backend/commerce-service
     ports:
-      - "8847:8847"
+      - "127.0.0.1:8847:8847"
     depends_on:
       discovery-service:
         condition: service_healthy
@@ -211,11 +228,11 @@ services:
         condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/commerce_db
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
-      SECRET: ${SECRET:-visnex@secret.key}
-      EXP_TIME: ${EXP_TIME:-864000000}
-      WC_URL: ${WC_URL:-http://wordpress:8850}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SECRET: ${SECRET:?falta SECRET en backend/.env}
+      EXP_TIME: ${EXP_TIME:-86400000}
+      WC_URL: ${WC_URL:-http://wordpress:80}
       WC_CONSUMER_KEY: ${WC_CONSUMER_KEY:-}
       WC_CONSUMER_SECRET: ${WC_CONSUMER_SECRET:-}
     networks:
@@ -226,7 +243,7 @@ services:
     build:
       context: ./backend/acquisition-service
     ports:
-      - "8846:8846"
+      - "127.0.0.1:8846:8846"
     depends_on:
       discovery-service:
         condition: service_healthy
@@ -234,10 +251,10 @@ services:
         condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/acquisition_db
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Visnex2026}
-      SECRET: ${SECRET:-visnex@secret.key}
-      EXP_TIME: ${EXP_TIME:-864000000}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SECRET: ${SECRET:?falta SECRET en backend/.env}
+      EXP_TIME: ${EXP_TIME:-86400000}
     networks:
       - visnex-network
 
@@ -251,7 +268,7 @@ services:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8841}
         NEXT_PUBLIC_ID_COMPANY: ${NEXT_PUBLIC_ID_COMPANY:-1}
         NEXT_PUBLIC_TZ: ${NEXT_PUBLIC_TZ:-America/Bogota}
-        NEXT_PUBLIC_CACHE_SECRET: ${NEXT_PUBLIC_CACHE_SECRET:-changeme123}
+        NEXT_PUBLIC_CACHE_SECRET: ${NEXT_PUBLIC_CACHE_SECRET:?falta NEXT_PUBLIC_CACHE_SECRET en backend/.env}
     ports:
       - "3001:3000"
     depends_on:

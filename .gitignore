@@ -34,12 +34,21 @@ Thumbs.db
 desktop.ini
 
 # ==================== Environment ====================
+# NUNCA commitear secretos. Las plantillas publicas son los .env.example
+.env
 .env.local
 .env.*.local
+!.env.example
 *.log
 
 # ==================== Build ====================
 dist/
 build/
 *.tgz
-.github/
+
+# ==================== Scratch / temporales ====================
+planif_user.txt
+planif_asst.txt
+
+# Claude Code local
+.claude/settings.local.json

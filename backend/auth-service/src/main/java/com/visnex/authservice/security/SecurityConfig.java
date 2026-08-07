@@ -33,7 +33,10 @@ public class SecurityConfig {
                         .requestMatchers("/delete/**").hasAuthority(ADMIN)
                         .requestMatchers("/save/user").permitAll()
                         .requestMatchers("/login").permitAll()
-                        .requestMatchers("/internalLogin").permitAll())
+                        .requestMatchers("/internalLogin").permitAll()
+                        // En Spring Security 6, sin esta linea final cualquier endpoint que no
+                        // aparezca arriba queda ABIERTO. Con ella, el default es denegar.
+                        .anyRequest().authenticated())
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -118,7 +118,7 @@ assert_eq "WordPress :$WP_PORT responds" "200" "$WP_STATUS"
 # Test 11: WooCommerce API
 echo ""
 echo "[11] WooCommerce API"
-WC_RES=$(curl -s -u "ck_6ba33a8e17b5e30b310ef6283e47d2c33299b690:cs_6ffb9521bed3a25b4d61133a4d6127a4d6686d4b" "$BASE_URL:$WP_PORT/wp-json/wc/v3/products?per_page=1")
+WC_RES=$(curl -s -u "${WC_CONSUMER_KEY:?Falta WC_CONSUMER_KEY}:${WC_CONSUMER_SECRET:?Falta WC_CONSUMER_SECRET}" "$BASE_URL:$WP_PORT/wp-json/wc/v3/products?per_page=1")
 WC_OK=$(echo $WC_RES | grep -c '"id"')
 assert_eq "WooCommerce API returns products" "1" "$([ $WC_OK -ge 1 ] && echo 1 || echo 0)"
 

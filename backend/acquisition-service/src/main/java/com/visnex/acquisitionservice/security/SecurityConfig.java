@@ -25,7 +25,9 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/actuator/**").permitAll()
+                        // Solo health. Antes /actuator/** completo estaba abierto (env, beans,
+                        // configprops exponen configuracion interna).
+                        .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/v2/supplier/**").hasAuthority(ADMIN)
                         .requestMatchers("/v2/source-config/**").hasAuthority(ADMIN)
                         .requestMatchers("/v2/source-product/**").hasAuthority(ADMIN)

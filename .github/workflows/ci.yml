@@ -1,0 +1,86 @@
+name: VISNEX CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # El repo es PUBLICO (portafolio). Este job es la red de seguridad que impide
+  # que vuelva a filtrarse un secreto por accidente.
+  secret-scan:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verificar que no haya .env trackeados
+        run: |
+          if git ls-files | grep -E '(^|/)\.env$'; then
+            echo "::error::Hay archivos .env trackeados en git. Usa .env.example."
+            exit 1
+          fi
+          echo "OK: ningun .env trackeado"
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  backend-build:
+    name: Backend Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build Backend
+        working-directory: ./backend
+        run: mvn -B clean package -DskipTests
+
+      - name: Run Tests
+        working-directory: ./backend
+        run: mvn -B test
+
+      - name: Publicar resultados de tests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: backend/*/target/surefire-reports/
+          if-no-files-found: ignore
+
+  frontend-build:
+    name: Frontend Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Preparar entorno
+        working-directory: ./frontend
+        run: cp .env.example .env
+
+      - name: Install Dependencies
+        working-directory: ./frontend
+        run: yarn install --frozen-lockfile
+
+      - name: Build Frontend
+        working-directory: ./frontend
+        run: yarn build
