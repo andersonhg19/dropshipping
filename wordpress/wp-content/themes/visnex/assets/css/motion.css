@@ -1496,3 +1496,551 @@ body.post-type-archive-product .col-full {
 .site-footer a:hover {
   color: #FFFFFF;
 }
+
+/* ==========================================================================
+   25. LA MAQUINA, ENCENDIDA
+   --------------------------------------------------------------------------
+   Un equipo de diez especialistas audito la tienda contra las cien mejores del
+   mundo. El veredicto no fue sobre estetica:
+
+     "No se siente viva porque el visitante NO PUEDE HACER NADA. La ceremonia
+      esta montada y la maquina esta apagada. Lo vivo no es el movimiento: lo
+      vivo es la RESPUESTA."
+
+   Lo que sigue enciende la maquina. Casi todo es quitar cosas que estaban
+   tapando funcionalidad que ya existia.
+   ========================================================================== */
+
+/* ---------- 25.1 - LA FICHA DE PRODUCTO NO DECIA COMO SE LLAMA ----------- */
+/*
+   `home.css` metia `.entry-title` en un bloque `display:none !important`
+   pensado para ocultar el titulo de las paginas de texto. Pero el titulo de un
+   producto en WooCommerce es `h1.product_title.entry-title`.
+
+   Resultado: LA PAGINA DONDE SE DECIDE LA COMPRA no mostraba el nombre de la
+   prenda. Solo precio, cantidad y boton. Es la prueba de que el CSS editorial
+   se escribio mirando la portada y no se comprobo donde entra el dinero.
+*/
+
+.single-product .product_title,
+.single-product .entry-title {
+  display: block;
+  font-family: var(--vn-font-serif);
+  font-size: clamp(2.5rem, 4.5vw, 4rem);   /* 40-64px, no 152: ese peso es del H1 de portada */
+  line-height: .96;
+  letter-spacing: -.015em;
+  font-weight: 400;
+  color: var(--vn-ink);
+  margin: 0 0 var(--vn-space-3);
+}
+
+.single-product div.product p.price,
+.single-product div.product span.price {
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-base);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .03em;
+  color: var(--vn-text-muted);
+  margin: 0 0 var(--vn-space-5);
+}
+
+/* La foto medía 270 px flotando en media pantalla vacia. En una tienda de ropa
+   la foto ES el producto: manda ella. */
+.single-product div.product {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(2rem, 4vw, 5rem);
+  align-items: start;
+  max-width: var(--vn-container-max);
+  margin-inline: auto;
+  padding-inline: var(--vn-space-5);
+}
+
+.single-product div.product .woocommerce-product-gallery {
+  grid-column: 1;
+  width: 100%;
+  float: none;
+  margin: 0;
+}
+
+.single-product div.product .summary {
+  grid-column: 2;
+  width: 100%;
+  float: none;
+  margin: 0;
+  position: sticky;
+  top: calc(var(--vn-header-height) + var(--vn-space-5));
+}
+
+.single-product div.product .woocommerce-tabs,
+.single-product div.product .related,
+.single-product div.product .upsells {
+  grid-column: 1 / -1;
+}
+
+.single-product .woocommerce-product-gallery__image img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 7;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+/* Storefront pinta flechas de producto anterior y siguiente pegadas a los
+   bordes de la ventana, medio cortadas. Distraen y parecen un error. */
+.single-product .storefront-product-pagination {
+  display: none;
+}
+
+/* ---------- 25.2 - LA TIENDA VUELVE A TENER MANDOS ---------------------- */
+/*
+   `home.css` ocultaba `.woocommerce-ordering`, `.storefront-sorting` y
+   `.woocommerce-result-count` con `!important`. Con eso quedaban muertas las
+   257 lineas de `inc/shop-filters.php`, y un catalogo de 100 prendas sin
+   forma de ordenar ni de saber cuantas hay.
+
+   Esa es la razon de fondo de que la tienda se sienta muerta: no porque falte
+   movimiento, sino porque no hay NADA QUE TOCAR.
+*/
+
+.woocommerce-result-count,
+.woocommerce-ordering,
+.storefront-sorting {
+  display: block;
+}
+
+.woocommerce .storefront-sorting,
+.woocommerce-page .storefront-sorting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vn-space-4);
+  position: sticky;
+  top: var(--vn-header-height);
+  z-index: 90;
+  background: color-mix(in srgb, var(--vn-paper) 94%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid color-mix(in srgb, var(--vn-ink) 10%, transparent);
+  padding: 10px 16px;
+  margin: 0 0 8px;
+}
+
+.woocommerce-result-count {
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-2xs);
+  letter-spacing: var(--vn-tracking-caps);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+
+.woocommerce-ordering select,
+.woocommerce-ordering .orderby {
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-2xs);
+  letter-spacing: var(--vn-tracking-caps);
+  text-transform: uppercase;
+  color: var(--vn-ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--vn-ink) 25%, transparent);
+  padding: 4px 22px 4px 0;
+  border-radius: 0;
+  cursor: pointer;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+                    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 10px) 55%, calc(100% - 5px) 55%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+/* ---------- 25.3 - EL PAGO, QUE ES DONDE ESTA EL DINERO ----------------- */
+/*
+   Medido a 1920 px: el formulario de facturacion ocupaba ~150 px pegado al
+   borde derecho, con los campos a 55-80 px y 1.250 px de pagina vacia al lado.
+   Nadie termina un pedido ahi.
+
+   `funnel.css` declaraba la rejilla correcta pero no reseteaba los `float` ni
+   los anchos en porcentaje que Storefront le pone a estos bloques, asi que la
+   rejilla nunca llego a mandar.
+*/
+
+.woocommerce-checkout form.checkout {
+  max-width: var(--vn-container-max);
+  margin-inline: auto;
+  padding-inline: var(--vn-space-5);
+}
+
+.woocommerce-checkout #customer_details,
+.woocommerce-checkout #order_review,
+.woocommerce-checkout #order_review_heading {
+  float: none;
+  width: auto;
+  max-width: none;
+}
+
+.woocommerce-checkout #customer_details {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+.woocommerce-checkout #customer_details .col-1,
+.woocommerce-checkout #customer_details .col-2 {
+  float: none;
+  width: auto;
+  max-width: none;
+}
+
+.woocommerce-checkout .form-row {
+  width: auto;
+  float: none;
+  padding: 0;
+  margin: 0 0 var(--vn-space-4);
+}
+
+.woocommerce-checkout .form-row input.input-text,
+.woocommerce-checkout .form-row textarea,
+.woocommerce-checkout .form-row select,
+.woocommerce-checkout .select2-container {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Dos columnas de verdad para nombre y apellidos. */
+.woocommerce-checkout #customer_details .woocommerce-billing-fields__field-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 var(--vn-space-4);
+}
+
+.woocommerce-checkout #customer_details .woocommerce-billing-fields__field-wrapper > .form-row {
+  grid-column: 1 / -1;
+}
+
+.woocommerce-checkout #customer_details .woocommerce-billing-fields__field-wrapper > #billing_first_name_field,
+.woocommerce-checkout #customer_details .woocommerce-billing-fields__field-wrapper > #billing_last_name_field {
+  grid-column: span 1;
+}
+
+/* El carrito tenia una columna fantasma y el boton de finalizar reducido a
+   135 px pegado al borde. */
+.woocommerce-cart .woocommerce {
+  max-width: var(--vn-container-max);
+  margin-inline: auto;
+  padding-inline: var(--vn-space-5);
+}
+
+.woocommerce-cart table.shop_table,
+.woocommerce-cart .cart-collaterals,
+.woocommerce-cart .cart_totals {
+  float: none;
+  width: auto;
+  max-width: none;
+}
+
+.woocommerce-cart .cart-collaterals {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+  gap: var(--vn-space-6);
+  margin-top: var(--vn-space-6);
+}
+
+.woocommerce-cart .cart_totals {
+  grid-column: 2;
+}
+
+.woocommerce-cart .wc-proceed-to-checkout .checkout-button {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+/* ---------- 25.4 - LOS AVISOS DEJAN DE GRITAR --------------------------- */
+/*
+   El aviso de contra entrega salia en verde Kelly y la barra del cupon en azul
+   brillante. Dos colores saturados en la pantalla donde mas importa la
+   confianza, y ademas los unicos colores de toda la tienda que no vienen de una
+   prenda. Leian como "plugin recien instalado".
+
+   La regla del proyecto es que el unico color sea la ropa. Aqui la senal la
+   dan el filete de laton y la jerarquia, no el fondo.
+*/
+
+.woocommerce-message,
+.woocommerce-info,
+.woocommerce-error,
+.woocommerce-noreviews,
+p.no-comments {
+  background: var(--vn-paper-deep);
+  color: var(--vn-ink);
+  border: 0;
+  border-left: 2px solid var(--vn-brass);
+  border-radius: 0;
+  padding: var(--vn-space-4) var(--vn-space-5);
+  font-size: var(--vn-text-base);
+}
+
+.woocommerce-message::before,
+.woocommerce-info::before,
+.woocommerce-error::before {
+  color: var(--vn-brass);
+}
+
+.woocommerce-error {
+  border-left-color: var(--vn-danger);
+}
+
+.woocommerce-error::before {
+  color: var(--vn-danger);
+}
+
+.woocommerce-message a,
+.woocommerce-info a {
+  color: var(--vn-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------- 25.5 - LA PAGINA DE ERROR TAMBIEN ES LA TIENDA -------------- */
+
+.error404 .site-main {
+  max-width: var(--vn-container-text);
+  margin-inline: auto;
+  padding: var(--vn-space-11) var(--vn-space-5);
+  text-align: center;
+}
+
+.error404 .page-title,
+.error404 .entry-title {
+  display: block;
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-display-3);
+  line-height: .96;
+  font-weight: 400;
+  margin: 0 0 var(--vn-space-4);
+}
+
+.error404 .widget,
+.error404 .widget-area,
+.error404 aside {
+  display: none;
+}
+
+/* ---------- 25.6 - LOS DOS COLORES QUE QUEDABAN ------------------------- */
+/*
+   El aviso de contra entrega usaba el verde de exito (`--vn-success-bg`) y el
+   del cupon el azul de informacion. Eran los dos unicos colores saturados de
+   toda la tienda que no venian de una prenda, y estaban justo en la pantalla
+   donde mas importa la confianza. La senal la da el filete de laton.
+*/
+
+.vn-cod-notice,
+.vn-trust-box,
+.vn-checkout-notice {
+  background: var(--vn-paper-deep);
+  border: 0;
+  border-left: 2px solid var(--vn-brass);
+  border-radius: 0;
+  color: var(--vn-ink);
+}
+
+.vn-cod-notice svg,
+.vn-cod-notice::before {
+  color: var(--vn-brass);
+}
+
+/* El icono del aviso iba en `position:absolute; left:21px` con solo 24 px de
+   relleno: se montaba encima de la primera letra. */
+.woocommerce-info,
+.woocommerce-message,
+.woocommerce-error {
+  padding-left: 56px;
+  position: relative;
+}
+
+.woocommerce-info::before,
+.woocommerce-message::before,
+.woocommerce-error::before {
+  left: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+}
+
+/* Las cajas del formulario eran blanco puro sobre papel: se veia el recuadro. */
+.woocommerce-billing-fields,
+.woocommerce-shipping-fields,
+.woocommerce-additional-fields,
+.woocommerce-checkout #customer_details .col-1,
+.woocommerce-checkout #customer_details .col-2 {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.woocommerce-checkout #order_review {
+  background: var(--vn-paper-deep);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Campos: filete abajo, no caja redondeada. Es la convencion del formulario de
+   una casa buena — menos lineas, mas aire. */
+.woocommerce-checkout .form-row input.input-text,
+.woocommerce-checkout .form-row textarea,
+.woocommerce-checkout .form-row select,
+.woocommerce form .form-row input.input-text {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--vn-ink) 22%, transparent);
+  border-radius: 0;
+  padding: 10px 0;
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-read);
+  color: var(--vn-ink);
+  transition: border-color var(--vn-dur-micro) var(--vn-ease-lux);
+}
+
+.woocommerce-checkout .form-row input.input-text:focus,
+.woocommerce-checkout .form-row textarea:focus,
+.woocommerce-checkout .form-row select:focus {
+  border-bottom-color: var(--vn-brass);
+  border-bottom-width: 2px;
+  outline: none;
+}
+
+.woocommerce-checkout .form-row label {
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-2xs);
+  letter-spacing: var(--vn-tracking-caps);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+  margin-bottom: 2px;
+  display: block;
+}
+
+/* El indicador de pasos: el verde de "hecho" pasa a laton. */
+.vn-steps__dot--done,
+.vn-step--done .vn-step__num {
+  background: var(--vn-brass);
+  border-color: var(--vn-brass);
+}
+
+/* ---------- 25.7 - UNA SOLA BARRA DE TIENDA ----------------------------- */
+/*
+   Al destapar los controles aparecieron DOS de cada: `inc/shop-filters.php`
+   monta los suyos (`.vn-shop-tools`) DENTRO del contenedor de Storefront, y
+   Storefront ademas imprime los suyos como hijo directo. Se ocultan los del
+   tema padre y se conservan los del tema hijo, que son los que estan
+   maquetados y llevan el buscador.
+*/
+
+.storefront-sorting > .woocommerce-ordering,
+.storefront-sorting > .woocommerce-result-count {
+  display: none;
+}
+
+.vn-shop-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vn-space-5);
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.vn-shop-tools > div {
+  display: flex;
+  align-items: center;
+  gap: var(--vn-space-5);
+}
+
+.vn-shop-search input[type="search"],
+.vn-shop-search input[type="text"] {
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-base);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--vn-ink) 22%, transparent);
+  border-radius: 0;
+  padding: 6px 0 6px 24px;
+  width: 260px;
+  transition: border-color var(--vn-dur-micro) var(--vn-ease-lux),
+              width        var(--vn-dur-micro) var(--vn-ease-lux);
+}
+
+.vn-shop-search input:focus {
+  border-bottom-color: var(--vn-brass);
+  width: 320px;
+  outline: none;
+}
+
+/* La paginacion, en la misma voz que el resto de la interfaz. */
+.woocommerce-pagination .page-numbers li a,
+.woocommerce-pagination .page-numbers li span {
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-2xs);
+  letter-spacing: var(--vn-tracking-caps);
+  font-variant-numeric: tabular-nums;
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: var(--vn-text-muted);
+  padding: 4px 10px;
+  min-width: 0;
+}
+
+.woocommerce-pagination .page-numbers li span.current {
+  color: var(--vn-ink);
+  border-bottom-color: var(--vn-brass);
+  background: transparent;
+}
+
+.woocommerce-pagination .page-numbers li a:hover {
+  color: var(--vn-ink);
+  border-bottom-color: color-mix(in srgb, var(--vn-ink) 30%, transparent);
+}
+
+/* El titulo de la categoria no necesita tanto aire por arriba: la barra tiene
+   que verse sin bajar. */
+.vn-shop-head {
+  padding-block: var(--vn-space-7) var(--vn-space-5);
+}
+
+.vn-shop-head__title {
+  font-family: var(--vn-font-serif);
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  line-height: .96;
+  letter-spacing: var(--vn-tracking-display);
+  font-weight: 400;
+  text-align: center;
+  margin: 0;
+}
+
+/* La lupa del buscador se montaba sobre la primera letra. */
+.vn-shop-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.vn-shop-search svg,
+.vn-shop-search .vn-shop-search__icon {
+  position: absolute;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  color: var(--vn-text-muted);
+  pointer-events: none;
+}
+
+.vn-shop-search input[type="search"],
+.vn-shop-search input[type="text"] {
+  padding-left: 26px;
+}

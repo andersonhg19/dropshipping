@@ -87,11 +87,17 @@
 .widget-area,
 aside,
 .sidebar,
-.entry-title,
+/* ACOTADO. Antes decia `.entry-title` a secas con !important, y el titulo de un
+   producto en WooCommerce es `h1.product_title.entry-title`: LA PAGINA DONDE SE
+   DECIDE LA COMPRA no mostraba el nombre de la prenda. Solo precio, cantidad y
+   boton. Ahora se oculta solo donde se queria: paginas de texto y entradas. */
+.page .entry-title,
+.blog .entry-title,
+.single-post .entry-title,
 .page-title,
 .page .entry-header,
-.hentry .entry-header {
-    display: none !important;
+.blog .hentry .entry-header {
+    display: none;
 }
 
 
