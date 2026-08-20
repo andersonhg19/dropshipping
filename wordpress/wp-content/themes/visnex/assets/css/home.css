@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* ==========================================================================
    VISNEX — Home premium
    --------------------------------------------------------------------------
@@ -55,66 +56,24 @@
 
 
 /* ===================================================
-   HEADER / NAVIGATION (Apple-style blur glass)
+   CABECERA — MOVIDA A motion.css
+   ===================================================
+   Aqui vivia la cabecera, y era la razon de que la barra se viera distinta en
+   la portada y en la tienda. Dos motivos concretos:
+
+   1. Declaraba `background`, `box-shadow` y `padding` con `!important` bajo
+      `#masthead` (especificidad 1-0-0). Cualquier regla de motion.css (0-2-0,
+      sin !important) perdia siempre. La cabecera de papel calido nunca se
+      llego a pintar.
+
+   2. La regla de la sombra al bajar enganchaba `.vn-scrolled`, pero
+      assets/js/visnex.js pone `.vn-header--scrolled`. Nombres distintos: esa
+      regla no se ejecuto ni una sola vez desde que se escribio.
+
+   DUENO UNICO DE LA CABECERA: assets/css/motion.css, seccion 12. Sin
+   !important. Si hace falta ganarle a Storefront se usa
+   `body.visnex-store #masthead` una vez, y punto.
    =================================================== */
-.site-header,
-#masthead {
-    background: rgba(255,255,255,0.72) !important;
-    backdrop-filter: saturate(180%) blur(20px) !important;
-    -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.08) !important;
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 9999 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    transition: box-shadow 0.3s ease !important;
-}
-
-/* Shadow on scroll (added via JS) */
-.site-header.vn-scrolled {
-    box-shadow: 0 1px 12px rgba(0,0,0,0.08) !important;
-}
-
-.site-branding {
-    padding: 10px 0 !important;
-}
-
-/* Logo: VISNEX uppercase with wide tracking */
-.site-title a,
-.beta .site-title a {
-    font-family: var(--vn-font-primary) !important;
-    font-weight: 700 !important;
-    font-size: 1.1rem !important;
-    letter-spacing: 0.2em !important;
-    text-transform: uppercase !important;
-    color: var(--vn-black) !important;
-    text-decoration: none !important;
-}
-
-.site-description {
-    display: none !important;
-}
-
-/* Nav items: 11px uppercase with wide spacing */
-.main-navigation ul li a,
-.storefront-primary-navigation ul li a {
-    font-family: var(--vn-font-primary) !important;
-    font-size: var(--vn-text-xs) !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.15em !important;
-    text-transform: uppercase !important;
-    color: var(--vn-gray-900) !important;
-    padding: 12px 14px !important;
-    transition: color 0.3s ease !important;
-    text-decoration: none !important;
-}
-
-.main-navigation ul li a:hover,
-.storefront-primary-navigation ul li a:hover {
-    color: var(--vn-accent) !important;
-}
-
 
 /* ===================================================
    HIDE ALL WP CLUTTER
@@ -159,133 +118,13 @@ aside,
 
 
 /* ===================================================
-   HERO SECTION (100vh, Ken Burns, Playfair Display)
+   HERO ANTIGUO — BORRADO
+   ===================================================
+   Aqui habia ~70 lineas de `.vn-hero`, `.vn-hero__bg`, `.vn-hero__overlay`,
+   `.vn-hero__title`... para un marcado que ya no existe: `inc/home-sections.php`
+   imprime `.vn-split`. Era CSS que se descargaba y se parseaba en cada visita
+   sin poder aplicarse a nada.
    =================================================== */
-.vn-hero {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    min-height: 600px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    text-align: center;
-    overflow: hidden;
-}
-
-.vn-hero__bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    animation: vnKenBurns 20s ease-in-out infinite alternate;
-    will-change: transform;
-}
-
-@keyframes vnKenBurns {
-    0%   { transform: scale(1); }
-    100% { transform: scale(1.1); }
-}
-
-.vn-hero__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        to top,
-        rgba(0,0,0,0.55) 0%,
-        rgba(0,0,0,0.2) 40%,
-        transparent 70%
-    );
-    z-index: 1;
-}
-
-.vn-hero__content {
-    position: relative;
-    z-index: 2;
-    color: var(--vn-white);
-    padding: 0 var(--vn-container-pad) 8vh;
-    max-width: 900px;
-}
-
-.vn-hero__title {
-    font-family: var(--vn-font-editorial);
-    font-size: var(--vn-text-7xl);
-    font-weight: 400;
-    font-style: italic;
-    line-height: 1.1;
-    letter-spacing: -0.022em;
-    color: var(--vn-white);
-    margin: 0 0 1.25rem;
-}
-
-.vn-hero__subtitle {
-    font-family: var(--vn-font-primary);
-    font-size: var(--vn-text-lg);
-    font-weight: 300;
-    letter-spacing: 0.05em;
-    color: rgba(255,255,255,0.7);
-    margin-bottom: 2.5rem;
-    line-height: 1.6;
-}
-
-.vn-hero__ctas {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-/* Primary CTA: white pill */
-.vn-btn--white {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--vn-white);
-    color: var(--vn-black);
-    padding: 14px 36px;
-    border-radius: var(--vn-radius-pill);
-    font-family: var(--vn-font-primary);
-    font-size: var(--vn-text-base);
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-decoration: none;
-    text-transform: uppercase;
-    border: none;
-    cursor: pointer;
-    transition: var(--vn-transition);
-}
-
-.vn-btn--white:hover {
-    background: var(--vn-gray-200);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255,255,255,0.2);
-    color: var(--vn-black);
-}
-
-/* Ghost text link CTA */
-.vn-btn--ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: none;
-    border: none;
-    color: rgba(255,255,255,0.8);
-    font-family: var(--vn-font-primary);
-    font-size: var(--vn-text-base);
-    font-weight: 400;
-    letter-spacing: 0.03em;
-    text-decoration: none;
-    cursor: pointer;
-    transition: color 0.3s ease;
-    padding: 14px 8px;
-}
-
-.vn-btn--ghost:hover {
-    color: var(--vn-white);
-}
-
 
 /* ===================================================
    SECTIONS - Shared layout
@@ -714,10 +553,6 @@ aside,
     to   { opacity: 1; transform: translateY(0); }
 }
 
-.vn-hero__content > * {
-    animation: vnFadeUp 0.8s ease forwards;
-}
-
 .vn-hero__title  { animation-delay: 0.2s; opacity: 0; }
 .vn-hero__subtitle { animation-delay: 0.5s; opacity: 0; }
 .vn-hero__ctas   { animation-delay: 0.8s; opacity: 0; }
@@ -734,7 +569,6 @@ aside,
         scroll-behavior: auto !important;
     }
     .vn-animate-in { opacity: 1; transform: none; }
-    .vn-hero__content > * { opacity: 1; }
     .vn-hero__bg { animation: none; }
 }
 

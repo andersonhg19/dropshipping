@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* ==========================================================================
    VISNEX — Design tokens
    --------------------------------------------------------------------------
@@ -51,19 +52,72 @@
   --vn-whatsapp-dark:#075E54;
 
   /* --- Tipografia ------------------------------------------------------- */
-  --vn-font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --vn-font-serif:   'Playfair Display', Georgia, 'Times New Roman', serif;
+  /* --- TRIO TIPOGRAFICO ---------------------------------------------------
+     Se retira Playfair Display. No es cuestion de gusto: es el serif por
+     defecto de webs de bodas, blogs de estilo de vida y hoteles boutique desde
+     2015. Hoy no dice "esto esta disenado", dice "use el primer serif bonito
+     que encontre" — y es una de las razones de que la portada se sienta datada.
 
-  /* Escala modular 1.25 sobre base 16px (el spec pedia 16, habia 14). */
-  --vn-text-xs:      0.75rem;   /* 12px */
-  --vn-text-sm:      0.875rem;  /* 14px */
-  --vn-text-base:    1rem;      /* 16px */
-  --vn-text-lg:      1.125rem;  /* 18px */
-  --vn-text-xl:      1.375rem;  /* 22px */
-  --vn-text-2xl:     1.75rem;   /* 28px */
-  --vn-text-3xl:     2.25rem;   /* 36px */
-  --vn-text-4xl:     3rem;      /* 48px */
-  --vn-text-5xl:     4rem;      /* 64px */
+     Instrument Serif tiene el contraste alto y las astas finas de una
+     cabecera de revista, y esta pensada para tamanos grandes. Regla dura:
+     NUNCA por debajo de 40 px, porque a tamano pequeno sus finos desaparecen.
+
+     Archivo entra para DATOS: precio, tallas, referencia, filtros, migas. Que
+     los numeros tengan su propia voz —estrecha, neutra, de ancho fijo— es lo
+     que separa una ficha de producto de un formulario.
+     ---------------------------------------------------------------------- */
+  --vn-font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --vn-font-serif:   'Instrument Serif', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --vn-font-datos:   'Archivo', 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif;
+
+  /* --- ESCALA BIMODAL -----------------------------------------------------
+     Se sustituye la escala modular 1.25 (12/14/16/18/22/28/36/48/64). El
+     problema de una escala modular es que sus peldanos son indistinguibles: de
+     22 a 28 px no hay salto, hay un empujoncito. Y una pagina sin saltos se ve
+     PLANA — que es, literalmente, la queja de "se ve igual".
+
+     Lo que el ojo percibe no es el tamano absoluto del titular: es la RAZON
+     entre lo mas pequeno y lo mas grande de la pantalla.
+        Antes:  12 px -> 48 px  =  4x
+        Ahora:  10 px -> 152 px = 15x
+
+     Y hay un dato que lo remata: el H1 de la portada estaba topado en 48 px,
+     cuando el H1 por defecto de Storefront mide 41,9 px. No se estaba
+     superando el tema padre: se estaba empatando con el.
+
+     Dos zonas y NADA en medio:
+       INTERFAZ  10-16 px. Todo lo que se usa: menu, precio, filtros, botones.
+       DISPLAY   36-152 px. Solo titulares.
+     El vacio entre las dos zonas es el efecto. La letra diminuta con
+     interletraje abierto es ademas una senal de confianza: solo puede
+     permitirse texto pequeno quien no necesita gritar.
+     ---------------------------------------------------------------------- */
+
+  /* Interfaz */
+  --vn-text-2xs:   0.625rem;    /* 10px — contadores, avisos legales */
+  --vn-text-xs:    0.6875rem;   /* 11px — menu, filtros, migas, botones */
+  --vn-text-sm:    0.75rem;     /* 12px — precio, nombre de producto, pie */
+  --vn-text-base:  0.875rem;    /* 14px — interfaz densa */
+  --vn-text-read:  1rem;        /* 16px — SOLO parrafos largos de lectura */
+  --vn-text-lg:    1.0625rem;   /* 17px — entradilla */
+
+  /* Display: dos saltos, sin peldanos intermedios */
+  --vn-display-1:  clamp(3.25rem, 10.5vw, 9.5rem);   /*  52 -> 152px */
+  --vn-display-2:  clamp(2.25rem, 5.5vw,  5.5rem);   /*  36 ->  88px */
+  --vn-display-3:  clamp(1.75rem, 3.2vw,  3rem);     /*  28 ->  48px */
+
+  --vn-leading-display:  0.92;
+  --vn-tracking-display: -0.025em;
+  --vn-tracking-caps:     0.12em;
+
+  /* Alias: las 36 llamadas que ya existen siguen funcionando y ahora apuntan
+     a la escala nueva, asi que heredan el salto sin tocar 36 sitios. */
+  --vn-text-xl:    var(--vn-display-3);
+  --vn-text-2xl:   var(--vn-display-2);
+  --vn-text-3xl:   var(--vn-display-2);
+  --vn-text-4xl:   var(--vn-display-2);
+  --vn-text-5xl:   var(--vn-display-1);
+  --vn-text-md:    var(--vn-text-base);
 
   --vn-weight-light:    300;
   --vn-weight-normal:   400;
@@ -127,6 +181,56 @@
   --vn-z-overlay: 300;
   --vn-z-modal:   400;
   --vn-z-toast:   500;
+  /* --- Papel, no pantalla ------------------------------------------------
+     El blanco puro (#FFF) y el negro puro (#000) son los valores por defecto de
+     todo. Leen como "pantalla" y, por tanto, como plantilla. Lo que se percibe
+     como caro tiene temperatura: el papel de un menu, la tinta de una etiqueta
+     cosida. Son cuatro grados de diferencia y no se ven de forma consciente —
+     se notan.
+
+     No se sustituyen --vn-black ni --vn-white: siguen existiendo para donde de
+     verdad hace falta el blanco puro (fondo de una foto de producto recortada).
+     Estos son las SUPERFICIES. */
+  --vn-paper:        #FAF8F4;   /* fondo de pagina: hueso calido */
+  --vn-paper-deep:   #F2EEE7;   /* bandas alternas */
+  --vn-ink:          #12110F;   /* tinta: negro con algo de marron */
+  --vn-ink-soft:     #1C1A17;
+
+  /* Un unico acento, y muy contenido: el laton de una placa o un herraje.
+     Se usa en filetes y detalles, nunca en bloques grandes. */
+  --vn-brass:        #8A6A3B;
+  --vn-brass-light:  #B99A6B;
+
+  /* --- Curvas de movimiento -----------------------------------------------
+     Nada rebota. El rebote es simpatico, y lo simpatico no es caro.
+     Todo entra rapido y frena largo: es como se abre una puerta pesada. */
+  --vn-ease-lux:     cubic-bezier(0.22, 1, 0.36, 1);      /* salida quintica */
+  --vn-ease-veil:    cubic-bezier(0.76, 0, 0.24, 1);      /* entrada y salida, para telones */
+  --vn-ease-glide:   linear(0, 0.0039 1.2%, 0.0156 2.4%, 0.0352, 0.0625 4.9%, 0.1407 7.3%, 0.25 9.8%, 0.3906, 0.5625 14.6%, 0.7656 17.1%, 1 19.5%, 0.9727, 0.9648, 0.9727, 1 29.3%, 0.9993 41.5%, 1);
+
+  --vn-dur-reveal:   1100ms;   /* aparicion de una imagen */
+  --vn-dur-veil:     620ms;    /* telon entre paginas */
+  --vn-dur-micro:    420ms;    /* boton, enlace, tarjeta */
+
+  /* --- Alias heredados del mu-plugin ------------------------------------
+     home.css se escribio antes que este archivo y llama a nueve variables con
+     otros nombres. Ninguna existia, asi que las 36 declaraciones que las usan
+     eran INVALIDAS y el navegador las descartaba en silencio: los titulos de
+     seccion salian en Inter en vez de Playfair, el hover del menu no cambiaba
+     de color y las secciones perdian su padding lateral.
+
+     Se arregla aqui, con alias, y no renombrando en home.css: son 36 puntos de
+     llamada y cada uno es una oportunidad de erratas. El alias es una linea y
+     no puede fallar a medias. */
+  --vn-font-primary:   var(--vn-font-sans);
+  --vn-font-editorial: var(--vn-font-serif);
+  --vn-accent:         var(--vn-black);
+  --vn-fashion:        var(--vn-text-muted);
+  --vn-container-pad:  var(--vn-space-5);
+  --vn-radius-pill:    var(--vn-radius-full);
+  --vn-text-md:        var(--vn-text-lg);
+  --vn-text-7xl:       var(--vn-display-1);
+  --vn-transition:     all var(--vn-duration-base) var(--vn-ease);
 }
 
 /* Quien pide menos movimiento, recibe menos movimiento. No es opcional. */
@@ -135,5 +239,8 @@
     --vn-duration-fast: 1ms;
     --vn-duration-base: 1ms;
     --vn-duration-slow: 1ms;
+    --vn-dur-reveal:    1ms;
+    --vn-dur-veil:      1ms;
+    --vn-dur-micro:     1ms;
   }
 }

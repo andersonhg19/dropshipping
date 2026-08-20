@@ -1,0 +1,1438 @@
+@charset "UTF-8";
+/* ==========================================================================
+   VISNEX — Sistema de movimiento y materia
+   --------------------------------------------------------------------------
+   QUE SE BUSCA
+   Que la pagina no se muestre de golpe. Lo que se percibe como caro no es
+   "tener animaciones": es el RITMO con el que aparecen las cosas y que nada
+   rebote. Una puerta pesada se abre rapido y frena largo; una puerta barata
+   golpea. Todo lo de aqui usa esa curva.
+
+   COMO ESTA HECHO
+   Todo es nativo. Cero librerias, y no por purismo: una web que tarda en
+   cargar no se siente cara por muchas animaciones que lleve.
+
+   - `animation-timeline: view()` — animacion dirigida por scroll, que el
+     navegador ejecuta FUERA del hilo principal. Es la diferencia entre un
+     desplazamiento sedoso y uno que tirita. Con respaldo de IntersectionObserver
+     donde no exista.
+   - `@view-transition` — transiciones entre paginas de verdad. WordPress sirve
+     documentos distintos, y esto hace que pasar de la portada a una ficha no
+     parezca una recarga.
+   - `@property` — para poder animar angulos y porcentajes dentro de gradientes.
+   - `@starting-style` — estado de entrada sin necesidad de una clase puesta por JS.
+   - `linear()` — curvas de varios tramos sin JavaScript.
+   - `@container` — la tarjeta de producto se adapta a SU hueco, no a la ventana.
+
+   REGLA QUE NO SE ROMPE
+   Nada de esto es imprescindible. Si el navegador no lo soporta o el usuario
+   pide menos movimiento, la tienda se ve entera y funciona igual: lo unico que
+   se pierde es la ceremonia.
+   ========================================================================== */
+
+/* ===================================================
+   0. PROPIEDADES TIPADAS
+   ===================================================
+   Un custom property normal es una cadena y no se puede interpolar. Al
+   declararlo con @property el navegador sabe que es un <length> o un <angle> y
+   puede animarlo — que es lo que permite el barrido de los filetes y el brillo
+   que cruza los botones.
+   =================================================== */
+
+@property --vn-wipe {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+@property --vn-sheen {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: -120%;
+}
+
+/* ===================================================
+   1. MATERIA: GRANO
+   ===================================================
+   Una superficie plana de color solido lee como pantalla. Un grano finisimo
+   —el ruido de un papel o de una emulsion— lee como material. Es el truco mas
+   barato que existe para que un fondo deje de parecer un div.
+
+   Se genera con feTurbulence en un SVG embebido: cero peticiones, cero KB de
+   imagen. Al 3,5 % de opacidad no se ve; se nota.
+   =================================================== */
+
+.visnex-store::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: .075;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* El grano no se mueve, asi que se queda: no molesta a nadie. */
+}
+
+/* ===================================================
+   2. SUPERFICIES DE PAPEL
+   =================================================== */
+
+body.visnex-store {
+  background: var(--vn-paper);
+  color: var(--vn-ink);
+}
+
+.vn-section--offwhite,
+.vn-section--paper {
+  background: var(--vn-paper-deep);
+}
+
+.vn-marquee,
+.vn-newsletter,
+.vn-footer {
+  background: var(--vn-ink);
+}
+
+/* La cabecera deja de ser blanco translucido y pasa a papel translucido. */
+.site-header,
+#masthead {
+  background: color-mix(in srgb, var(--vn-paper) 78%, transparent) !important;
+  border-bottom-color: color-mix(in srgb, var(--vn-ink) 10%, transparent) !important;
+}
+
+/* ===================================================
+   3. LA BARRA DE PROGRESO DE LECTURA
+   ===================================================
+   Un filete de laton de 2 px que avanza con el scroll. No es un adorno: es la
+   unica pista de "cuanto queda" en una portada larga, y se hace con
+   `animation-timeline: scroll()` — el navegador la mueve solo, sin un solo
+   evento de scroll en JavaScript.
+   =================================================== */
+
+.vn-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--vn-brass), var(--vn-brass-light));
+  z-index: 9999;
+  pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .vn-progress {
+    animation: vn-progress-grow linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes vn-progress-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vn-progress { display: none; }
+}
+
+/* ===================================================
+   4. APARICIONES DIRIGIDAS POR SCROLL
+   ===================================================
+   Dos capas, a proposito:
+
+   (a) Si el navegador tiene `animation-timeline: view()`, la aparicion va
+       atada a la posicion real del elemento en la ventana. Se puede rebobinar
+       subiendo, no se dispara "de golpe" y corre en el compositor.
+
+   (b) Si no, el JS pone `.is-visible` con un IntersectionObserver y se usa una
+       transicion normal. Mismo resultado, un pelo menos fino.
+
+   El elemento NUNCA se queda invisible por defecto sin una de las dos rutas
+   activas: el estado oculto solo se aplica dentro de los bloques que garantizan
+   que algo lo va a revelar. Un contenido que no aparece es un fallo mucho peor
+   que una animacion que no ocurre.
+   =================================================== */
+
+/* --- (a) Ruta nativa ---------------------------------------------------- */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+
+    /* `entry 8% cover 32%` terminaba la animacion con el elemento todavia a
+       ~500 px del borde superior: para cuando el ojo llegaba, llevaba rato
+       quieto. `entry 25% cover 58%` la hace ocurrir mientras el elemento CRUZA
+       EL CENTRO DE LA PANTALLA, que es donde se esta mirando. */
+    .vn-reveal {
+      animation: vn-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 25% cover 58%;
+    }
+
+    .vn-reveal--slow {
+      animation-range: entry 2% cover 46%;
+    }
+
+    /* Las imagenes no aparecen: se DESCUBREN. La mascara sube desde abajo y la
+       foto llega con un 8 % de mas y se asienta. Es el gesto de una cortina que
+       se levanta, y es lo que separa un catalogo de un editorial. */
+    .vn-unveil > img,
+    .vn-unveil > .vn-pic,
+    .vn-unveil > picture {
+      animation: vn-unveil linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 52%;
+    }
+
+    /* Parallax contenidisimo: 6 % de recorrido. Mas que eso se nota como
+       efecto, y un efecto que se nota deja de ser lujo para ser feria. */
+    .vn-parallax > img,
+    .vn-parallax > .vn-pic img {
+      animation: vn-drift linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+  }
+}
+
+/* 88 px, no 34.
+   Medido: 34 px de recorrido repartidos sobre ~300 px de scroll es una razon de
+   1:8,8 — el elemento se mueve tres veces mas despacio que la pagina, asi que
+   el ojo lo lee como quieto. Por debajo de ~60 px no hay percepcion de
+   movimiento en un elemento que ademas se esta desplazando con el scroll. */
+@keyframes vn-rise {
+  from { opacity: 0; transform: translate3d(0, 88px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes vn-unveil {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: scale(1.10);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: scale(1);
+  }
+}
+
+@keyframes vn-drift {
+  from { transform: translate3d(0, -3%, 0) scale(1.06); }
+  to   { transform: translate3d(0,  3%, 0) scale(1.06); }
+}
+
+/* --- (b) Respaldo con IntersectionObserver ------------------------------ */
+
+@supports not (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .vn-reveal {
+      opacity: 0;
+      transform: translate3d(0, 88px, 0);
+      transition:
+        opacity   var(--vn-dur-reveal) var(--vn-ease-lux),
+        transform var(--vn-dur-reveal) var(--vn-ease-lux);
+    }
+
+    .vn-reveal.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .vn-unveil > img,
+    .vn-unveil > .vn-pic,
+    .vn-unveil > picture {
+      clip-path: inset(0 0 100% 0);
+      transform: scale(1.10);
+      transition:
+        clip-path var(--vn-dur-reveal) var(--vn-ease-lux),
+        transform var(--vn-dur-reveal) var(--vn-ease-lux);
+    }
+
+    .vn-unveil.is-visible > img,
+    .vn-unveil.is-visible > .vn-pic,
+    .vn-unveil.is-visible > picture {
+      clip-path: inset(0 0 0 0);
+      transform: scale(1);
+    }
+  }
+}
+
+/* ===================================================
+   5. TITULARES QUE SE LEVANTAN PALABRA A PALABRA
+   ===================================================
+   El JS parte el titular en palabras y envuelve cada una en una mascara. Cada
+   palabra sube desde debajo de su propia linea con 55 ms de retraso sobre la
+   anterior.
+
+   Por que palabras y no letras: por letras se lee como efecto de plantilla y
+   ademas destroza el titular para un lector de pantalla. Por palabras se lee
+   como que alguien lo esta escribiendo, y el texto sigue siendo texto.
+   =================================================== */
+
+.vn-split-words {
+  display: inline;
+}
+
+.vn-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  /* El descendente de la "g" o la "j" se comeria la mascara sin este respiro. */
+  padding-bottom: .12em;
+  margin-bottom: -.12em;
+}
+
+.vn-word > span {
+  display: inline-block;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vn-word > span {
+    transform: translate3d(0, 110%, 0);
+    opacity: 0;
+    transition:
+      transform 900ms var(--vn-ease-lux),
+      opacity   700ms linear;
+    transition-delay: calc(var(--i, 0) * 55ms);
+  }
+
+  .is-visible .vn-word > span,
+  .vn-headline.is-visible .vn-word > span {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* ===================================================
+   6. TELON ENTRE PAGINAS
+   ===================================================
+   Lo que mas separa "una web" de "una casa": que al cambiar de pagina no haya
+   un parpadeo en blanco.
+
+   Ruta moderna: transiciones entre documentos de la View Transitions API. El
+   navegador captura la pagina de salida y la de entrada y las funde. La
+   cabecera y el logotipo llevan `view-transition-name`, asi que NO parpadean:
+   se quedan quietos mientras el resto cambia. Ese detalle es el que hace que
+   parezca una aplicacion y no una recarga.
+   =================================================== */
+
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vn-vt-out var(--vn-dur-veil) var(--vn-ease-veil) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: vn-vt-in var(--vn-dur-veil) var(--vn-ease-veil) both;
+  }
+}
+
+@keyframes vn-vt-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.985); }
+}
+
+@keyframes vn-vt-in {
+  from { opacity: 0; transform: scale(1.012); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Lo que NO debe moverse al cambiar de pagina. */
+.site-header      { view-transition-name: vn-header; }
+.vn-announcement  { view-transition-name: vn-aviso; }
+.vn-footer        { view-transition-name: vn-pie; }
+
+/* Un elemento con nombre se saca del arbol durante la transicion, asi que hay
+   que decirle explicitamente que no se anime. */
+::view-transition-group(vn-header),
+::view-transition-group(vn-aviso),
+::view-transition-group(vn-pie) {
+  animation: none;
+}
+
+/* ===================================================
+   7. MICROINTERACCIONES
+   =================================================== */
+
+/* --- Boton: el relleno sube desde abajo --------------------------------- */
+
+.vn-btn,
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce ul.products li.product .button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    color       var(--vn-dur-micro) var(--vn-ease-lux),
+    border-color var(--vn-dur-micro) var(--vn-ease-lux);
+}
+
+.vn-btn::before,
+.woocommerce a.button::before,
+.woocommerce button.button::before,
+.woocommerce ul.products li.product .button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: currentColor;
+  opacity: .12;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform var(--vn-dur-micro) var(--vn-ease-lux);
+}
+
+.vn-btn:hover::before,
+.woocommerce a.button:hover::before,
+.woocommerce button.button:hover::before,
+.woocommerce ul.products li.product .button:hover::before {
+  transform: scaleY(1);
+}
+
+/* Un brillo que cruza el boton principal al pasar por encima. Una sola vez,
+   rapido, y solo en el CTA — si lo llevan todos, no lo lleva ninguno. */
+.vn-btn--solid::after,
+.vn-btn--white::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    color-mix(in srgb, var(--vn-white) 35%, transparent) 50%,
+    transparent 100%
+  );
+  transform: translateX(var(--vn-sheen));
+  transition: --vn-sheen 900ms var(--vn-ease-lux);
+}
+
+.vn-btn--solid:hover::after,
+.vn-btn--white:hover::after {
+  --vn-sheen: 120%;
+}
+
+/* --- Enlaces: el subrayado se barre en vez de encenderse ---------------- */
+
+.vn-link-arrow,
+.vn-editorial__link,
+.vn-footer__link {
+  position: relative;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: var(--vn-wipe, 0%) 1px;
+  transition: --vn-wipe var(--vn-dur-micro) var(--vn-ease-lux);
+}
+
+.vn-link-arrow:hover,
+.vn-editorial__link:hover,
+.vn-footer__link:hover {
+  --vn-wipe: 100%;
+}
+
+/* La flecha avanza con el enlace. */
+.vn-link-arrow span,
+.vn-editorial__link span,
+.vn-split__cta span,
+.vn-duo__cta span {
+  display: inline-block;
+  transition: transform var(--vn-dur-micro) var(--vn-ease-lux);
+}
+
+.vn-link-arrow:hover span,
+.vn-editorial__link:hover span,
+.vn-split__panel:hover .vn-split__cta span,
+.vn-duo__item:hover .vn-duo__cta span {
+  transform: translateX(6px);
+}
+
+/* --- Tarjeta de categoria: el rotulo tambien se mueve -------------------- */
+
+.vn-card-cat__body,
+.vn-split__label {
+  transition: transform var(--vn-dur-micro) var(--vn-ease-lux);
+}
+
+.vn-card-cat:hover .vn-card-cat__body {
+  transform: translateY(-6px);
+}
+
+/* Un filete de laton que cruza el pie de la tarjeta al pasar por encima. */
+.vn-card-cat::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  z-index: 3;
+  background: var(--vn-brass-light);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 620ms var(--vn-ease-lux);
+}
+
+.vn-card-cat:hover::after,
+.vn-card-cat:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* ===================================================
+   8. TARJETA DE PRODUCTO
+   ===================================================
+   Se usa @container y no @media: la tarjeta se adapta al hueco que le toca,
+   asi que la misma pieza sirve en una rejilla de cuatro, en una de dos y en un
+   carrusel sin escribir tres juegos de reglas.
+   =================================================== */
+
+.woocommerce ul.products li.product {
+  container-type: inline-size;
+  container-name: vn-card;
+}
+
+.vn-card__media-wrap img {
+  transition: transform 900ms var(--vn-ease-lux);
+}
+
+.woocommerce ul.products li.product:hover .vn-card__media-wrap img {
+  transform: scale(1.055);
+}
+
+/* El boton de anadir no esta siempre a la vista: aparece al acercarse. La
+   tarjeta en reposo es solo la prenda, que es lo que se ha venido a ver. */
+@media (hover: hover) and (pointer: fine) {
+  .woocommerce ul.products li.product .button {
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity   var(--vn-dur-micro) var(--vn-ease-lux),
+      transform var(--vn-dur-micro) var(--vn-ease-lux);
+  }
+
+  .woocommerce ul.products li.product:hover .button,
+  .woocommerce ul.products li.product:focus-within .button {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@container vn-card (max-width: 220px) {
+  .woocommerce ul.products li.product .button {
+    font-size: var(--vn-text-xs);
+    padding-inline: var(--vn-space-3);
+  }
+}
+
+/* ===================================================
+   9. CURSOR
+   ===================================================
+   Solo con raton de verdad (`pointer: fine`) y solo sobre las zonas de imagen.
+   Un disco pequeño que crece y dice VER. Es la firma de las casas de moda en
+   web, y funciona porque convierte una foto en algo que invita a entrar.
+
+   Nunca sustituye al cursor del sistema en formularios ni en texto: ahi el
+   cursor tiene que decir donde se escribe.
+   =================================================== */
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .vn-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 84px;
+    height: 84px;
+    margin: -42px 0 0 -42px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--vn-paper) 92%, transparent);
+    color: var(--vn-ink);
+    display: grid;
+    place-items: center;
+    font-family: var(--vn-font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 9997;
+    opacity: 0;
+    transform: translate3d(-100px, -100px, 0) scale(.4);
+    transition:
+      opacity 260ms var(--vn-ease-lux),
+      scale   380ms var(--vn-ease-lux);
+    backdrop-filter: blur(2px);
+  }
+
+  .vn-cursor.is-on {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* Sobre una zona con cursor propio, se esconde el del sistema. */
+  .vn-cursor-zone {
+    cursor: none;
+  }
+}
+
+/* ===================================================
+   10. HERO: EL AIRE SE MUEVE
+   ===================================================
+   Un zoom de 22 segundos y un 6 % de recorrido. A esa velocidad nadie ve que se
+   mueve; lo que se percibe es que la imagen "respira" en vez de estar clavada.
+   Los dos paneles van a distinta velocidad para que la costura no lata a la vez.
+   =================================================== */
+
+/* LA RESPIRACION DEL HERO, ELIMINADA.
+   Era un zoom del 6 % en 26 s: 1,7 px por segundo. Nadie lo ve, y a cambio
+   mantenia dos capas a pantalla completa componiendose sin parar.
+
+   Pero el motivo de fondo es peor: una animacion CSS gana a cualquier
+   declaracion normal del autor, asi que `vn-breathe` sobre `.vn-split__img`
+   anulaba el `transform: scale(1.045)` del hover. Pasar el raton por encima del
+   hero —la primerisima interaccion de cualquier visita— no hacia absolutamente
+   nada. El `animation-play-state: paused` que habia como parche congelaba la
+   animacion, pero su valor seguia mandando, asi que no arreglaba lo que decia
+   arreglar.
+
+   Ese presupuesto se gasta ahora en un hover que si se percibe (seccion 18). */
+
+
+}
+
+/* La tarjeta central llega la ultima, cuando las dos fotos ya estan. */
+@media (prefers-reduced-motion: no-preference) {
+  .vn-split__statement {
+    animation: vn-statement 1200ms var(--vn-ease-lux) 380ms both;
+  }
+}
+
+@keyframes vn-statement {
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 26px)); }
+  to   { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+@media (max-width: 900px) {
+  /* Apilado, la tarjeta no esta centrada: la animacion no puede tocar translate. */
+  @media (prefers-reduced-motion: no-preference) {
+    .vn-split__statement {
+      animation: vn-rise 1000ms var(--vn-ease-lux) 260ms both;
+    }
+  }
+}
+
+/* ===================================================
+   11. LA BANDA SE DETIENE SI LA MIRAS
+   =================================================== */
+
+.vn-marquee:hover .vn-marquee__track {
+  animation-play-state: paused;
+}
+
+/* ===================================================
+   12. CABECERA QUE SE ASIENTA
+   ===================================================
+   Al bajar, la barra se compacta y se opaca. Es el gesto de un maitre que se
+   aparta: sigue ahi, ocupa menos.
+   =================================================== */
+
+.site-header {
+  transition:
+    background var(--vn-dur-micro) var(--vn-ease-lux),
+    box-shadow var(--vn-dur-micro) var(--vn-ease-lux);
+}
+
+.site-header.vn-header--scrolled {
+  background: color-mix(in srgb, var(--vn-paper) 94%, transparent) !important;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--vn-ink) 8%, transparent),
+              0 10px 40px -28px color-mix(in srgb, var(--vn-ink) 60%, transparent) !important;
+}
+
+.site-header .site-branding,
+.site-header .main-navigation {
+  transition: padding var(--vn-dur-micro) var(--vn-ease-lux);
+}
+
+.site-header.vn-header--scrolled .site-branding {
+  padding-block: 4px !important;
+}
+
+/* ===================================================
+   13. RENDIMIENTO
+   ===================================================
+   `content-visibility: auto` le dice al navegador que no maquete ni pinte las
+   secciones que aun no se ven. En una portada de ocho bloques con foto, eso
+   recorta el trabajo del primer pintado a la mitad.
+
+   `contain-intrinsic-size` es imprescindible al lado: sin el, el navegador cree
+   que la seccion mide 0 y la barra de scroll pega saltos al bajar.
+   =================================================== */
+
+/* IMPORTANTE: solo en secciones SIN imagenes diferidas.
+   Se probo tambien en `.vn-strip`, `.vn-duo` y `.vn-editorial` y se quito: con
+   `content-visibility: auto`, el navegador no maqueta el bloque hasta tenerlo
+   cerca, y una imagen con `loading="lazy"` dentro de ese bloque nunca llegaba a
+   dispararse. El resultado era una banda a sangre completa SIN foto — que es
+   justo el fallo silencioso que este proyecto ya tuvo una vez.
+
+   Un pintado un poco mas lento es mejor que una imagen que no aparece. */
+.vn-trust {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 200px;
+}
+
+/* ===================================================
+   14. ENTRADA DE LA PAGINA
+   ===================================================
+   @starting-style da un estado inicial sin que JavaScript tenga que poner una
+   clase. Evita el parpadeo clasico de "se ve todo, luego se esconde, luego
+   aparece" — que es exactamente lo que delata a una web hecha con prisa.
+   =================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  .vn-announcement,
+  .site-header {
+    transition: opacity 700ms var(--vn-ease-lux), transform 700ms var(--vn-ease-lux);
+  }
+
+  @starting-style {
+    .vn-announcement,
+    .site-header {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+  }
+}
+
+/* ===================================================
+   15. FOCO VISIBLE
+   ===================================================
+   Todo lo anterior es para el raton. Esto es para quien navega con teclado, y
+   no es negociable: si se anaden estados de hover elaborados y el foco no se
+   ve, la pagina se vuelve inusable para quien mas lo necesita.
+   =================================================== */
+
+.visnex-store a:focus-visible,
+.visnex-store button:focus-visible,
+.visnex-store input:focus-visible,
+.visnex-store select:focus-visible,
+.visnex-store [tabindex]:focus-visible {
+  outline: 2px solid var(--vn-brass);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ==========================================================================
+   16. COLOR: METODO, NO GUSTO
+   --------------------------------------------------------------------------
+   La regla que gobierna todo lo de arriba, y la razon por la que la interfaz
+   es acromatica: EN UNA TIENDA DE ROPA, EL UNICO COLOR DEBE SER LA PRENDA.
+
+   No es una preferencia estetica. Un boton azul, un badge rojo o un banner
+   verde compiten con la foto del producto por la misma atencion, y el que
+   pierde siempre es el producto. Por eso las casas que viven de vender ropa
+   —de Zara a SSENSE— tienen interfaces en blanco, negro y un neutro: es
+   funcion, no moda. Y de paso es lo que hace que la pagina no caduque, porque
+   los colores de marca son lo primero que envejece.
+
+   Reparto 60 / 30 / 10:
+     60 %  papel  (--vn-paper)     fondo, aire, la mayoria de la pagina
+     30 %  tinta  (--vn-ink)       tipografia, bandas oscuras, pie
+     10 %  laton  (--vn-brass)     filetes, foco, progreso. Nunca en bloques.
+
+   El acento es laton y no oro: el oro saturado lee como bisuteria y como
+   "oferta". El laton es el herraje de un bolso bueno — se ve caro justamente
+   porque no brilla.
+   ========================================================================== */
+
+/* --- Cohesion de campana -------------------------------------------------
+   Las fotos de escenografia vienen de sesiones distintas: una de estudio, una
+   de calle, un bodegon. Puestas juntas se nota que no son de la misma marca.
+
+   Un grado unificado muy leve —bajar un punto la saturacion y subir un punto
+   el contraste— las hace parecer una sola campana. Es lo que hace un director
+   de arte al cerrar un catalogo, y aqui cuesta una linea.
+
+   SE APLICA SOLO A LA ESCENOGRAFIA. Nunca a la foto de un producto: ahi el
+   color tiene que ser el REAL, porque el cliente compra por esa foto y una
+   camisa que llega con otro tono es una devolucion.
+   ------------------------------------------------------------------------ */
+
+.vn-split__img img,
+.vn-card-cat__img,
+.vn-duo__img,
+.vn-strip__img img,
+.vn-editorial__image img {
+  filter: saturate(0.9) contrast(1.05);
+}
+
+/* Al pasar por encima, la foto recupera su color completo. Es un premio
+   pequeño y silencioso: la pagina responde a que la mires. */
+.vn-split__panel:hover .vn-split__img img,
+.vn-card-cat:hover .vn-card-cat__img,
+.vn-duo__item:hover .vn-duo__img {
+  filter: saturate(1) contrast(1);
+  transition: filter 700ms var(--vn-ease-lux);
+}
+
+/* --- Filetes de laton ----------------------------------------------------
+   Una linea de 1 px bajo los antetitulos. Es el equivalente al hilo dorado en
+   el canto de una carta: no se mira, pero si no esta, la carta parece
+   fotocopiada.
+   ------------------------------------------------------------------------ */
+
+.vn-split__eyebrow,
+.vn-strip__eyebrow,
+.vn-editorial__label,
+.vn-duo__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vn-space-3);
+}
+
+.vn-split__eyebrow::after,
+.vn-editorial__label::after {
+  content: "";
+  width: 34px;
+  height: 1px;
+  background: var(--vn-brass);
+  opacity: .8;
+}
+
+.vn-strip__eyebrow::after,
+.vn-duo__eyebrow::after {
+  content: "";
+  width: 34px;
+  height: 1px;
+  background: currentColor;
+  opacity: .55;
+}
+
+/* El precio en la tarjeta, con cifras de ancho fijo: en una rejilla, los
+   precios tienen que formar columna. Sin `tabular-nums` los digitos bailan y
+   la rejilla se ve descuidada aunque nadie sepa decir por que. */
+.woocommerce ul.products li.product .price,
+.woocommerce div.product p.price,
+.vn-card-cat__count {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ===================================================
+   17. REMATES VISTOS EN PANTALLA
+   =================================================== */
+
+/* Los botones heredaban el subrayado de los enlaces de Storefront. Un boton
+   subrayado se lee como enlace, y en la portada el CTA principal es lo unico
+   que tiene que leerse como boton sin dudarlo. */
+.vn-btn,
+.woocommerce a.button,
+.woocommerce ul.products li.product .button {
+  text-decoration: none !important;
+}
+
+/* El bloque editorial se pinta a dos columnas a sangre completa. Con
+   `content-visibility: auto` el navegador no maqueta lo que no se ve, y eso es
+   bueno para el primer pintado — pero la altura estimada tenia que subir: el
+   bloque mide mas de 600 px y la barra de scroll pegaba un tiron al llegar. */
+/* El texto del editorial necesita el mismo aire que la foto de al lado: sin
+   esto, en pantallas anchas la columna de texto queda muy alta respecto al
+   centro optico de la imagen. */
+.vn-editorial__content {
+  padding-block: clamp(var(--vn-space-8), 8vw, var(--vn-space-11));
+}
+
+/* La barra de confianza pierde su borde superior: con las superficies de papel,
+   dos tonos contiguos ya separan sin necesidad de dibujar una linea. Menos
+   lineas es una de las cosas que mas separa lo caro de lo barato. */
+.vn-trust {
+  border-top: 0;
+  background: var(--vn-paper);
+}
+
+/* Las cifras del pie y del carrito, alineadas. */
+.vn-footer,
+.site-header .amount {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   18. LA CAPA QUE MANDA
+   --------------------------------------------------------------------------
+   Esta hoja se encola en un hook de prioridad 99, asi que es la ultima del
+   tema en TODAS las paginas. Por eso lo de aqui abajo no lleva un solo
+   !important: no le hace falta.
+
+   Todo lo que sigue son las cosas que el ojo ve a un metro de la pantalla.
+   ========================================================================== */
+
+/* ---------- 18.1 - Los titulares por fin son titulares ------------------- */
+
+.vn-split__title {
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-display-1);          /* hasta 152px; antes topaba en 48 */
+  line-height: var(--vn-leading-display);
+  letter-spacing: var(--vn-tracking-display);
+  font-weight: 400;
+  margin: 0 0 var(--vn-space-5);
+}
+
+/* Si la tarjeta sigue midiendo 540px, 152px de titular no caben. */
+.vn-split__statement {
+  width: min(94vw, 900px);
+  padding: clamp(2.5rem, 4vw, 4.5rem) clamp(2rem, 3.5vw, 4rem);
+  background: var(--vn-paper);
+  box-shadow: none;
+}
+
+.vn-section__title,
+.vn-editorial__title,
+.vn-strip__title {
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-display-2);          /* hasta 88px */
+  line-height: var(--vn-leading-display);
+  letter-spacing: var(--vn-tracking-display);
+  font-weight: 400;
+}
+
+.vn-newsletter__title {
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-display-3);
+  line-height: var(--vn-leading-display);
+  letter-spacing: var(--vn-tracking-display);
+  font-weight: 400;
+}
+
+.vn-split__name {
+  font-size: var(--vn-display-2);
+  line-height: var(--vn-leading-display);
+  letter-spacing: var(--vn-tracking-display);
+}
+
+.vn-card-cat__name {
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-display-3);
+  line-height: var(--vn-leading-display);
+  letter-spacing: var(--vn-tracking-display);
+  font-weight: 400;
+}
+
+.vn-card-cat--wide .vn-card-cat__name {
+  font-size: var(--vn-display-2);
+}
+
+/* ---------- 18.2 - Versalitas: la voz de la interfaz --------------------- */
+/*
+   Mayusculas a 11 px con interletraje abierto es la convencion de la cartela
+   de museo, la etiqueta cosida y la carta de un restaurante caro: no se lee
+   rapido, se lee con atencion, y esa lentitud deliberada se percibe como
+   cuidado.
+
+   `text-transform: uppercase` conserva las vocales acentuadas y la ene con
+   virgulilla. NUNCA `font-variant: small-caps`: muchas fuentes no traen
+   versalitas acentuadas y saldria una ene pelada.
+*/
+
+.main-navigation ul li a,
+.storefront-primary-navigation ul li a,
+.vn-btn,
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce ul.products li.product .button,
+.vn-split__cta,
+.vn-duo__cta,
+.vn-link-arrow,
+.vn-footer__col-title,
+.vn-trust__title {
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--vn-tracking-caps);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.vn-btn,
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce ul.products li.product .button {
+  padding-inline: 28px;
+}
+
+.vn-split__eyebrow,
+.vn-strip__eyebrow,
+.vn-editorial__label,
+.vn-duo__eyebrow,
+.vn-card-cat__count {
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-2xs);
+  letter-spacing: var(--vn-tracking-caps);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* ---------- 18.3 - Superficies de papel, no solo el margen --------------- */
+/*
+   --vn-paper solo se aplicaba a `body`. Todas las superficies GRANDES, las que
+   el ojo mira de verdad, seguian en blanco puro o en el gris frio #F5F5F7 de
+   Storefront. Son cuatro grados de temperatura que no se ven de forma
+   consciente, pero son la diferencia entre papel y pantalla.
+*/
+
+.vn-duo__caption       { background: var(--vn-paper); }
+.vn-editorial__content { background: var(--vn-paper-deep); }
+
+.vn-card-cat,
+.vn-duo__item,
+.vn-strip,
+.vn-card__media-wrap,
+.woocommerce ul.products li.product img.woocommerce-placeholder {
+  background: var(--vn-paper-deep);
+}
+
+/* ---------- 18.4 - Fuera la joyeria de plantilla ------------------------- */
+/*
+   La esquina redondeada y la sombra suave en tarjetas son LA firma visual de
+   tema comprado. Ningun catalogo impreso tiene las fotos con las esquinas
+   redondeadas. Se dejan solo donde significan algo: el contador del carrito.
+*/
+
+.vn-card-cat,
+.vn-duo__item,
+.vn-strip,
+.vn-split__panel,
+.vn-editorial__image,
+.vn-card__media-wrap,
+.vn-card__media,
+.woocommerce ul.products li.product img,
+.woocommerce div.product div.images img {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ---------- 18.5 - La cabecera reacciona -------------------------------- */
+/*
+   Hasta ahora, al bajar, lo unico que pasaba era que el logotipo perdia 6 px de
+   relleno. Y ni eso: la regla de la sombra enganchaba `.vn-scrolled` y el
+   JavaScript pone `.vn-header--scrolled`. Nunca se ejecuto.
+
+   Es la unica pieza que se ve en TODAS las paginas y en los primeros 300 ms.
+   Que se compacte con firmeza es la senal mas barata de "esto esta construido".
+*/
+
+.site-header,
+#masthead {
+  background: color-mix(in srgb, var(--vn-paper) 82%, transparent);
+  backdrop-filter: saturate(150%) blur(14px);
+  -webkit-backdrop-filter: saturate(150%) blur(14px);
+  border-bottom: 1px solid transparent;
+  box-shadow: none;
+  transition:
+    background   260ms var(--vn-ease-lux),
+    border-color 260ms var(--vn-ease-lux),
+    box-shadow   260ms var(--vn-ease-lux);
+}
+
+.site-header.vn-header--scrolled,
+#masthead.vn-header--scrolled {
+  background: color-mix(in srgb, var(--vn-paper) 95%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--vn-ink) 10%, transparent);
+  box-shadow: 0 10px 40px -30px color-mix(in srgb, var(--vn-ink) 70%, transparent);
+}
+
+.site-header .site-branding,
+.site-header .main-navigation {
+  transition: padding 260ms var(--vn-ease-lux);
+}
+
+.site-header.vn-header--scrolled .site-branding {
+  padding-block: 2px;
+}
+
+.site-title a,
+.beta .site-title a {
+  display: inline-block;
+  transform-origin: left center;
+  transition: transform 260ms var(--vn-ease-lux);
+}
+
+.site-header.vn-header--scrolled .site-title a {
+  transform: scale(.86);
+}
+
+/* ---------- 18.6 - Hover que se nota ------------------------------------ */
+
+.vn-split__img,
+.vn-split__img img,
+.vn-duo__img,
+.vn-card-cat__img {
+  transition:
+    transform 700ms var(--vn-ease-lux),
+    filter    700ms var(--vn-ease-lux);
+}
+
+.vn-split__panel:hover .vn-split__img,
+.vn-split__panel:focus-visible .vn-split__img {
+  transform: scale(1.06);
+}
+
+/* ---------- 18.7 - Botones que responden -------------------------------- */
+/*
+   La transicion que declaraba la seccion 7 era mas CORTA que la de
+   components.css y ganaba por orden: el fondo y el levantamiento del hover
+   pasaban a ser instantaneos. Los botones habian quedado mas duros que antes
+   de tocar nada.
+
+   Y una sola senal, no dos: el barrido. Antes competian un barrido casi
+   invisible (12 % de opacidad) y un cambio de fondo brusco, y el resultado neto
+   era un boton que no parecia reaccionar.
+*/
+
+.vn-btn,
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce ul.products li.product .button {
+  border-radius: 0;
+  transition:
+    color            var(--vn-dur-micro) var(--vn-ease-lux),
+    background-color var(--vn-dur-micro) var(--vn-ease-lux),
+    border-color     var(--vn-dur-micro) var(--vn-ease-lux);
+}
+
+.vn-btn::before,
+.woocommerce a.button::before,
+.woocommerce button.button::before,
+.woocommerce ul.products li.product .button::before {
+  opacity: .22;                 /* antes .12: invisible */
+}
+
+/* ---------- 18.8 - El precio es un dato, no el argumento ---------------- */
+/*
+   El precio en negrita, mas grande y en color es la gramatica del DESCUENTO:
+   dice "el precio es la razon para comprar". Compuesto como pie de foto dice
+   "el precio es un dato". Es exactamente lo que necesita esta tienda: producto
+   asequible que no debe parecer barato.
+*/
+
+.woocommerce ul.products li.product .woocommerce-loop-product__title {
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-sm);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  margin: 0 0 2px;
+}
+
+.woocommerce ul.products li.product .price {
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-sm);
+  font-weight: 400;
+  color: var(--vn-text-muted);
+  margin: 0;
+}
+
+.woocommerce ul.products li.product .price del { display: none; }
+.woocommerce ul.products li.product .price ins { text-decoration: none; }
+
+/* La insignia de rebaja de WooCommerce, ella sola, destruye la percepcion de
+   precio de toda la rejilla. La rebaja se cuenta en la ficha, nunca como
+   pegatina sobre la foto. */
+.woocommerce span.onsale { display: none; }
+
+/* ---------- 18.9 - Menos lineas ----------------------------------------- */
+/* Cada filete que se quita es una decision menos que el ojo tiene que
+   procesar. Lo caro tiene pocas lineas. */
+
+.vn-trust,
+.vn-section--offwhite,
+.vn-editorial {
+  border: 0;
+}
+
+.vn-trust {
+  background: var(--vn-paper);
+}
+
+/* ==========================================================================
+   19. REJILLA DE CONTACTOS
+   --------------------------------------------------------------------------
+   EL CAMBIO QUE MAS SE NOTA DE TODA LA LISTA.
+
+   El lujo en pantalla no esta en el hueco entre productos: esta en el TAMANO
+   de la foto. Con 32 px de separacion y un contenedor de 1440 px, la rejilla
+   se lee como "tarjetas de catalogo separadas". Con 8 px y a sangre completa
+   se lee como una hoja de contactos fotografica: un objeto continuo.
+
+   Numeros en un monitor de 1920 px:
+       columna   330 px  ->  466 px   (+41 %)
+       alto foto 440 px  ->  652 px   (+48 %)
+       SUPERFICIE DE CADA IMAGEN  x 2,1
+
+   Y la proporcion: 3/4 es la intermedia que no lee ni a catalogo ni a
+   editorial. 5:7 es la del papel impreso.
+   ========================================================================== */
+
+.woocommerce ul.products {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding-inline: 16px;
+  max-width: none;
+  margin: 0;
+}
+
+/* El contenedor de Storefront estrangula la rejilla. Se suelta SOLO donde hay
+   rejilla de producto: en las paginas de texto la medida de lectura sigue
+   haciendo falta. */
+body.home .col-full,
+body.woocommerce-shop .col-full,
+body.tax-product_cat .col-full,
+body.post-type-archive-product .col-full {
+  max-width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.woocommerce ul.products li.product a img,
+.vn-card__media,
+.vn-card__media-wrap {
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  object-fit: cover;
+  object-position: center top;   /* con `center` a secas, 5:7 corta cabezas */
+  border-radius: 0;
+  display: block;
+}
+
+.vn-card__media-wrap { margin-bottom: 10px; }
+
+@media (max-width: 1100px) {
+  .woocommerce ul.products { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  .woocommerce ul.products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    padding-inline: 8px;
+  }
+}
+
+/* ==========================================================================
+   20. LA MISMA LOGICA EN LA PORTADA
+   --------------------------------------------------------------------------
+   Las tarjetas de categoria tenian 24 px de separacion y un tope de 1440 px:
+   el mismo estrangulamiento. A sangre completa y con 8 px, las dos grandes
+   pasan de 688 px a ~950 px de ancho.
+   ========================================================================== */
+
+.vn-grid-cats,
+.vn-duo {
+  max-width: none;
+  gap: 8px;
+  padding-inline: 16px;
+}
+
+.vn-card-cat          { aspect-ratio: 5 / 7; }
+.vn-card-cat--wide    { aspect-ratio: 4 / 3; }
+.vn-duo__item         { aspect-ratio: 5 / 7; }
+
+.vn-section {
+  padding-inline: 0;
+}
+
+.vn-section__header {
+  padding-inline: 16px;
+}
+
+@media (max-width: 700px) {
+  .vn-grid-cats,
+  .vn-duo {
+    gap: 4px;
+    padding-inline: 8px;
+  }
+}
+
+/* El hero deja de tener costura: a sangre completa, los dos paneles se tocan.
+   Una linea menos. */
+.vn-split {
+  gap: 1px;
+  min-height: min(92vh, 940px);
+}
+
+.vn-split__panel {
+  min-height: min(92vh, 940px);
+}
+
+/* ---------- 21. ESCALONADO --------------------------------------------- */
+/*
+   Los hermanos de una rejilla no aparecen a la vez: aparecen en fila, con 90 ms
+   entre uno y otro. Es la diferencia entre "aparecio un bloque" y "se estan
+   colocando las cosas".
+
+   Con `animation-timeline: view()` no existe `animation-delay`, asi que el
+   escalonado se hace desplazando el RANGO de cada hermano: cada uno empieza su
+   animacion un poco mas tarde en su propio recorrido.
+*/
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .vn-grid-cats > .vn-reveal,
+    .vn-duo > .vn-reveal,
+    .vn-trust__grid > .vn-reveal,
+    .woocommerce ul.products > .vn-reveal {
+      animation-range: entry calc(25% + var(--i, 0) * 4%) cover calc(58% + var(--i, 0) * 4%);
+    }
+  }
+}
+
+@supports not (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .vn-grid-cats > .vn-reveal,
+    .vn-duo > .vn-reveal,
+    .vn-trust__grid > .vn-reveal,
+    .woocommerce ul.products > .vn-reveal {
+      transition-delay: calc(var(--i, 0) * 90ms);
+    }
+  }
+}
+
+/* ---------- 22. RESTOS DE LA LIMPIEZA DE LA CABECERA -------------------- */
+/*
+   Al sacar el bloque de cabecera de home.css se fue con el el `display: none`
+   del lema del sitio, y reaparecio "Moda Premium | Estilo que te define" bajo
+   el logotipo. Ese lema es texto de relleno de la instalacion: en una casa de
+   moda, el nombre va solo.
+*/
+
+.site-description {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.site-header,
+#masthead {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  padding: 0;
+}
+
+.site-branding {
+  padding-block: 14px;
+}
+
+.site-title a,
+.beta .site-title a {
+  font-family: var(--vn-font-datos);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--vn-ink);
+  text-decoration: none;
+}
+
+/* Los rotulos de categoria a 88px se comen la tarjeta. El nombre de una
+   categoria no es un titular de portada: es una etiqueta grande. */
+.vn-card-cat__name          { font-size: var(--vn-display-3); }
+.vn-card-cat--wide .vn-card-cat__name { font-size: clamp(2rem, 4vw, 3.75rem); }
+
+/* Y el titulo de seccion tampoco necesita 88px: el que manda es el H1. */
+.vn-section__title {
+  font-size: clamp(2rem, 4.2vw, 4rem);
+}
+
+/* ---------- 23. EL VELO SE LEVANTA CON LA FOTO -------------------------- */
+/*
+   El telon (`vn-unveil`) recortaba la imagen pero NO el velo que va encima:
+   mientras la mascara subia, en la parte de abajo quedaba velo oscuro sobre el
+   fondo claro de la tarjeta, y el resultado era una franja gris que parecia un
+   error de maquetacion.
+
+   Los dos tienen que recortarse a la vez. La forma limpia de conseguirlo es
+   recortar el CONTENEDOR en vez de la imagen: asi entran foto, velo y rotulo
+   en el mismo gesto, que ademas es mejor — la tarjeta entera se descubre como
+   una cortina, en lugar de aparecer el texto antes que la foto.
+*/
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Se anula el recorte sobre los hijos... */
+    .vn-card-cat.vn-unveil > .vn-pic,
+    .vn-card-cat.vn-unveil > picture,
+    .vn-duo__item.vn-unveil > .vn-pic,
+    .vn-duo__item.vn-unveil > picture {
+      animation: none;
+    }
+
+    /* ...y se aplica al contenedor entero. */
+    .vn-card-cat.vn-unveil,
+    .vn-duo__item.vn-unveil {
+      animation: vn-unveil-caja linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 52%;
+    }
+  }
+}
+
+@supports not (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .vn-card-cat.vn-unveil > .vn-pic,
+    .vn-card-cat.vn-unveil > picture,
+    .vn-duo__item.vn-unveil > .vn-pic,
+    .vn-duo__item.vn-unveil > picture {
+      clip-path: none;
+      transform: none;
+      transition: none;
+    }
+
+    .vn-card-cat.vn-unveil,
+    .vn-duo__item.vn-unveil {
+      clip-path: inset(0 0 100% 0);
+      transition: clip-path var(--vn-dur-reveal) var(--vn-ease-lux);
+    }
+
+    .vn-card-cat.vn-unveil.is-visible,
+    .vn-duo__item.vn-unveil.is-visible {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+}
+
+/* Sin `scale` en el contenedor: escalar la tarjeta escalaria tambien el rotulo
+   y el texto se veria borroso durante la transicion. El acercamiento se queda
+   dentro, sobre la imagen. */
+@keyframes vn-unveil-caja {
+  from { clip-path: inset(0 0 100% 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .vn-card-cat.vn-unveil .vn-card-cat__img,
+    .vn-duo__item.vn-unveil .vn-duo__img {
+      animation: vn-acercar linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 52%;
+    }
+  }
+}
+
+@keyframes vn-acercar {
+  from { transform: scale(1.10); }
+  to   { transform: scale(1); }
+}

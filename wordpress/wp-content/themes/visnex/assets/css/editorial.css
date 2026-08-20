@@ -1,0 +1,787 @@
+@charset "UTF-8";
+/* ==========================================================================
+   VISNEX — Secciones editoriales de la portada
+   --------------------------------------------------------------------------
+   Se carga DESPUES de home.css y sólo añade lo nuevo: el hero partido, la
+   banda deslizante, la rejilla de categorías, el lookbook doble y la banda de
+   temporada. home.css conserva la cabecera, la barra de confianza, el
+   boletín, el pie y las animaciones — no se toca lo que ya funcionaba.
+
+   Todo sale de tokens.css. Aquí no hay un solo color ni tamaño a mano.
+   ========================================================================== */
+
+/* ===================================================
+   0. DOS BUGS DE MAQUETACION DE LA CABECERA
+   ===================================================
+   Los dos venían de Storefront y se veían en TODAS las páginas:
+
+   1. `ul.menu` heredaba `margin-left: -1em` (-16 px) del tema padre y nadie lo
+      reseteó, así que el primer elemento del menú quedaba cortado por el borde
+      izquierdo de la ventana: se leía "NICIO" en lugar de "INICIO".
+
+   2. `.col-full` de la cabecera no tenía padding horizontal, de modo que el
+      logotipo quedaba pegado al borde de la pantalla, sin margen.
+   =================================================== */
+
+/* home.css declara `.col-full { max-width:100% !important; padding:0 !important }`
+   para que las secciones de la portada sangren de borde a borde. Correcto para
+   el cuerpo, pero aplana tambien el contenedor interno de la cabecera, y por eso
+   el logotipo quedaba pegado al borde de la pantalla.
+
+   La barra sigue ocupando todo el ancho —el fondo y el desenfoque viven en
+   `.site-header`—; lo que se acota aqui es solo su contenido. Hace falta
+   !important y mayor especificidad porque la regla de home.css lleva las dos. */
+.site-header .col-full {
+  max-width: var(--vn-container-max) !important;
+  width: auto !important;
+  margin-inline: auto !important;
+  padding-inline: var(--vn-space-5) !important;
+}
+
+/* Storefront le pone `margin-left: -1em` a la lista del menu y nadie lo reseteo:
+   el primer elemento quedaba cortado por el borde y se leia "NICIO". */
+.main-navigation ul.menu,
+.main-navigation ul.nav-menu {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* El hover del menu dependia de `--vn-accent`, que no existia: la declaracion
+   era invalida y el enlace no cambiaba en absoluto. Ahora el color si cambia,
+   pero se le anade un subrayado porque un cambio de gris muy oscuro a negro es
+   demasiado sutil para verse — y porque el color por si solo no deberia ser
+   nunca la unica senal de un estado. */
+.main-navigation ul li a,
+.storefront-primary-navigation ul li a {
+  position: relative;
+}
+
+.main-navigation ul li a::after,
+.storefront-primary-navigation ul li a::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 6px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--vn-duration-fast) var(--vn-ease);
+}
+
+.main-navigation ul li a:hover::after,
+.main-navigation ul li a:focus-visible::after,
+.main-navigation ul li.current-menu-item > a::after {
+  transform: scaleX(1);
+}
+
+/* Los submenus desplegables si necesitan el subrayado quieto. */
+.main-navigation ul ul li a::after {
+  display: none;
+}
+
+/* La franja blanca entre la cabecera y el hero eran los `4.235801032em`
+   (67,77 px) de `margin-bottom` que Storefront le pone a `.site-header`.
+   home.css puso el PADDING a cero pero no el MARGEN, asi que el hueco seguia
+   ahi en todas las paginas — y en la portada partia por la mitad la union
+   entre la barra y la foto a sangre. */
+.site-header {
+  margin-bottom: 0 !important;
+}
+
+.home .site-main,
+.home .content-area,
+.home .entry-content {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Fuera de la portada el contenido si necesita respirar bajo la cabecera. */
+body:not(.home) .site-content {
+  padding-top: var(--vn-space-7);
+}
+
+@media (max-width: 768px) {
+  .site-header .col-full {
+    padding-inline: var(--vn-space-4) !important;
+  }
+}
+
+/* ===================================================
+   1. <picture> — comportamiento comun
+   =================================================== */
+
+.vn-pic {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.vn-pic img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ===================================================
+   2. PORTADA PARTIDA (Ella / El)
+   ===================================================
+   Dos paneles a pantalla completa. La razón es de negocio: el catálogo tiene
+   94 prendas de mujer y 60 de hombre, y la portada anterior sólo enseñaba
+   mujer — quien llegaba buscando ropa de hombre no tenía ninguna señal de que
+   existiera hasta el menú.
+   =================================================== */
+
+.vn-split {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;                      /* la costura, no un borde: separa sin dibujar */
+  background: var(--vn-black);
+  min-height: min(88vh, 860px);
+  margin-bottom: 0;
+}
+
+.vn-split__panel {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  min-height: min(88vh, 860px);
+  text-decoration: none;
+  isolation: isolate;
+}
+
+.vn-split__img {
+  transition: transform var(--vn-duration-slow) var(--vn-ease-out);
+  will-change: transform;
+}
+
+.vn-split__panel:hover .vn-split__img,
+.vn-split__panel:focus-visible .vn-split__img {
+  transform: scale(1.045);
+}
+
+/* El velo cumple dos funciones: da contraste al rótulo y hunde la mitad
+   inferior para que la tarjeta central no compita con las fotos. */
+.vn-split__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 10, .35) 0%,
+    rgba(10, 10, 10, .05) 32%,
+    rgba(10, 10, 10, .62) 100%
+  );
+  transition: opacity var(--vn-duration-base) var(--vn-ease);
+}
+
+.vn-split__panel:hover .vn-split__scrim {
+  opacity: .82;
+}
+
+.vn-split__label {
+  position: absolute;
+  z-index: 2;
+  left: var(--vn-space-7);
+  bottom: var(--vn-space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--vn-space-2);
+  color: var(--vn-white);
+}
+
+.vn-split__name {
+  font-family: var(--vn-font-serif);
+  font-size: clamp(2.5rem, 5vw, var(--vn-text-5xl));
+  font-weight: var(--vn-weight-normal);
+  font-style: italic;
+  line-height: var(--vn-leading-tight);
+  letter-spacing: var(--vn-tracking-tight);
+  text-shadow: 0 2px 24px rgba(0, 0, 0, .45);
+}
+
+.vn-split__cta {
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-wider);
+  text-transform: uppercase;
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(255, 255, 255, .45);
+  align-self: flex-start;
+  transition: border-color var(--vn-duration-fast) var(--vn-ease);
+}
+
+.vn-split__panel:hover .vn-split__cta {
+  border-bottom-color: var(--vn-white);
+}
+
+/* La declaración de marca, encima de la costura. Fondo sólido y no traslúcido
+   a propósito: el H1 tiene que cumplir contraste sobre CUALQUIER foto que el
+   usuario suba luego desde el Personalizador, y un cristal esmerilado depende
+   de lo que haya detrás. */
+.vn-split__statement {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 540px);
+  background: var(--vn-white);
+  padding: var(--vn-space-8) var(--vn-space-7);
+  text-align: center;
+  box-shadow: var(--vn-shadow-xl);
+}
+
+.vn-split__eyebrow {
+  display: block;
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-widest);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+  margin-bottom: var(--vn-space-4);
+}
+
+.vn-split__title {
+  font-family: var(--vn-font-serif);
+  font-size: clamp(2rem, 4vw, var(--vn-text-4xl));
+  font-weight: var(--vn-weight-normal);
+  line-height: var(--vn-leading-tight);
+  letter-spacing: var(--vn-tracking-tight);
+  color: var(--vn-text);
+  margin: 0 0 var(--vn-space-4);
+  text-wrap: balance;
+}
+
+.vn-split__text {
+  font-size: var(--vn-text-base);
+  line-height: var(--vn-leading-normal);
+  color: var(--vn-text-muted);
+  margin: 0 0 var(--vn-space-6);
+  text-wrap: pretty;
+}
+
+/* ===================================================
+   3. BANDA DESLIZANTE
+   ===================================================
+   Repite las promesas que deciden una compra contra entrega en Colombia,
+   justo debajo del hero: la duda de "¿y si no me llega?" se resuelve antes de
+   mirar el primer precio.
+   =================================================== */
+
+.vn-marquee {
+  overflow: hidden;
+  background: var(--vn-black);
+  color: var(--vn-white);
+  padding: var(--vn-space-4) 0;
+  user-select: none;
+}
+
+.vn-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: vn-marquee-slide 46s linear infinite;
+}
+
+.vn-marquee__item {
+  padding-inline: var(--vn-space-6);
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-medium);
+  letter-spacing: var(--vn-tracking-wider);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Se desplaza exactamente el 50 %: como el texto está duplicado en el marcado,
+   la segunda copia ocupa el sitio de la primera y el bucle no da el salto que
+   delataría el truco. */
+@keyframes vn-marquee-slide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vn-marquee__track {
+    animation: none;
+    width: 100%;
+    justify-content: center;
+  }
+  .vn-marquee__item[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+/* ===================================================
+   4. REJILLA DE CATEGORIAS
+   ===================================================
+   Seis tarjetas en rejilla asimétrica en vez de tres iguales. Las dos de
+   arriba (Mujer y Hombre) mandan; las cuatro de abajo son la entrada rápida.
+   =================================================== */
+
+/* Doce columnas, no seis.
+   Con seis, las dos tarjetas anchas (span 3) llenaban la primera fila y las
+   cuatro estrechas (span 2) sólo cabían de tres en tres: "Accesorios" se
+   quedaba sola en una tercera fila, descolgada a la izquierda. Sobre doce,
+   6+6 y 3+3+3+3 cuadran exactas en dos filas. */
+.vn-grid-cats {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--vn-space-4);
+  max-width: var(--vn-container-max);
+  margin-inline: auto;
+}
+
+.vn-card-cat {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  grid-column: span 3;
+  aspect-ratio: 3 / 4;
+  text-decoration: none;
+  background: var(--vn-gray-100);
+  isolation: isolate;
+}
+
+.vn-card-cat--wide {
+  grid-column: span 6;
+  aspect-ratio: 16 / 11;
+}
+
+.vn-card-cat__img {
+  transition: transform var(--vn-duration-slow) var(--vn-ease-out);
+}
+
+.vn-card-cat:hover .vn-card-cat__img,
+.vn-card-cat:focus-visible .vn-card-cat__img {
+  transform: scale(1.06);
+}
+
+.vn-card-cat__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, .72) 0%,
+    rgba(10, 10, 10, .22) 42%,
+    rgba(10, 10, 10, 0) 68%
+  );
+}
+
+.vn-card-cat__body {
+  position: absolute;
+  z-index: 2;
+  left: var(--vn-space-5);
+  right: var(--vn-space-5);
+  bottom: var(--vn-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--vn-white);
+}
+
+.vn-card-cat__name {
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-text-2xl);
+  font-weight: var(--vn-weight-medium);
+  line-height: var(--vn-leading-tight);
+}
+
+.vn-card-cat--wide .vn-card-cat__name {
+  font-size: var(--vn-text-3xl);
+}
+
+/* El recuento sale de la taxonomía, no de un número escrito a mano: es la
+   diferencia entre una tienda que parece un maniquí y una con fondo. */
+.vn-card-cat__count {
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-medium);
+  letter-spacing: var(--vn-tracking-wider);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .82);
+}
+
+/* ===================================================
+   5. LOOKBOOK DOBLE
+   =================================================== */
+
+.vn-duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--vn-space-4);
+  max-width: var(--vn-container-max);
+  margin-inline: auto;
+}
+
+.vn-duo__item {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  text-decoration: none;
+  background: var(--vn-gray-100);
+  isolation: isolate;
+}
+
+.vn-duo__img {
+  transition: transform var(--vn-duration-slow) var(--vn-ease-out);
+}
+
+.vn-duo__item:hover .vn-duo__img,
+.vn-duo__item:focus-visible .vn-duo__img {
+  transform: scale(1.04);
+}
+
+.vn-duo__caption {
+  position: absolute;
+  z-index: 2;
+  left: var(--vn-space-6);
+  right: var(--vn-space-6);
+  bottom: var(--vn-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--vn-space-2);
+  padding: var(--vn-space-5);
+  background: rgba(255, 255, 255, .94);
+  color: var(--vn-text);
+}
+
+.vn-duo__eyebrow {
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-widest);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+}
+
+.vn-duo__title {
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-text-xl);
+  line-height: var(--vn-leading-snug);
+}
+
+.vn-duo__cta {
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-wide);
+  align-self: flex-start;
+  border-bottom: 1px solid var(--vn-border-strong);
+  padding-bottom: 2px;
+  transition: border-color var(--vn-duration-fast) var(--vn-ease);
+}
+
+.vn-duo__item:hover .vn-duo__cta {
+  border-bottom-color: var(--vn-black);
+}
+
+/* ===================================================
+   6. BANDA DE TEMPORADA
+   =================================================== */
+
+.vn-strip {
+  position: relative;
+  overflow: hidden;
+  min-height: 380px;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+  margin-block: var(--vn-space-10);
+}
+
+.vn-strip__img {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.vn-strip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: rgba(10, 10, 10, .42);
+}
+
+.vn-strip__body {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: var(--vn-white);
+  padding: var(--vn-space-8) var(--vn-space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--vn-space-4);
+}
+
+.vn-strip__eyebrow {
+  font-size: var(--vn-text-xs);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-widest);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .88);
+}
+
+.vn-strip__title {
+  font-family: var(--vn-font-serif);
+  font-size: clamp(2rem, 4.5vw, var(--vn-text-4xl));
+  font-weight: var(--vn-weight-normal);
+  line-height: var(--vn-leading-tight);
+  margin: 0;
+  text-wrap: balance;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, .4);
+}
+
+/* ===================================================
+   7. PIEZAS SUELTAS
+   =================================================== */
+
+.vn-section__inner {
+  max-width: var(--vn-container-max);
+  margin-inline: auto;
+}
+
+.vn-section__more {
+  text-align: center;
+  margin-top: var(--vn-space-7);
+}
+
+.vn-link-arrow {
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-semibold);
+  letter-spacing: var(--vn-tracking-wide);
+  text-transform: uppercase;
+  color: var(--vn-text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--vn-border-strong);
+  padding-bottom: 3px;
+  transition: border-color var(--vn-duration-fast) var(--vn-ease);
+}
+
+.vn-link-arrow:hover {
+  border-bottom-color: var(--vn-black);
+}
+
+.vn-btn--solid {
+  background: var(--vn-black);
+  color: var(--vn-white);
+  border: 1px solid var(--vn-black);
+}
+
+.vn-btn--solid:hover {
+  background: var(--vn-gray-900);
+  color: var(--vn-white);
+}
+
+/* La mitad con foto de "Nuestra historia" estaba en blanco porque el archivo
+   no existía. Ahora la imagen se estira al alto de la columna de texto. */
+.vn-editorial__image,
+.vn-editorial__image .vn-pic,
+.vn-editorial__image img {
+  height: 100%;
+  min-height: 420px;
+}
+
+/* ===================================================
+   8. RESPONSIVE
+   =================================================== */
+
+@media (max-width: 1024px) {
+  .vn-grid-cats {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .vn-card-cat        { grid-column: span 3; }
+  .vn-card-cat--wide  { grid-column: span 6; }
+}
+
+@media (max-width: 900px) {
+  /* El hero partido se apila y la declaración deja de flotar: encima de una
+     foto a pantalla completa en móvil, una tarjeta centrada tapa justo la
+     parte que hace que la foto valga la pena. */
+  .vn-split {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .vn-split__panel {
+    min-height: 62vh;
+  }
+
+  .vn-split__statement {
+    position: static;
+    transform: none;
+    width: 100%;
+    order: -1;
+    box-shadow: none;
+    padding: var(--vn-space-8) var(--vn-space-5);
+  }
+
+  .vn-duo {
+    grid-template-columns: 1fr;
+  }
+
+  .vn-strip {
+    min-height: 300px;
+    margin-block: var(--vn-space-8);
+  }
+}
+
+@media (max-width: 700px) {
+  .vn-grid-cats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--vn-space-3);
+  }
+  .vn-card-cat        { grid-column: span 1; }
+  .vn-card-cat--wide  { grid-column: span 2; }
+  .vn-card-cat        { aspect-ratio: 3 / 4; }
+  .vn-card-cat--wide  { aspect-ratio: 16 / 11; }
+
+  .vn-split__label {
+    left: var(--vn-space-5);
+    bottom: var(--vn-space-5);
+  }
+
+  .vn-duo__caption {
+    left: var(--vn-space-4);
+    right: var(--vn-space-4);
+    bottom: var(--vn-space-4);
+    padding: var(--vn-space-4);
+  }
+}
+
+/* ===================================================
+   9. UNA SOLA VOZ TIPOGRAFICA
+   ===================================================
+   El hero, los rotulos de las tarjetas y "Nuestra historia" hablan en Playfair;
+   los titulos de seccion estaban en Inter Bold. Dos voces en la misma pagina
+   hacen que ninguna suene deliberada.
+
+   Se pasan los titulos de seccion a la serif, con peso normal en vez de 600: en
+   una serif de contraste alto, el negrita cierra los ojales y a tamano grande
+   se lee mas pesado que elegante. La jerarquia la da el tamano, no el peso.
+   =================================================== */
+
+.vn-section__title {
+  font-family: var(--vn-font-serif);
+  font-size: clamp(1.75rem, 3.4vw, var(--vn-text-4xl));
+  font-weight: var(--vn-weight-normal);
+  letter-spacing: var(--vn-tracking-tight);
+  line-height: var(--vn-leading-tight);
+  text-wrap: balance;
+}
+
+.vn-section__subtitle {
+  font-size: var(--vn-text-base);
+  color: var(--vn-text-muted);
+  text-wrap: pretty;
+}
+
+/* El titulo del boletin comparte la misma voz. */
+.vn-newsletter__title {
+  font-family: var(--vn-font-serif);
+  font-weight: var(--vn-weight-normal);
+}
+
+/* ===================================================
+   10. TARJETA DE PRODUCTO
+   ===================================================
+   El nombre del producto competia con el precio: ambos en el mismo gris y a
+   tamano parecido. En una tienda de ropa el orden de lectura es foto, luego
+   nombre, luego precio — asi que el precio baja de tamano y sube de peso, que
+   es como se distingue sin gritar.
+   =================================================== */
+
+.woocommerce ul.products li.product .woocommerce-loop-product__title {
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-medium);
+  color: var(--vn-text);
+  letter-spacing: var(--vn-tracking-normal);
+  line-height: var(--vn-leading-snug);
+}
+
+.woocommerce ul.products li.product .price {
+  font-size: var(--vn-text-sm);
+  font-weight: var(--vn-weight-semibold);
+  color: var(--vn-text);
+}
+
+/* La segunda foto al pasar el raton: la maquinaria ya estaba en functions.php
+   (`vn-card__media--hover`) pero no habia una sola regla que la colocara, asi
+   que la imagen secundaria se apilaba DEBAJO de la principal y estiraba la
+   tarjeta al doble de alto en los productos con galeria. */
+.vn-card__media-wrap {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: var(--vn-gray-100);
+}
+
+.vn-card__media-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.vn-card__media--hover {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--vn-duration-base) var(--vn-ease);
+}
+
+.woocommerce ul.products li.product:hover .vn-card__media--hover {
+  opacity: 1;
+}
+
+/* Sin foto, WooCommerce mete su marcador de posicion. Que al menos no rompa la
+   proporcion de la fila. */
+.woocommerce ul.products li.product img.woocommerce-placeholder {
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  background: var(--vn-gray-100);
+}
+
+/* ===================================================
+   11. DOS CORRECCIONES VISTAS EN PANTALLA
+   =================================================== */
+
+/* El titulo de la banda de temporada heredaba el color de `.vn-strip__body`
+   (blanco), pero home.css pinta los h2 en gris muy oscuro con un selector mas
+   especifico: sobre la foto verde el texto quedaba practicamente invisible.
+   Se fija el color aqui, y se le anade la sombra que ya tenian los otros
+   titulos sobre foto — el blanco puro sobre una imagen clara tampoco basta. */
+.vn-strip .vn-strip__title,
+.vn-strip .vn-strip__eyebrow {
+  color: var(--vn-white) !important;
+}
+
+.vn-strip .vn-strip__title {
+  text-shadow: 0 2px 30px rgba(0, 0, 0, .55);
+}
+
+/* Un velo algo mas denso: la foto de temporada es la unica clara de la pagina
+   y con el 42 % anterior el texto no llegaba a contraste suficiente. */
+.vn-strip::after {
+  background: rgba(10, 10, 10, .52);
+}
+
+/* "Nuestra historia" es una rejilla de dos columnas: la foto ocupaba todo el
+   alto y el texto se apilaba arriba, dejando medio panel vacio. Centrado
+   vertical y una medida de lectura acotada, que a 700 px de ancho la linea se
+   hacia demasiado larga para seguirla comodamente. */
+.vn-editorial__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.vn-editorial__text {
+  max-width: 52ch;
+}

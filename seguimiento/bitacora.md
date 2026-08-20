@@ -137,3 +137,346 @@ nombre de columna, vista previa de 5 filas ya emparejadas, y avisos de campo dup
 - Router de fulfillment que envíe automáticamente a Dropi al confirmar.
 - Flyway (sigue `ddl-auto=update`).
 - Credenciales reales de Mercado Pago / Wompi / Dropi.
+
+---
+
+## 2026-08-20 — La tienda se veía vacía y lenta: causa raíz, diseño e imágenes
+
+**Contexto:** al levantar el WordPress, la tienda tardaba **18 segundos** en responder
+y la portada se veía vacía: hero gris, tarjetas de categoría grises y media sección
+"Nuestra Historia" en blanco. Ninguna de las dos cosas era lo que parecía.
+
+### Las tres causas raíz
+
+| Síntoma | Causa real | Cómo se encontró |
+|---|---|---|
+| 18 s de TTFB, incluso en un 302 sin cuerpo | El bind mount de Windows: leer 500 ficheros del contenedor tardaba **31 s** (62 ms/fichero). Con `opcache.validate_timestamps=On` y `revalidate_freq=2`, OPcache hacía `stat()` de ~1.500 ficheros por petición contra ese mount | Se midió dentro del contenedor comparando la capa de imagen (3 ms) con el mount |
+| Portada "vacía" | El tema buscaba `assets/img/hero.jpg`, `cat-mujer.jpg`, `editorial.jpg`… y si no existían **pintaba un degradado**. Esas fotos nunca se subieron. El fallback silencioso convirtió "falta contenido" en algo que parecía diseño | Leyendo `visnex_img()` en `inc/home-sections.php` |
+| Toda la tienda inaccesible | `woocommerce_coming_soon = yes` con `store_pages_only`: **cada página de categoría y la tienda entera** servían la pantalla "Tenemos grandes proyectos por anunciar". La portada funcionaba, así que no se notaba | Abriendo `/product-category/mujer/` |
+
+La tercera es la más grave y llevaba ahí desde el principio: **el catálogo entero
+estaba oculto al público y nadie lo sabía**, porque el único sitio que se miraba
+—la portada— quedaba fuera del modo "próximamente".
+
+### Rendimiento
+
+`wordpress/config/opcache.ini` (nuevo, montado en el compose): `validate_timestamps=0`,
+`max_accelerated_files=30000` (4.000 se quedaba corto: solo `wp-content` tiene 10.901
+ficheros), 256 MB de memoria.
+
+El precio es que al editar un `.php` hay que recargar PHP:
+`wordpress/config/recargar-php.sh`. No hace falta para CSS, imágenes ni para nada
+que se cambie desde el administrador.
+
+Con eso el sitio bajó a 1,7 s **en inglés**. Al instalar el español volvió a subir a
+4-9 s, y ahí apareció la segunda mitad del problema: los **11 MB y 323 ficheros de
+traducción** que WordPress lee en cada petición, también desde el mount. Se movieron
+a un volumen de Docker (`wp-languages` en el compose) — es una carpeta que gestiona
+WordPress solo, no algo que se edite a mano.
+
+| Momento | Portada | Arranque (`wp-login.php`) |
+|---|---|---|
+| Al empezar | **18 s** | 18,6 s |
+| Con OPcache afinado (en inglés) | 1,7 s | — |
+| Al instalar el español | 4-9 s | 5,5 s |
+| Traducciones en volumen (español) | **2,6 s** | 2,3 s |
+
+**18 s → 2,6 s, siete veces más rápido y ya en español.**
+
+Lo que queda de esos 2,6 s sigue siendo el bind mount: `wp-content` tiene 97 MB de
+plugins y 10.901 ficheros. Se cierra moviéndolo también a un volumen y dejando en el
+repo sólo el tema y el plugin propios. **No se hizo**: cambia la estructura del
+proyecto y esa decisión no es técnica.
+
+Se descartó activar el caché de página (WP Super Cache está instalado pero inerte
+porque nadie definió `WP_CACHE`): serviría páginas en ~50 ms, pero enmascara los
+cambios mientras se sigue editando la tienda. Queda anotado como el siguiente paso
+cuando la tienda esté quieta.
+
+### Nueve variables CSS que no existían
+
+`home.css` llamaba a `--vn-font-primary`, `--vn-font-editorial`, `--vn-accent`,
+`--vn-container-pad`, `--vn-radius-pill`, `--vn-text-md`, `--vn-text-7xl`,
+`--vn-transition` y `--vn-fashion`. **Ninguna estaba definida en `tokens.css`**, así
+que las 36 declaraciones que las usaban eran inválidas y el navegador las descartaba
+en silencio: los títulos de sección salían en Inter en vez de Playfair, el hover del
+menú no cambiaba nada y varias secciones perdían su padding lateral.
+
+Se arregló con alias en `tokens.css` —una línea por variable— en vez de renombrar 36
+puntos de llamada.
+
+### Tres bugs de maquetación heredados de Storefront
+
+1. `ul.menu` con `margin-left: -1em` sin resetear: el primer ítem del menú quedaba
+   cortado por el borde y se leía **"NICIO"**.
+2. `.col-full` de la cabecera sin padding: el logotipo pegado al borde de la pantalla.
+   `home.css` ponía `padding: 0 !important` para el ancho completo del cuerpo y
+   arrastraba también la cabecera.
+3. `.site-header` con `margin-bottom: 4.235801032em` (67,77 px): una franja blanca
+   entre la barra y el contenido **en todas las páginas**.
+
+### Diseño
+
+- **Portada partida Ella / Él.** El catálogo tiene 94 prendas de mujer y 60 de hombre,
+  y la portada anterior sólo enseñaba mujer: quien entraba buscando ropa de hombre no
+  tenía ninguna señal de que la hubiera hasta el menú.
+- **Banda deslizante** con las tres promesas que deciden una compra contraentrega.
+- **Rejilla de categorías de 6 tarjetas** sobre 12 columnas (6+6 / 3+3+3+3). Con 6
+  columnas, "Accesorios" se quedaba sola descolgada en una tercera fila.
+- **Lookbook doble**, **banda de temporada** y **"Nuestra historia"** con foto real.
+- Una sola voz tipográfica: los títulos de sección pasan a Playfair.
+- El recuento de las tarjetas usa `include_children`: `$term->count` sólo cuenta los
+  productos asignados directamente, así que "Mujer" anunciaba **2 prendas** en vez de 94.
+
+### Imágenes
+
+13 fotos editoriales curadas (Unsplash, licencia de uso comercial), recortadas al
+tamaño de cada hueco y servidas en **WebP con respaldo JPEG**: 3.225 KB → 1.250 KB,
+**un 61 % menos**.
+
+Todas están en la biblioteca de medios y son **editables desde Apariencia →
+Personalizar → VISNEX — Portada** (`inc/customizer.php`, nuevo). Las del tema quedan
+como valor por defecto: si se borra la elección, la portada no se rompe.
+
+### Datos del catálogo
+
+| Qué | Antes | Ahora |
+|---|---|---|
+| Modo "próximamente" | Toda la tienda oculta | Desactivado |
+| Idioma | WooCommerce en inglés ("Add to cart") | es_ES, con paquetes de WooCommerce, Yoast y Storefront |
+| Menú | 10 ítems duplicados, varios sin enlace, y un segundo listado con **todas** las páginas (Cart, Checkout, My account, Sample Page) | Inicio · Mujer (8 hijas) · Hombre (7) · Tienda · Novedades |
+| Tildes | Ninguna en todo el catálogo | 34 títulos, 19 descripciones, 17 extractos |
+| Duplicados | 47 productos repetidos, visibles uno al lado del otro | A borrador. En **47 de 47** grupos la regla era la misma: el duplicado tardío no tenía descripción |
+| Productos de prueba | 5 "Producto Premium Test" **publicados** | A borrador |
+| Publicados | 153 (106 únicos) | 101, todos únicos |
+| Recorte de miniatura | Cuadrado 324×324 | 3:4 vertical, 450 px |
+
+### Pendiente / decisiones que no son mías
+
+- **Fotos de producto reales.** 4 productos quedaron con imágenes *aproximadas* y
+  "Portafolios Cuero Negro" sin foto: no hay stock que coincida. Y el catálogo ya
+  traía desajustes (una foto de abdominales en "Traje Baño Negro"). Esto no se
+  arregla con banco de imágenes: lo tiene que resolver el importador trayendo las
+  fotos del proveedor.
+- **Mover `wp-content` a un volumen de Docker** para cerrar el 1,7 s restante.
+- **Renovar credenciales** de Mercado Pago / Wompi / Dropi (sigue pendiente de antes).
+
+---
+
+## 2026-08-20 (cont.) — Que se sienta caro: movimiento, papel y dos mercados
+
+**Encargo:** que la tienda transmita lo que transmite un restaurante caro —que
+todo se perciba fino— vendiendo prendas de diario a precio bajo. Y dos
+condiciones nuevas: **España y Colombia**, y una portada **que no caduque**.
+
+### La tesis
+
+Lo que se percibe como caro no es "tener animaciones". Es el **ritmo** con el que
+aparecen las cosas y que **nada rebote**. Una puerta pesada se abre rápido y
+frena largo; una barata golpea. Todo el sistema usa esa curva
+(`cubic-bezier(0.22, 1, 0.36, 1)`) y duraciones de 0,9-1,2 s, no de 0,3 s.
+
+### Técnicas, todas nativas
+
+Cero librerías, y no por purismo: una web lenta no se siente cara.
+
+| Técnica | Para qué |
+|---|---|
+| `animation-timeline: view()` / `scroll()` | Apariciones y barra de progreso atadas al scroll real, ejecutadas **fuera del hilo principal**. Con respaldo de IntersectionObserver donde no exista |
+| `@view-transition { navigation: auto }` | Transiciones **entre documentos**. La cabecera y el pie llevan `view-transition-name`, así que no parpadean: pasar de la portada a una ficha deja de parecer una recarga |
+| `@property` | Permite interpolar porcentajes: el barrido del subrayado y el brillo que cruza el CTA |
+| `@starting-style` | Estado de entrada sin que JS ponga una clase — evita el parpadeo de "se ve, se esconde, aparece" |
+| `linear()` | Curvas de varios tramos sin JavaScript |
+| `@container` | La tarjeta de producto se adapta a **su** hueco, no a la ventana |
+| `content-visibility` | No maquetar lo que aún no se ve |
+| `feTurbulence` en SVG embebido | Grano de papel al 3,5 %. Cero peticiones, cero KB de imagen |
+
+Verificado en Chrome 151: las ocho soportadas. 29 elementos con aparición,
+8 titulares partidos en 34 palabras enmascaradas, cursor y barra de progreso.
+
+**Regla que no se rompe:** nada de esto es imprescindible. Si falla, si el
+navegador es viejo o si el usuario pide menos movimiento, la tienda se ve entera
+y se puede comprar. Lo único que se pierde es la ceremonia.
+
+### Papel, no pantalla
+
+El blanco puro y el negro puro son los valores por defecto de todo y leen como
+"plantilla". Ahora: papel `#FAF8F4`, tinta `#12110F` y un único acento de
+**latón** `#8A6A3B` en filetes y foco. Latón y no oro: el oro saturado lee como
+bisutería y como oferta.
+
+**Reparto 60/30/10** y una regla que lo gobierna: *en una tienda de ropa el único
+color debe ser la prenda*. Un botón azul o un badge rojo compiten con la foto del
+producto, y el que pierde siempre es el producto. Además es lo que hace que la
+página no caduque: los colores de marca son lo primero que envejece.
+
+**Cohesión de campaña:** las fotos de escenografía llevan un grado unificado
+(`saturate(.9) contrast(1.05)`) para que un bodegón y una foto de calle parezcan
+la misma marca. Al pasar el ratón recuperan su color. **Nunca se aplica a la foto
+de un producto**: ahí el color tiene que ser el real.
+
+### Dos mercados y una portada que no caduca
+
+| Antes | Ahora | Por qué |
+|---|---|---|
+| "Envío gratis desde $150.000" | "Envíos a España y Colombia" | Una cifra en pesos no significa nada en Madrid |
+| "Nequi, PSE y tarjetas" | "Tarjeta, transferencia y contra entrega" | Las pasarelas no son las mismas |
+| "Nueva temporada" | "Fondo de armario" | Lo atado a una temporada obliga a reescribir la portada cada pocos meses, y cuando se queda viejo la tienda parece abandonada |
+| "Edición de temporada" | "Básicos" | Igual |
+| "Lo que más está gustando esta temporada" | "Lo que más se lleva" | Igual |
+
+**Los cuatro textos de la barra de confianza son ahora editables**, porque son
+justo lo que cambia de un mercado a otro. Mantener la tienda pasa a ser cambiar
+productos, no reescribir la casa.
+
+### Imágenes, con criterio de dirección de arte
+
+Se descartaron dos por método, no por gusto:
+- **El pantalón sobre verde neón**: un saturado peleando contra una paleta
+  acromática. Sustituido por un perchero en crudo, óxido y negro — que además
+  *es* el fondo de armario hecho imagen.
+- **La camiseta de grupo sobre pared rosa**: leía a calle estadounidense y a
+  moda pasajera. Sustituida por punto grueso en crudo sobre gris, que empareja
+  con el detalle de chaqueta oscura del otro panel.
+
+La foto de hombre **se mantuvo**: el cuero negro sobre ladrillo ya estaba dentro
+de la paleta cálida.
+
+### Un hallazgo que no se arregla con banco de imágenes
+
+**100 productos publicados y solo 54 fotos distintas.** Casi la mitad comparte
+imagen con otro producto: `photo-1523170335258` está a la vez en un bolso, un
+clutch, una gorra, unos mocasines y una pulsera. Y hay al menos una foto con
+**logotipo de marca ajena visible** (un reloj Omega en "Mocasines Cuero").
+
+Las fotos se asignaron en rotación sobre un fondo pequeño de stock: son
+decorativas, no descriptivas. Esto no lo arregla ningún banco de imágenes — lo
+tiene que resolver el importador trayendo las fotos del proveedor, que es
+exactamente para lo que existe VISNEX.
+
+### Otros remates
+
+- WP-CLI pasa a estar **montado** desde `wordpress/config/`: al recrear el
+  contenedor se perdía porque vive en la capa de imagen.
+- Los botones perdieron el subrayado que heredaban de Storefront: un botón
+  subrayado se lee como enlace.
+- Foco visible con filete de latón en todo lo interactivo. Con estados de hover
+  elaborados, si el foco no se ve la página se vuelve inusable con teclado.
+
+**Rendimiento:** sin regresión. 2,9 s, los mismos que antes del sistema de
+movimiento (37 KB entre CSS y JS, y el movimiento lo ejecuta el compositor).
+
+---
+
+## 2026-08-20 (cont. 2) — "Se ve igual y va lento": las dos veces que me equivoqué
+
+El dueño reporta que no ve cambios ni animaciones, y que la tienda sigue muy lenta.
+Tenía razón en las dos cosas, y las dos eran errores míos de método.
+
+### Error 1 — Estaba midiendo el rendimiento donde no dolía
+
+`curl` solo pide el HTML. Medido así daba 2,9 s y lo di por resuelto. Medido **en el
+navegador**, que es lo que sufre una persona:
+
+| | curl (lo que yo medía) | Navegador (lo que se sufre) |
+|---|---|---|
+| TTFB | 2,9 s | **4,2 s**, y hasta **33 s** bajo carga |
+| Primer pintado | no lo mide | **116 s** |
+
+La diferencia son los **39 recursos**: cada CSS, cada JS y cada imagen cruzaba también
+el bind mount de Windows. El documento era el 3 % del problema.
+
+**Arreglo definitivo, el que llevaba pospuesto dos veces:** `wp-content` a un volumen
+de Docker, con el tema y el plugin propios montados **encima** desde el repo para poder
+seguir editándolos desde Windows y desde git.
+
+```
+lectura de 500 ficheros:  31.000 ms  ->  275 ms   (113x)
+TTFB:                      4.227 ms  ->  264 ms   (16x)
+carga completa:            4.952 ms  ->  706 ms   (7x)
+```
+
+Además: fuera `cart-fragments` salvo en el embudo (hacía una llamada AJAX en cada carga
+de cada página para refrescar un carrito vacío), fuera `wc-blocks` en la portada, y
+`preload` de las dos fotos del hero.
+
+### Error 2 — Diseñé para el gusto, no para el impacto
+
+Se lanzó una investigación con **7 agentes en paralelo** (4 de tendencias 2025-2026 +
+2 de auditoría del código + 1 de síntesis; 57 hallazgos, 506k tokens). El veredicto,
+literal:
+
+> *"Se ve igual porque el 90 % de lo nuevo **no llega a pintarse** —`motion.css` pierde
+> por especificidad y por orden de carga frente a `home.css`— o está **calibrado por
+> debajo del umbral de percepción**."*
+
+Lo que encontró, verificado línea a línea:
+
+| Hallazgo | Evidencia | Consecuencia |
+|---|---|---|
+| La animación **buena** estaba dentro de `@supports not (animation-timeline)` | `motion.css:222` | Chrome moderno recibía la invisible; solo un navegador viejo veía la buena |
+| Recorrido de 34 px sobre ~300 px de scroll | `motion.css:200` | Razón 1:8,8 — el ojo lo lee como quieto |
+| El rango terminaba con el elemento a ~500 px del borde | `entry 8% cover 32%` | Cuando el ojo llegaba, llevaba rato parado |
+| `home.css` declaraba la cabecera con `!important` bajo `#masthead` | `home.css:63-72` | La cabecera de papel **nunca se pintó** |
+| La sombra al bajar enganchaba `.vn-scrolled`; el JS pone `.vn-header--scrolled` | `home.css:75` vs `visnex.js:47` | Esa regla **no se ejecutó jamás** |
+| `vn-breathe` anulaba el zoom del hover del hero | una animación gana a una declaración normal | Pasar el ratón por el hero **no hacía nada** |
+| El H1 topaba en 48 px | `editorial.css:249` | **Más pequeño que el H1 por defecto de Storefront (41,9 px + peso)** |
+| ~70 líneas de `.vn-hero*` | `home.css:200-235` | CSS de un marcado que ya no existe |
+
+### Lo que se cambió
+
+**Cascada.** `home.css` una sola vez (antes en tres bloques condicionales, así que el
+orden final cambiaba entre portada y tienda) y `motion.css` en un hook de **prioridad
+99**: es la última hoja del tema en todas las páginas y por eso no necesita un solo
+`!important`. Los 232 `!important` de `home.css` bajan a 25. `@charset "UTF-8"` en las
+nueve hojas.
+
+**Escala bimodal.** Fuera la escala modular 1.25, cuyos peldaños son indistinguibles —
+y eso *es* la queja de "se ve igual".
+
+```
+INTERFAZ  10-16 px   (menú, precio, filtros, botones)
+DISPLAY   36-152 px  (solo titulares)
+razón     4x  ->  14x
+```
+
+**Trío tipográfico.** Playfair Display fuera: es el serif por defecto de webs de bodas
+desde 2015 y hoy dice "usé el primer serif bonito que encontré". Entra **Instrument
+Serif** (display, nunca por debajo de 40 px), **Inter** baja de 6 pesos a 3, y entra
+**Archivo** para datos — que el precio y las tallas tengan voz propia.
+
+**Rejilla de contactos.** El lujo en pantalla no está en el hueco entre productos: está
+en el tamaño de la foto.
+
+```
+separación   32 px -> 8 px        contenedor  1440 px -> a sangre
+proporción   3/4   -> 5:7         superficie de cada imagen  x 2,1
+```
+
+**Movimiento por encima del umbral.** Recorrido 34 → **88 px**; rango `entry 25% cover
+58%`, que hace que la animación ocurra mientras el elemento **cruza el centro de la
+pantalla**; telón con escalonado de 4 % por hermano. Y el telón pasa a recortar el
+**contenedor**, no la imagen: antes recortaba la foto pero no el velo, y durante la
+animación quedaba una franja gris que parecía un error.
+
+**Superficies.** El papel solo estaba en `body`; las superficies grandes seguían en
+blanco puro y en el gris frío `#F5F5F7` de Storefront. Grano de 3,5 % a 7,5 %. Y fuera
+la joyería de plantilla: `border-radius: 0` y `box-shadow: none` en toda tarjeta e
+imagen — ningún catálogo impreso tiene las fotos con las esquinas redondeadas.
+
+**El precio deja de ser el argumento.** Mismo tamaño que el nombre, peso normal, color
+apagado, y fuera la insignia de rebaja de WooCommerce. El precio en negrita y en color
+es la gramática del descuento; compuesto como pie de foto es un dato. Es justo lo que
+necesita esta tienda: producto asequible que no debe parecer barato.
+
+### Verificación final
+
+| | |
+|---|---|
+| TTFB / carga | 264 ms / 706 ms |
+| H1 | 152 px, Instrument Serif |
+| Menú | 11 px, Archivo |
+| Animaciones vivas | 43, de ellas **40 dirigidas por scroll** |
+| Última hoja de la cascada | `motion.css` |
+| Radio de tarjeta | 0 px |
+| Literales de temporada | 0 |

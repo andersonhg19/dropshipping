@@ -20,6 +20,8 @@ networks:
 volumes:
   postgres-data:
   mysql-data:
+  wp-languages:
+  wp-content:
 
 services:
 
@@ -80,8 +82,44 @@ services:
       # de PHP se imprimen en la pagina y se ven en la tienda.
       WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-0}
     volumes:
-      - ./wordpress/wp-content:/var/www/html/wp-content
+      # ------------------------------------------------------------------
+      # wp-content vive en un VOLUMEN DE DOCKER, no en el bind mount.
+      #
+      # Medido en el navegador con el bind mount: TTFB de 4,2 s y hasta 33 s
+      # bajo carga, con el primer pintado a los 116 s. La causa es que
+      # wp-content tiene 10.901 ficheros y 97 MB de plugins, y CADA peticion
+      # -incluidas las 39 de CSS, JS e imagenes- cruza la frontera entre
+      # Windows y el contenedor. Leer 500 ficheros de ahi tarda 31 s.
+      #
+      # Dentro de un volumen, esos ficheros estan en el ext4 de la maquina
+      # virtual de Docker: no cruzan nada.
+      #
+      # LO QUE SE EDITA A MANO SIGUE EN EL REPO, montado ENCIMA del volumen:
+      # el tema y el plugin propios. Asi se sigue trabajando desde Windows y
+      # desde git, y solo WooCommerce, Yoast y las subidas viven en el volumen.
+      #
+      # Las subidas dejan de verse desde el Explorador de Windows. Para
+      # sacarlas:  docker cp dropshipping-wordpress-1:/var/www/html/wp-content/uploads ./copia
+      # ------------------------------------------------------------------
+      - wp-content:/var/www/html/wp-content
+      - ./wordpress/wp-content/themes/visnex:/var/www/html/wp-content/themes/visnex
+      - ./wordpress/wp-content/plugins/visnex-colombia:/var/www/html/wp-content/plugins/visnex-colombia
       - ./wordpress/config/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      # Sin esto, cada peticion revalidaba ~1.500 ficheros contra el bind mount
+      # de Windows y el TTFB era de 18 s. Ver el comentario de opcache.ini.
+      - ./wordpress/config/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+      # Las traducciones NO van en el bind mount de Windows. Son 11 MB y varios
+      # miles de ficheros que WordPress lee en CADA peticion, y medido aqui esa
+      # sola carpeta costaba entre 2 y 7 s por pagina: en ingles el sitio
+      # respondia en 2,3 s y en espanol se iba a 4-9 s. Es una carpeta que
+      # gestiona WordPress solo (Ajustes -> Generales -> Idioma), no algo que se
+      # edite a mano, asi que vive mejor en un volumen del propio Docker.
+      - wp-languages:/var/www/html/wp-content/languages
+      # WP-CLI montado, no instalado dentro del contenedor: al recrearlo se
+      # perdia (vive en la capa de imagen) y habia que volver a bajarlo. Desde
+      # aqui sobrevive a `docker compose up --build`.
+      #   docker exec -w /var/www/html dropshipping-wordpress-1 wp <lo que sea> --allow-root
+      - ./wordpress/config/wp-cli.phar:/usr/local/bin/wp:ro
     ports:
       - "8850:80"
     networks:
