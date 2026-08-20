@@ -172,7 +172,7 @@ body.visnex-store {
     .vn-reveal {
       animation: vn-rise linear both;
       animation-timeline: view();
-      animation-range: entry 25% cover 58%;
+      animation-range: entry 15% entry 85%;
     }
 
     .vn-reveal--slow {
@@ -187,7 +187,7 @@ body.visnex-store {
     .vn-unveil > picture {
       animation: vn-unveil linear both;
       animation-timeline: view();
-      animation-range: entry 20% cover 52%;
+      animation-range: entry 12% entry 82%;
     }
 
     /* Parallax contenidisimo: 6 % de recorrido. Mas que eso se nota como
@@ -1290,7 +1290,7 @@ body.post-type-archive-product .col-full {
     .vn-duo > .vn-reveal,
     .vn-trust__grid > .vn-reveal,
     .woocommerce ul.products > .vn-reveal {
-      animation-range: entry calc(25% + var(--i, 0) * 4%) cover calc(58% + var(--i, 0) * 4%);
+      animation-range: entry calc(15% + var(--i, 0) * 4%) entry calc(85% + var(--i, 0) * 4%);
     }
   }
 }
@@ -1384,7 +1384,7 @@ body.post-type-archive-product .col-full {
     .vn-duo__item.vn-unveil {
       animation: vn-unveil-caja linear both;
       animation-timeline: view();
-      animation-range: entry 20% cover 52%;
+      animation-range: entry 12% entry 82%;
     }
   }
 }
@@ -1427,7 +1427,7 @@ body.post-type-archive-product .col-full {
     .vn-duo__item.vn-unveil .vn-duo__img {
       animation: vn-acercar linear both;
       animation-timeline: view();
-      animation-range: entry 20% cover 52%;
+      animation-range: entry 12% entry 82%;
     }
   }
 }
@@ -1435,4 +1435,64 @@ body.post-type-archive-product .col-full {
 @keyframes vn-acercar {
   from { transform: scale(1.10); }
   to   { transform: scale(1); }
+}
+
+/* ==========================================================================
+   24. EL FALLO DE LA ULTIMA PANTALLA
+   --------------------------------------------------------------------------
+   SINTOMA: el boletin y el pie se veian "tapados", como con una capa encima.
+
+   CAUSA: los rangos terminaban en la fase `cover`, que va desde que el elemento
+   empieza a entrar hasta que ha salido del todo por arriba. Los ultimos
+   elementos de la pagina NUNCA completan esa fase, porque el scroll se acaba
+   antes. Se quedaban congelados a media animacion: opacidad parcial y
+   desplazados 20-30 px. Exactamente el aspecto de estar velados.
+
+   ARREGLO EN DOS CAPAS:
+   1. Los rangos terminan ahora en `entry`, que se completa cuando el elemento
+      ha terminado de entrar en pantalla — alcanzable tambien al final del
+      documento.
+   2. Y por si acaso, una red de seguridad en motion.js: en cuanto un elemento
+      esta completamente visible se le quita la animacion, de modo que sus
+      valores declarados (opacidad 1, sin desplazamiento) pasan a mandar. Una
+      animacion gana a una declaracion, asi que quitarla es la unica forma
+      fiable de garantizar el estado final.
+
+   REGLA GENERAL: con animaciones dirigidas por scroll, NUNCA terminar un rango
+   en `cover` para algo que pueda quedar al final de la pagina.
+   ========================================================================== */
+
+/* El pie tenia una caja dentro de otra: `.site-footer` heredaba #0A0A0A de
+   Storefront y `.vn-footer` pintaba #12110F. Dos negros distintos con un borde
+   perfectamente recto entre ellos. */
+.site-footer,
+.storefront-footer,
+.vn-footer {
+  background: var(--vn-ink);
+}
+
+/* El boletin y el pie no necesitan aparecer: son el final del recorrido y a esa
+   altura la ceremonia sobra. Que esten, sin mas. */
+.vn-newsletter__title,
+.vn-newsletter__subtitle,
+.vn-newsletter__form {
+  opacity: 1;
+  transform: none;
+}
+
+/* Los enlaces y el texto del pie a medio gas (50 % de blanco) leian como
+   desactivados. En un pie oscuro, 72 % es legible y sigue siendo secundario. */
+.vn-footer__link,
+.site-footer a {
+  color: rgba(255, 255, 255, .72);
+}
+
+.vn-footer__brand-desc,
+.vn-footer__bottom {
+  color: rgba(255, 255, 255, .58);
+}
+
+.vn-footer__link:hover,
+.site-footer a:hover {
+  color: #FFFFFF;
 }

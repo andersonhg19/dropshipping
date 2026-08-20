@@ -448,11 +448,12 @@ aside,
 /* ===================================================
    FOOTER (4 columns, dark)
    =================================================== */
+/* Sin !important y sin color: el pie tenia dos negros distintos, #0A0A0A aqui y
+   #12110F en motion.css, con un borde perfectamente recto entre ellos. El color
+   lo pone motion.css, que cierra la cascada. */
 .site-footer,
 .storefront-footer {
-    background: var(--vn-black) !important;
-    color: rgba(255,255,255,0.5) !important;
-    padding: 0 !important;
+    padding: 0;
 }
 
 .vn-footer {

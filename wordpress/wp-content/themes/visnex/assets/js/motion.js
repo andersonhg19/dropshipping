@@ -35,6 +35,10 @@
      que no va a ocurrir. El fallo, si ocurre, deja la página completa.
      ================================================================== */
 
+  // El boletin y el pie salieron de esta lista a proposito: son el final del
+  // recorrido, la ceremonia ahi ya no aporta, y ademas eran justo los elementos
+  // que se quedaban congelados a media animacion por no poder completar su
+  // rango (ver la seccion 24 de motion.css).
   var A_REVELAR = [
     '.vn-section__header',
     '.vn-card-cat',
@@ -42,9 +46,6 @@
     '.vn-strip__body',
     '.vn-editorial__content',
     '.vn-trust__item',
-    '.vn-newsletter__title',
-    '.vn-newsletter__subtitle',
-    '.vn-newsletter__form',
     '.woocommerce ul.products li.product'
   ];
 
@@ -98,7 +99,9 @@
     if (quietoPorFavor.matches) return;
 
     var titulares = document.querySelectorAll(
-      '.vn-split__title, .vn-section__title, .vn-strip__title, .vn-editorial__title, .vn-newsletter__title'
+            // El del boletin queda fuera: esta al final de la pagina, donde las
+      // apariciones no pueden completar su recorrido, y ahi la ceremonia sobra.
+      '.vn-split__title, .vn-section__title, .vn-strip__title, .vn-editorial__title'
     );
 
     titulares.forEach(function (h) {
@@ -190,6 +193,43 @@
      movimiento lo hace la GPU y no provoca ni un solo recálculo de estilo.
      ================================================================== */
 
+  /* =====================================================================
+     3-bis. RED DE SEGURIDAD: NADA SE QUEDA A MEDIAS
+     ---------------------------------------------------------------------
+     Una animacion dirigida por scroll se queda en el punto del recorrido en
+     el que este la pagina. Si un elemento no puede completar su rango —porque
+     esta al final del documento y el scroll se acaba— se queda congelado a
+     media opacidad, con aspecto de estar velado.
+
+     En cuanto un elemento esta completamente visible se le QUITA la animacion.
+     Entonces mandan sus valores declarados, que son el estado final. Se hace
+     asi y no poniendo una clase porque una animacion gana siempre a una
+     declaracion normal: la unica forma fiable de fijar el final es retirarla.
+     ================================================================== */
+
+  function redDeSeguridad() {
+    if (quietoPorFavor.matches || !('IntersectionObserver' in window)) return;
+
+    var objetivos = document.querySelectorAll('.vn-reveal, .vn-unveil');
+    if (!objetivos.length) return;
+
+    var io = new IntersectionObserver(
+      function (entradas) {
+        entradas.forEach(function (e) {
+          if (e.intersectionRatio < 0.98) return;
+          e.target.style.animation = 'none';
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'none';
+          e.target.style.clipPath = 'none';
+          io.unobserve(e.target);
+        });
+      },
+      { threshold: [0.98, 1] }
+    );
+
+    objetivos.forEach(function (el) { io.observe(el); });
+  }
+
   function cursor() {
     if (!hayRaton.matches || quietoPorFavor.matches) return;
 
@@ -268,6 +308,7 @@
       marcar();
       partirTitulares();
       observar();
+      redDeSeguridad();
       cursor();
       progreso();
     } catch (e) {
