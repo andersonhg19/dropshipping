@@ -173,6 +173,22 @@ add_action('wp_body_open', function () {
 
 add_action('after_setup_theme', function () {
     add_theme_support('woocommerce');
+
+    /*
+     * TAMANOS PROPIOS, EN LA PROPORCION REAL DE LA TARJETA
+     *
+     * `woocommerce_thumbnail` mide 324x454 y la tarjeta mide 462x647: la foto
+     * se estaba estirando un 143 %, y un 285 % en un portatil retina. La
+     * nitidez es la senal de calidad mas primitiva que procesa el ojo —antes
+     * que la composicion y mucho antes que la tipografia—, asi que una foto
+     * interpolada dice "esto se monto con prisa" en 200 ms sin que el visitante
+     * sepa por que.
+     *
+     * 5:7 exacto, el mismo que la tarjeta, para que no haya recorte doble.
+     */
+    add_image_size('visnex_card',   1000, 1400, true);
+    add_image_size('visnex_card_s',  500,  700, true);   // movil y densidad alta
+    add_image_size('visnex_single', 1400, 1960, true);
     // Zoom, lightbox y carrusel de la galeria de producto.
     add_theme_support('wc-product-gallery-zoom');
     add_theme_support('wc-product-gallery-lightbox');
@@ -210,21 +226,122 @@ add_action('woocommerce_before_shop_loop_item_title', function () {
         return;
     }
 
-    $main = $product->get_image('woocommerce_thumbnail', ['class' => 'vn-card__media']);
+    /*
+     * Se usa wp_get_attachment_image() y no $product->get_image() porque la
+     * primera emite `srcset` de verdad: el navegador elige el ancho que le
+     * conviene segun la pantalla y la densidad. Con get_image() se servia
+     * siempre el mismo fichero de 324 px.
+     *
+     * El `sizes` se calcula con la variable --cols del control de densidad, de
+     * modo que al pasar de 4 columnas a 1 el navegador pide una foto mayor sin
+     * que haya que tocar nada.
+     */
+    static $posicion = 0;
+    $posicion++;
+
+    /*
+     * OJO: `sizes` NO admite var(). El navegador no puede leer --cols desde
+     * aqui, asi que se declara el caso mas exigente que puede darse (2
+     * columnas = 50vw) y `motion.js` lo reescribe con el valor exacto cada vez
+     * que cambia la densidad.
+     *
+     * Se peca por exceso a proposito: si el `sizes` se queda corto, el
+     * navegador pide una foto pequena y la estira, que es el defecto que
+     * estamos arreglando. Si se pasa, solo descarga algunos KB de mas.
+     */
+    $sizes = '(max-width: 700px) 50vw, 50vw';
+
+    // Las cuatro primeras entran en pantalla: se piden con prioridad y sin
+    // diferir. Las demas, diferidas. Cargar las 24 a la vez es lo que hunde
+    // el primer pintado.
+    $arriba = $posicion <= 4;
+
+    $attr = [
+        'class'  => 'vn-card__media',
+        'sizes'  => $sizes,
+        'alt'    => $product->get_name(),
+    ];
+
+    if ($arriba) {
+        $attr['loading']       = 'eager';
+        $attr['fetchpriority'] = 'high';
+    } else {
+        $attr['loading']  = 'lazy';
+        $attr['decoding'] = 'async';
+    }
+
+    $id = $product->get_image_id();
+
+    $main = $id
+        ? wp_get_attachment_image($id, 'visnex_card', false, $attr)
+        : $product->get_image('visnex_card', ['class' => 'vn-card__media']);
+
+    // La segunda foto, para el cambio al pasar el raton. Solo si existe: en un
+    // catalogo donde casi ningun producto tiene galeria, pintarla vacia solo
+    // anadiria peticiones.
     $gallery = $product->get_gallery_image_ids();
     $hover = '';
 
     if (!empty($gallery[0])) {
         $hover = wp_get_attachment_image(
             $gallery[0],
-            'woocommerce_thumbnail',
+            'visnex_card',
             false,
-            ['class' => 'vn-card__media vn-card__media--hover', 'aria-hidden' => 'true', 'loading' => 'lazy']
+            [
+                'class'       => 'vn-card__media vn-card__media--hover',
+                'aria-hidden' => 'true',
+                'loading'     => 'lazy',
+                'decoding'    => 'async',
+                'sizes'       => $sizes,
+                'alt'         => '',
+            ]
         );
     }
 
-    echo '<span class="vn-card__media-wrap">' . $main . $hover . '</span>';
+    /*
+     * `view-transition-name` unico por producto: es lo que permite que, al
+     * abrir la ficha, la foto CREZCA desde la tarjeta en vez de aparecer de
+     * cero. El navegador empareja los dos elementos por el nombre.
+     * Ver la seccion 26 de motion.css.
+     */
+    $vt = 'vn-foto-' . $product->get_id();
+
+    printf(
+        '<span class="vn-card__media-wrap" style="view-transition-name:%s">%s%s</span>',
+        esc_attr($vt),
+        $main,
+        $hover
+    );
 }, 10);
+
+/**
+ * El mismo nombre de transicion en la ficha, para que el navegador empareje.
+ */
+add_filter('woocommerce_single_product_image_thumbnail_html', function ($html, $attachment_id) {
+    global $product;
+    if (!$product || !is_product()) {
+        return $html;
+    }
+
+    // Solo la principal: si se nombran todas las de la galeria, el navegador
+    // encuentra varios candidatos con el mismo nombre y no anima ninguno.
+    if ((int) $attachment_id !== (int) $product->get_image_id()) {
+        return $html;
+    }
+
+    $vt = 'vn-foto-' . $product->get_id();
+
+    return str_replace(
+        'class="woocommerce-product-gallery__image"',
+        'class="woocommerce-product-gallery__image" style="view-transition-name:' . esc_attr($vt) . '"',
+        $html
+    );
+}, 10, 2);
+
+/**
+ * La ficha pide su imagen grande, no la de 416 px de Storefront.
+ */
+add_filter('woocommerce_gallery_image_size', fn() => 'visnex_single', 20);
 
 /* =============================================================================
    4. CONTENIDO DE LA HOME
@@ -233,6 +350,7 @@ add_action('woocommerce_before_shop_loop_item_title', function () {
 require_once get_stylesheet_directory() . '/inc/customizer.php';
 require_once get_stylesheet_directory() . '/inc/home-sections.php';
 require_once get_stylesheet_directory() . '/inc/shop-filters.php';
+require_once get_stylesheet_directory() . '/inc/densidad.php';
 require_once get_stylesheet_directory() . '/inc/checkout-trust.php';
 require_once get_stylesheet_directory() . '/inc/legal-pages.php';
 
@@ -308,3 +426,52 @@ add_action('wp_head', function () {
         }
     }
 }, 2);
+
+/* =============================================================================
+   7. NAVEGACION INSTANTANEA
+   =============================================================================
+   Reglas de especulacion: el navegador PRECARGA Y PREPINTA la pagina que el
+   visitante esta a punto de abrir, en cuanto el raton se acerca al enlace. Al
+   soltar el clic, la pagina ya esta lista.
+
+   Es lo que mas se nota de todo lo hecho hoy y no se ve: la diferencia entre
+   "web" y "aplicacion". Y cuesta CERO kilobytes de JavaScript, porque lo hace
+   el propio navegador — solo hay que decirle que puede.
+
+   `moderate` significa que espera a que el raton lleve ~200 ms sobre el enlace,
+   asi no se precarga media tienda por pasar el cursor por encima.
+
+   Se excluye todo lo que tenga estado o efectos: carrito, pago, mi cuenta y
+   cualquier cosa con parametros. Prepintar un "anadir al carrito" lo ejecutaria
+   sin que nadie lo pida.
+   ============================================================================= */
+
+add_action('wp_head', function () {
+    if (is_cart() || is_checkout() || is_account_page()) {
+        return;
+    }
+
+    $reglas = [
+        'prerender' => [[
+            'where' => [
+                'and' => [
+                    ['href_matches' => '/*'],
+                    ['not' => ['href_matches' => '/wp-admin/*']],
+                    ['not' => ['href_matches' => '/wp-login.php*']],
+                    ['not' => ['href_matches' => '/cart/*']],
+                    ['not' => ['href_matches' => '/checkout/*']],
+                    ['not' => ['href_matches' => '/my-account/*']],
+                    ['not' => ['href_matches' => '/*\?*']],
+                    ['not' => ['selector_matches' => '.add_to_cart_button']],
+                    ['not' => ['selector_matches' => '[rel~="nofollow"]']],
+                ],
+            ],
+            'eagerness' => 'moderate',
+        ]],
+    ];
+
+    printf(
+        '<script type="speculationrules">%s</script>' . "\n",
+        wp_json_encode($reglas)
+    );
+}, 5);

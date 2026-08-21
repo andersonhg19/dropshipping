@@ -230,6 +230,76 @@
     objetivos.forEach(function (el) { io.observe(el); });
   }
 
+  /* =====================================================================
+     5. DENSIDAD DEL CATALOGO
+     ---------------------------------------------------------------------
+     Cambia --cols en el elemento raiz y lo recuerda. Envuelto en
+     `startViewTransition`, asi que la rejilla no da un salto: las fotos se
+     desplazan a su sitio nuevo. Esa transicion es la mitad del efecto — sin
+     ella el cambio se lee como un error de maquetacion.
+
+     Se degrada solo: donde no exista la API, el cambio ocurre igual, seco.
+     ================================================================== */
+
+  function densidad() {
+    var grupo = document.querySelector('[data-vn-densidad]');
+    if (!grupo) return;
+
+    var raiz = document.documentElement;
+
+    // Sincroniza el radio marcado con lo que ya restauro el script del <head>.
+    var guardado = null;
+    try { guardado = localStorage.getItem('visnex-cols'); } catch (e) {}
+
+    if (guardado) {
+      var actual = grupo.querySelector('input[value="' + guardado + '"]');
+      if (actual) actual.checked = true;
+    }
+
+    /*
+     * El atributo `sizes` no entiende var(--cols), asi que se escribe a mano
+     * con el ancho REAL que acaba teniendo la tarjeta. Sin esto, al pasar a 1 o
+     * 2 columnas el navegador seguiria pidiendo la foto pequena y la estiraria
+     * — justo el defecto que hace que una tienda parezca barata.
+     */
+    function ajustarSizes() {
+      var tarjeta = document.querySelector('.woocommerce ul.products li.product');
+      if (!tarjeta) return;
+
+      var ancho = Math.round(tarjeta.getBoundingClientRect().width);
+      if (!ancho) return;
+
+      document
+        .querySelectorAll('.woocommerce ul.products img.vn-card__media')
+        .forEach(function (img) { img.sizes = ancho + 'px'; });
+    }
+
+    function aplicar(n) {
+      raiz.style.setProperty('--cols', n);
+      try { localStorage.setItem('visnex-cols', n); } catch (e) {}
+      // Tras el reflujo de la rejilla, no antes.
+      requestAnimationFrame(ajustarSizes);
+    }
+
+    ajustarSizes();
+    window.addEventListener('resize', function () {
+      clearTimeout(window.__vnSizes);
+      window.__vnSizes = setTimeout(ajustarSizes, 200);
+    }, { passive: true });
+
+    grupo.addEventListener('change', function (e) {
+      if (!e.target.matches('input[name="vn-densidad"]')) return;
+      var n = e.target.value;
+
+      if (!document.startViewTransition || quietoPorFavor.matches) {
+        aplicar(n);
+        return;
+      }
+
+      document.startViewTransition(function () { aplicar(n); });
+    });
+  }
+
   function cursor() {
     if (!hayRaton.matches || quietoPorFavor.matches) return;
 
@@ -309,6 +379,7 @@
       partirTitulares();
       observar();
       redDeSeguridad();
+      densidad();
       cursor();
       progreso();
     } catch (e) {

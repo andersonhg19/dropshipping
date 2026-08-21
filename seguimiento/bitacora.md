@@ -480,3 +480,84 @@ necesita esta tienda: producto asequible que no debe parecer barato.
 | Última hoja de la cascada | `motion.css` |
 | Radio de tarjeta | 0 px |
 | Literales de temporada | 0 |
+
+---
+
+## 2026-08-20 (cont. 3) — Encender la máquina
+
+Diez agentes especializados estudiaron las cien tiendas más innovadoras del mundo y
+auditaron VISNEX contra ellas. El veredicto no fue sobre estética:
+
+> *"No se siente viva porque el visitante NO PUEDE HACER NADA. La ceremonia está
+> montada y la máquina está apagada. **Lo vivo no es el movimiento: lo vivo es la
+> respuesta.**"*
+
+### Cuatro cosas rotas que nadie había visto
+
+Verificadas una a una en el navegador antes de tocar nada.
+
+| Qué | Evidencia | Consecuencia |
+|---|---|---|
+| **La ficha no decía el nombre de la prenda** | `home.css` metía `.entry-title` en un `display:none !important` pensado para páginas de texto; el título de un producto es `h1.product_title.entry-title` | La página donde se decide la compra mostraba solo precio, cantidad y botón |
+| **El catálogo no tenía mandos** | El mismo bloque ocultaba `.woocommerce-ordering`, `.storefront-sorting` y `.woocommerce-result-count` | Dejaba muertas las **257 líneas de `inc/shop-filters.php` que ya existían**. 100 prendas sin ordenar, buscar ni contar |
+| **El pago era inutilizable** | A 1920 px el formulario medía ~150 px pegado al borde, campos a 55-80 px, 1.250 px vacíos al lado | Nadie podía terminar un pedido |
+| **Dos colores ajenos a la ropa** | Verde Kelly en el aviso de contraentrega, azul en el cupón | Justo en la pantalla donde más importa la confianza |
+
+La primera y la segunda son la misma lección: **el CSS editorial se escribió mirando
+la portada y no se comprobó donde entra el dinero.**
+
+### Las fotos estaban blandas, y arreglarlo BAJA el peso
+
+`woocommerce_thumbnail` mide 324×454 y la tarjeta 462×647: se estiraba un **143 %**, y
+un 285 % en un portátil retina. La nitidez es la señal de calidad más primitiva que
+procesa el ojo — antes que la composición y mucho antes que la tipografía.
+
+- Tamaño propio `visnex_card` 1000×1400, en la proporción real de la tarjeta.
+- `wp_get_attachment_image()` en vez de `$product->get_image()`, que sí emite `srcset`.
+- Prioridad alta y sin diferir en las cuatro primeras; el resto diferidas.
+- **El `sizes` no admite `var()`**: se declara por exceso y `motion.js` lo reescribe con
+  el ancho real de la tarjeta cada vez que cambia la densidad.
+
+Resultado: de 324 px dentro de una caja de 462, a **850 px de media dentro de 933**.
+
+Y un fallo del Personalizador que costaba medio mega: la rama que se usa cuando el
+dueño elige una foto devolvía `'webp' => ''` **siempre**, así que en el camino normal la
+portada servía los JPEG. En disco conviven `hero-ella.webp` (63 KB) y `hero-ella.jpg`
+(295 KB). Además escribía el descriptor `1600w` a ciegas sobre ficheros de 840 px.
+
+### Lo que hace que responda
+
+**Control de densidad 1 · 2 · 4 · 6** (`inc/densidad.php`). La única decisión que el
+cliente puede tomar sobre la tienda. Y no es capricho: con 100 prendas una rejilla fija
+obliga a elegir un solo negocio — a 1-2 columnas la foto vende deseo, a 6 se comparan
+siluetas y precios, que es como se repone un fondo de armario. Un control resuelve los
+dos.
+
+Detalles que importan: son `<input type="radio">` reales, así que funcionan con teclado
+y lector de pantalla sin una línea de ARIA; el cambio va envuelto en
+`startViewTransition`, así que la rejilla no salta; y la elección se restaura **en un
+script en línea del `<head>`**, no desde `motion.js`, porque si no la página se pintaría
+a 4 columnas y saltaría a la vista del usuario.
+
+**La foto crece de la tarjeta a la ficha.** `view-transition-name: vn-foto-{id}` en las
+dos, y el navegador las empareja: la foto se mueve hasta su sitio en lugar de
+desaparecer y reaparecer. Es el gesto que se recuerda al cerrar la pestaña y cuesta una
+línea de CSS y una de PHP.
+
+**Navegación instantánea** con reglas de especulación: el navegador precarga y prepinta
+la página que el visitante está a punto de abrir. Cero kilobytes de JavaScript, porque
+lo hace el propio navegador. Excluido todo lo que tiene estado o efectos — carrito,
+pago, mi cuenta y cualquier enlace de "añadir al carrito", porque prepintar eso lo
+ejecutaría sin que nadie lo pida.
+
+### Verificación
+
+| | |
+|---|---|
+| TTFB / carga | **150 ms / 585 ms** |
+| Recursos / peso | 38 / **25 KB** |
+| Foto de tarjeta | 850 px de media en caja de 933 (antes 324 en 462) |
+| Controles | buscador, orden, contador, 4 densidades, paginación |
+| Densidad recordada | sí, sin salto al recargar |
+| Transición de foto | `vn-foto-93` en tarjeta y ficha |
+| Animaciones vivas | 31 |

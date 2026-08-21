@@ -2044,3 +2044,182 @@ p.no-comments {
 .vn-shop-search input[type="text"] {
   padding-left: 26px;
 }
+
+/* ==========================================================================
+   26. QUE LA TIENDA RESPONDA
+   ========================================================================== */
+
+/* ---------- 26.1 - CONTROL DE DENSIDAD ---------------------------------- */
+/*
+   La rejilla deja de tener un numero de columnas escrito a mano y pasa a leer
+   una variable. Ese es todo el truco: una linea de CSS convierte el catalogo en
+   algo que se maneja.
+*/
+
+.woocommerce ul.products {
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+}
+
+.vn-densidad {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.vn-densidad__op {
+  cursor: pointer;
+}
+
+/* El radio real sigue ahi, invisible pero enfocable: el teclado y el lector de
+   pantalla funcionan sin una sola linea de ARIA. */
+.vn-densidad__op input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.vn-densidad__op span {
+  display: grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding-inline: 6px;
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-2xs);
+  letter-spacing: .06em;
+  font-variant-numeric: tabular-nums;
+  color: var(--vn-text-muted);
+  border-bottom: 1px solid transparent;
+  transition:
+    color        var(--vn-dur-micro) var(--vn-ease-lux),
+    border-color var(--vn-dur-micro) var(--vn-ease-lux);
+}
+
+.vn-densidad__op:hover span {
+  color: var(--vn-ink);
+}
+
+.vn-densidad__op input:checked + span {
+  color: var(--vn-ink);
+  border-bottom-color: var(--vn-brass);
+}
+
+.vn-densidad__op input:focus-visible + span {
+  outline: 2px solid var(--vn-brass);
+  outline-offset: 2px;
+}
+
+/* A una columna la foto manda del todo y el texto se pone al lado. */
+@media (min-width: 900px) {
+  .woocommerce ul.products[style*="--cols: 1"] li.product,
+  :root[style*="--cols: 1"] .woocommerce ul.products li.product {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    gap: var(--vn-space-6);
+    align-items: center;
+  }
+}
+
+/* En movil solo caben dos estados. Seis columnas en 390 px son sellos. */
+@media (max-width: 700px) {
+  .woocommerce ul.products {
+    grid-template-columns: repeat(var(--cols-movil, 2), minmax(0, 1fr));
+  }
+
+  .vn-densidad__op:nth-child(n+3) {
+    display: none;
+  }
+}
+
+/* ---------- 26.2 - LA FOTO CRECE HASTA LA FICHA ------------------------- */
+/*
+   El gesto que se recuerda al cerrar la pestana, y cuesta una linea de CSS y
+   una de PHP.
+
+   Cada tarjeta lleva un `view-transition-name` unico (vn-foto-{id}) y la foto
+   principal de la ficha lleva el mismo. Al navegar, el navegador reconoce que
+   son el mismo objeto y lo interpola: la foto CRECE desde la tarjeta hasta su
+   sitio en la ficha, en vez de desaparecer y volver a aparecer.
+
+   Es la diferencia entre pasar de pagina y abrir algo.
+*/
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(*) {
+    animation-duration: 520ms;
+    animation-timing-function: var(--vn-ease-lux);
+  }
+
+  /* La foto emparejada no se funde: se mueve. El cruce de opacidad la
+     emborrona y delata el truco. */
+  ::view-transition-old(vn-foto-*),
+  ::view-transition-new(vn-foto-*) {
+    animation: none;
+    mix-blend-mode: normal;
+    height: 100%;
+    overflow: clip;
+  }
+}
+
+.vn-card__media-wrap {
+  contain: paint;
+}
+
+/* ---------- 26.3 - LA SEGUNDA FOTO ------------------------------------- */
+/*
+   En moda, ver la prenda por detras o puesta sube el clic de forma medible. La
+   maquinaria ya estaba en functions.php; faltaba que la tarjeta lo aprovechara
+   y que no ocupara sitio cuando no hay galeria.
+*/
+
+.vn-card__media--hover {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 520ms var(--vn-ease-lux);
+}
+
+.woocommerce ul.products li.product:hover .vn-card__media--hover,
+.woocommerce ul.products li.product:focus-within .vn-card__media--hover {
+  opacity: 1;
+}
+
+/* ---------- 26.4 - LA TARJETA RESPONDE ---------------------------------- */
+
+.woocommerce ul.products li.product {
+  position: relative;
+}
+
+/* Un filete de laton que cruza el pie de la tarjeta: la misma senal que ya
+   tienen las tarjetas de categoria, para que el sistema hable un solo idioma. */
+.woocommerce ul.products li.product .vn-card__media-wrap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--vn-brass-light);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 620ms var(--vn-ease-lux);
+  z-index: 2;
+}
+
+.woocommerce ul.products li.product:hover .vn-card__media-wrap::after {
+  transform: scaleX(1);
+}
+
+/* ---------- 26.5 - NAVEGACION INSTANTANEA ------------------------------- */
+/*
+   Nada de esto se ve, y es lo que mas se nota: el navegador precarga la pagina
+   que el visitante esta a punto de abrir, asi que al soltar el raton ya esta
+   ahi. Es la diferencia entre "web" y "aplicacion", y cuesta cero KB de
+   JavaScript porque lo hace el propio navegador. Las reglas van en el <head>
+   (ver functions.php).
+*/

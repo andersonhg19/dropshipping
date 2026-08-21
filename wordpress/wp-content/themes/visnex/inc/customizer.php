@@ -84,7 +84,7 @@ function visnex_image(string $slot): array
     $slots = visnex_image_slots();
     $meta  = $slots[$slot] ?? ['file' => '', 'alt' => ''];
 
-    $empty = ['webp' => '', 'jpg' => '', 'webp_sm' => '', 'jpg_sm' => '', 'alt' => $meta['alt'], 'w' => 0, 'h' => 0];
+    $empty = ['webp' => '', 'jpg' => '', 'webp_sm' => '', 'jpg_sm' => '', 'alt' => $meta['alt'], 'w' => 0, 'h' => 0, 'ancho' => 1400];
 
     // 1. Elección del usuario.
     $attachment_id = (int) get_theme_mod('visnex_img_' . $slot, 0);
@@ -96,14 +96,39 @@ function visnex_image(string $slot): array
             // así que se sirve el original en ambas ranuras. WordPress ya genera
             // sus propios tamaños intermedios.
             $med = wp_get_attachment_image_src($attachment_id, 'large');
+
+            /*
+             * Si el adjunto que eligio el usuario corresponde a una de las
+             * fotos que trae el tema, se sirve el WebP del tema: pesa un 61 %
+             * menos y es exactamente la misma imagen.
+             *
+             * Antes esta rama devolvia 'webp' => '' siempre, asi que en cuanto
+             * alguien tocaba el Personalizador —o sea, en el camino NORMAL— la
+             * portada pasaba a servir los JPEG. En disco conviven
+             * hero-ella.webp (63 KB) y hero-ella.jpg (295 KB), y se estaba
+             * mandando el segundo.
+             */
+            $webp = '';
+            $webp_sm = '';
+            $fichero = $meta['file'] ?? '';
+
+            if ($fichero !== '') {
+                $ruta_subida = get_post_meta($attachment_id, '_wp_attached_file', true);
+                if (is_string($ruta_subida) && str_contains(basename($ruta_subida), $fichero)) {
+                    $webp    = visnex_theme_img($fichero, 'webp');
+                    $webp_sm = visnex_theme_img($fichero, 'webp', true);
+                }
+            }
+
             return [
-                'webp'    => '',
+                'webp'    => $webp,
                 'jpg'     => $src[0],
-                'webp_sm' => '',
+                'webp_sm' => $webp_sm !== '' ? $webp_sm : $webp,
                 'jpg_sm'  => $med ? $med[0] : $src[0],
                 'alt'     => $alt !== '' ? $alt : $meta['alt'],
                 'w'       => (int) $src[1],
                 'h'       => (int) $src[2],
+                'ancho'   => (int) $src[1],
             ];
         }
     }
@@ -118,14 +143,20 @@ function visnex_image(string $slot): array
         return $empty;
     }
 
+    // El ancho real del fichero del tema, para escribir descriptores honestos.
+    $ruta  = get_stylesheet_directory() . '/assets/img/' . $meta['file'] . '.jpg';
+    $medida = @getimagesize($ruta);
+    $ancho  = $medida ? (int) $medida[0] : 1400;
+
     return [
         'webp'    => visnex_theme_img($meta['file'], 'webp'),
         'jpg'     => $jpg,
         'webp_sm' => visnex_theme_img($meta['file'], 'webp', true),
         'jpg_sm'  => visnex_theme_img($meta['file'], 'jpg', true),
         'alt'     => $meta['alt'],
-        'w'       => 0,
+        'w'       => $ancho,
         'h'       => 0,
+        'ancho'   => $ancho,
     ];
 }
 
@@ -153,15 +184,19 @@ function visnex_picture(string $slot, string $class = '', bool $eager = false, s
     ?>
     <picture class="vn-pic">
         <?php if ($img['webp'] !== '') : ?>
+            <?php /* Los descriptores salen del ancho REAL del fichero. Antes se
+                     escribia "1600w" a ciegas sobre imagenes de 840 px, asi que
+                     el navegador creia estar pidiendo el doble de lo que habia
+                     y elegia mal. */ ?>
             <source
                 type="image/webp"
-                srcset="<?php echo esc_url($img['webp_sm']); ?> 800w, <?php echo esc_url($img['webp']); ?> 1600w"
+                srcset="<?php echo esc_url($img['webp_sm']); ?> <?php echo (int) round($img['ancho'] * 0.55); ?>w, <?php echo esc_url($img['webp']); ?> <?php echo (int) $img['ancho']; ?>w"
                 sizes="<?php echo esc_attr($sizes); ?>">
         <?php endif; ?>
         <?php if ($img['jpg_sm'] !== '' && $img['jpg_sm'] !== $img['jpg']) : ?>
             <source
                 type="image/jpeg"
-                srcset="<?php echo esc_url($img['jpg_sm']); ?> 800w, <?php echo esc_url($img['jpg']); ?> 1600w"
+                srcset="<?php echo esc_url($img['jpg_sm']); ?> <?php echo (int) round($img['ancho'] * 0.55); ?>w, <?php echo esc_url($img['jpg']); ?> <?php echo (int) $img['ancho']; ?>w"
                 sizes="<?php echo esc_attr($sizes); ?>">
         <?php endif; ?>
         <img
