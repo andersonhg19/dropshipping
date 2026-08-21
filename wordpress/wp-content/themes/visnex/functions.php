@@ -351,6 +351,8 @@ require_once get_stylesheet_directory() . '/inc/customizer.php';
 require_once get_stylesheet_directory() . '/inc/home-sections.php';
 require_once get_stylesheet_directory() . '/inc/shop-filters.php';
 require_once get_stylesheet_directory() . '/inc/densidad.php';
+require_once get_stylesheet_directory() . '/inc/produccion.php';
+require_once get_stylesheet_directory() . '/inc/tallas.php';
 require_once get_stylesheet_directory() . '/inc/checkout-trust.php';
 require_once get_stylesheet_directory() . '/inc/legal-pages.php';
 
@@ -475,3 +477,45 @@ add_action('wp_head', function () {
         wp_json_encode($reglas)
     );
 }, 5);
+
+/* =============================================================================
+   8. UN SOLO H1 POR PAGINA
+   =============================================================================
+   Se estaban imprimiendo DOS <h1> en portada, tienda y categorias. En la
+   portada el primero decia "Inicio"; en la tienda decia "Shop", sin traducir.
+
+   Estaban ocultos por CSS, que es peor que no arreglarlo: siguen en el
+   documento, asi que un lector de pantalla los anuncia y un buscador los indexa.
+   El primer H1 de tu portada le decia a Google que la pagina se llama "Inicio".
+
+   Se quitan del MARCADO, no de la vista.
+   ============================================================================= */
+
+add_action('init', function () {
+    // El titulo de WooCommerce en tienda y categorias: ya lo pinta
+    // `inc/shop-filters.php` con `.vn-shop-head__title`.
+    add_filter('woocommerce_show_page_title', '__return_false');
+
+    // La cabecera de entrada en paginas: la portada monta la suya.
+    remove_action('storefront_page', 'storefront_page_header', 10);
+    remove_action('storefront_single_post', 'storefront_post_header', 10);
+}, 20);
+
+/**
+ * La portada no necesita cabecera de entrada: su H1 es el de la portada partida.
+ */
+add_action('wp', function () {
+    if (!is_front_page()) {
+        return;
+    }
+
+    remove_action('storefront_page', 'storefront_page_header', 10);
+
+    add_filter('the_title', function ($titulo, $id = 0) {
+        // Solo el <h1> de la cabecera, no el <title> ni los menus.
+        if (in_the_loop() && is_front_page() && (int) $id === (int) get_queried_object_id()) {
+            return '';
+        }
+        return $titulo;
+    }, 10, 2);
+});

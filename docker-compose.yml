@@ -81,6 +81,43 @@ services:
       # 0 en cualquier entorno que no sea depuracion activa: con 1, los avisos
       # de PHP se imprimen en la pagina y se ven en la tienda.
       WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-0}
+      # Correo. Sin esto el cliente no recibe confirmacion de su pedido y tu no
+      # te enteras de que has vendido. Las credenciales van en .env, nunca aqui:
+      # este repositorio es publico.
+      VN_SMTP_HOST:   ${VN_SMTP_HOST:-}
+      VN_SMTP_PORT:   ${VN_SMTP_PORT:-587}
+      VN_SMTP_USER:   ${VN_SMTP_USER:-}
+      VN_SMTP_PASS:   ${VN_SMTP_PASS:-}
+      VN_SMTP_FROM:   ${VN_SMTP_FROM:-}
+      VN_SMTP_NOMBRE: ${VN_SMTP_NOMBRE:-VISNEX}
+      # ------------------------------------------------------------------
+      # LA TIENDA RESPONDE AL NOMBRE POR EL QUE LA LLAMEN
+      #
+      # WordPress guarda su direccion en la base de datos, asi que si se fija a
+      # "localhost" no se puede abrir desde el movil, y si se fija a la IP deja
+      # de funcionar desde el portatil. Lo normal es cambiarla a mano cada vez.
+      #
+      # Aqui se resuelve sola: se toma el host de la peticion, comprobado
+      # contra una lista cerrada. Asi el mismo contenedor sirve en
+      # localhost:8850 y en 192.168.40.32:8850, y el dia que haya dominio solo
+      # hay que anadirlo a la lista.
+      #
+      # La comprobacion contra lista NO es adorno: la cabecera Host la controla
+      # quien hace la peticion, y sin filtro se puede envenenar el enlace de
+      # "restablecer contrasena" para que apunte al sitio del atacante.
+      # ------------------------------------------------------------------
+      WORDPRESS_CONFIG_EXTRA: |
+        $$vn_permitidos = array(
+            'localhost:8850',
+            '127.0.0.1:8850',
+            '192.168.40.32:8850',
+        );
+        $$vn_host = isset($$_SERVER['HTTP_HOST']) ? $$_SERVER['HTTP_HOST'] : 'localhost:8850';
+        if (!in_array($$vn_host, $$vn_permitidos, true)) {
+            $$vn_host = 'localhost:8850';
+        }
+        define('WP_HOME',    'http://' . $$vn_host);
+        define('WP_SITEURL', 'http://' . $$vn_host);
     volumes:
       # ------------------------------------------------------------------
       # wp-content vive en un VOLUMEN DE DOCKER, no en el bind mount.

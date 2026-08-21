@@ -2223,3 +2223,228 @@ p.no-comments {
    JavaScript porque lo hace el propio navegador. Las reglas van en el <head>
    (ver functions.php).
 */
+
+/* ==========================================================================
+   27. TALLAS
+   --------------------------------------------------------------------------
+   Un desplegable esconde las tallas hasta que lo abres, asi que no se puede
+   ver de un vistazo que hay ni que esta agotado — y son las dos unicas
+   preguntas que se hacen en ese momento.
+
+   Lo agotado se TACHA, no se quita: si desaparece, el cliente escribe para
+   preguntar si la teneis. Si esta tachado, ya lo sabe.
+   ========================================================================== */
+
+.vn-tallas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 var(--vn-space-5);
+}
+
+.vn-talla {
+  min-width: 52px;
+  min-height: 44px;          /* el minimo para acertar con el pulgar */
+  padding-inline: var(--vn-space-4);
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-xs);
+  letter-spacing: var(--vn-tracking-caps);
+  text-transform: uppercase;
+  color: var(--vn-ink);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--vn-ink) 22%, transparent);
+  border-radius: 0;
+  cursor: pointer;
+  transition:
+    border-color var(--vn-dur-micro) var(--vn-ease-lux),
+    background   var(--vn-dur-micro) var(--vn-ease-lux),
+    color        var(--vn-dur-micro) var(--vn-ease-lux);
+}
+
+.vn-talla:hover:not(:disabled) {
+  border-color: var(--vn-ink);
+}
+
+.vn-talla.is-elegida {
+  background: var(--vn-ink);
+  border-color: var(--vn-ink);
+  color: var(--vn-paper);
+}
+
+.vn-talla:focus-visible {
+  outline: 2px solid var(--vn-brass);
+  outline-offset: 2px;
+}
+
+/* Agotada: se ve, se lee, y se entiende que no se puede pedir. */
+.vn-talla--agotada {
+  color: var(--vn-text-muted);
+  border-color: color-mix(in srgb, var(--vn-ink) 10%, transparent);
+  cursor: not-allowed;
+  position: relative;
+  overflow: hidden;
+}
+
+.vn-talla--agotada::after {
+  content: "";
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  top: 50%;
+  height: 1px;
+  background: color-mix(in srgb, var(--vn-ink) 30%, transparent);
+  transform: rotate(-14deg);
+}
+
+/* El <select> real sigue ahi para que la compra no dependa del JavaScript,
+   pero fuera de la vista. No se usa `display:none`: eso lo sacaria del
+   formulario en algunos navegadores. */
+.vn-tallas__select {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* La etiqueta "Talla" y la tabla de variaciones, en la voz del sitio. */
+.woocommerce div.product form.cart .variations th,
+.woocommerce div.product form.cart .variations label {
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-2xs);
+  letter-spacing: var(--vn-tracking-caps);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+  font-weight: 500;
+  padding: 0 0 6px;
+}
+
+.woocommerce div.product form.cart .variations,
+.woocommerce div.product form.cart .variations tbody,
+.woocommerce div.product form.cart .variations tr,
+.woocommerce div.product form.cart .variations td,
+.woocommerce div.product form.cart .variations th {
+  display: block;
+  width: auto;
+  border: 0;
+  background: transparent;
+  padding-inline: 0;
+}
+
+.woocommerce div.product form.cart .reset_variations {
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-2xs);
+  letter-spacing: var(--vn-tracking-caps);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+}
+
+/* El precio de la variacion elegida, en la misma voz que el del catalogo. */
+.woocommerce div.product .woocommerce-variation-price .price {
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-base);
+  font-variant-numeric: tabular-nums;
+  color: var(--vn-ink);
+}
+
+/* Boton bloqueado hasta elegir talla: que se note que espera algo. */
+.woocommerce div.product form.cart .button:disabled,
+.woocommerce div.product form.cart .button.disabled {
+  opacity: .38;
+  cursor: not-allowed;
+}
+
+/* ---------- 27.1 - EL ULTIMO VERDE -------------------------------------- */
+/*
+   La pantalla de "gracias, tu pedido ha sido recibido" salia sobre un rectangulo
+   verde claro. Es la ULTIMA imagen que se lleva el cliente de la marca y era el
+   unico bloque de color saturado que quedaba en toda la tienda.
+
+   El acierto no se comunica con un fondo verde: se comunica con el numero de
+   pedido bien compuesto y con lo que pasa despues.
+*/
+
+.woocommerce-order .woocommerce-notice,
+.woocommerce-order .woocommerce-thankyou-order-received,
+.woocommerce-order-received .woocommerce-message,
+.woocommerce-thankyou-order-received {
+  background: transparent;
+  border: 0;
+  border-left: 0;
+  padding: 0;
+  color: var(--vn-ink);
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-display-3);
+  line-height: .98;
+  letter-spacing: var(--vn-tracking-display);
+  text-align: left;
+  max-width: 16ch;
+  margin: var(--vn-space-8) 0 var(--vn-space-7);
+}
+
+/* Los datos del pedido, como una ficha impresa: filete arriba, cifras
+   alineadas, sin cajas. */
+.woocommerce-order .woocommerce-order-overview,
+.woocommerce ul.order_details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--vn-space-5);
+  list-style: none;
+  margin: 0 0 var(--vn-space-8);
+  padding: var(--vn-space-5) 0 0;
+  border-top: 1px solid color-mix(in srgb, var(--vn-ink) 14%, transparent);
+  background: transparent;
+}
+
+.woocommerce ul.order_details li {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font-family: var(--vn-font-datos);
+  font-size: var(--vn-text-2xs);
+  letter-spacing: var(--vn-tracking-caps);
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+  float: none;
+}
+
+.woocommerce ul.order_details li strong {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-read);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--vn-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Y los dos bloques de funnel.css que seguian pintando verde. */
+.vn-cod-notice,
+.vn-checkout-notice,
+.woocommerce-message {
+  background: var(--vn-paper-deep);
+  border-left-color: var(--vn-brass);
+  color: var(--vn-ink);
+}
+
+/* El selector exacto que pintaba el verde de la pantalla de gracias. */
+.woocommerce-order .woocommerce-notice--success {
+  background: transparent;
+  border-radius: 0;
+  text-align: left;
+  padding: var(--vn-space-8) 0 var(--vn-space-6);
+  font-size: var(--vn-display-3);
+  line-height: .98;
+  letter-spacing: var(--vn-tracking-display);
+  max-width: 18ch;
+  margin-bottom: var(--vn-space-6);
+}
+
+.vn-cod-notice {
+  border: 0;
+  border-left: 2px solid var(--vn-brass);
+  border-radius: 0;
+}

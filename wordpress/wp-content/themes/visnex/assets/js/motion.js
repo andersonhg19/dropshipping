@@ -300,6 +300,48 @@
     });
   }
 
+  /* =====================================================================
+     6. TALLAS
+     ---------------------------------------------------------------------
+     Los botones manejan el <select> real de WooCommerce, que sigue en el
+     documento oculto. Si este archivo no se ejecuta, el desplegable esta ahi
+     y se puede comprar igual: la venta nunca depende del JavaScript.
+     ================================================================== */
+
+  function tallas() {
+    var caja = document.querySelector('[data-vn-tallas]');
+    if (!caja) return;
+
+    var select = document.querySelector('.vn-tallas__select select');
+    if (!select) return;
+
+    caja.addEventListener('click', function (e) {
+      var boton = e.target.closest('.vn-talla');
+      if (!boton || boton.disabled) return;
+
+      caja.querySelectorAll('.vn-talla').forEach(function (b) {
+        b.classList.remove('is-elegida');
+        b.setAttribute('aria-pressed', 'false');
+      });
+
+      boton.classList.add('is-elegida');
+      boton.setAttribute('aria-pressed', 'true');
+
+      select.value = boton.dataset.valor;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    // Si algo cambia el select por otro camino (el enlace de "Limpiar", o el
+    // navegador al volver atras), los botones se enteran.
+    select.addEventListener('change', function () {
+      caja.querySelectorAll('.vn-talla').forEach(function (b) {
+        var elegida = b.dataset.valor === select.value;
+        b.classList.toggle('is-elegida', elegida);
+        b.setAttribute('aria-pressed', elegida ? 'true' : 'false');
+      });
+    });
+  }
+
   function cursor() {
     if (!hayRaton.matches || quietoPorFavor.matches) return;
 
@@ -380,6 +422,7 @@
       observar();
       redDeSeguridad();
       densidad();
+      tallas();
       cursor();
       progreso();
     } catch (e) {
