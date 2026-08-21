@@ -2,7 +2,7 @@
 /**
  * Confianza en el embudo de pago.
  *
- * En Colombia la desconfianza es la objecion numero uno de la compra online:
+ * En Colombia la desconfianza es la objecion número uno de la compra online:
  * en 2025 se registraron 64.628 denuncias por estafas digitales y las compras
  * en linea fueron la modalidad mas frecuente. Estos bloques existen para
  * responder, en el momento exacto de pagar, a las tres preguntas que hacen
@@ -26,7 +26,7 @@ function visnex_icon_check(): string
 add_action('woocommerce_review_order_after_submit', function () {
     $items = [
         ['<strong>Pago contra entrega disponible.</strong> Pagas cuando recibes el pedido en tu casa.'],
-        ['<strong>Devolucion en 5 dias habiles.</strong> Derecho de retracto garantizado por ley.'],
+        ['<strong>Devolución en 5 dias hábiles.</strong> Derecho de retracto garantizado por ley.'],
         ['<strong>Te confirmamos por WhatsApp</strong> antes de despachar. Sin sorpresas.'],
     ];
     echo '<div class="vn-checkout-trust">';
@@ -65,7 +65,7 @@ add_action('woocommerce_before_checkout_form', function () {
 
 function visnex_render_steps(int $active): void
 {
-    $steps = ['Carrito', 'Datos y pago', 'Confirmacion'];
+    $steps = ['Carrito', 'Datos y pago', 'Confirmación'];
     echo '<ol class="vn-steps">';
     foreach ($steps as $i => $label) {
         $n = $i + 1;
@@ -102,22 +102,22 @@ add_action('woocommerce_thankyou', function ($order_id) {
     $is_cod = $order->get_payment_method() === 'cod';
     ?>
     <div class="vn-order-next">
-        <h2 class="vn-order-next__title">Que sigue ahora</h2>
+        <h2 class="vn-order-next__title">Qué sigue ahora</h2>
         <ol class="vn-order-next__steps">
             <li class="vn-order-next__step">
                 <span class="vn-order-next__num">1</span>
                 <span>
                     <strong>Te confirmamos el pedido</strong>
-                    Te escribimos por WhatsApp al <?php echo esc_html($order->get_billing_phone() ?: 'numero que registraste'); ?>
-                    en las proximas horas para confirmar la direccion antes de despachar.
+                    Te escribimos por WhatsApp al <?php echo esc_html($order->get_billing_phone() ?: 'número que registraste'); ?>
+                    en las próximas horas para confirmar la dirección antes de despachar.
                 </span>
             </li>
             <li class="vn-order-next__step">
                 <span class="vn-order-next__num">2</span>
                 <span>
                     <strong>Lo despachamos</strong>
-                    Una vez confirmado, sale el mismo dia o el siguiente dia habil.
-                    Te enviamos el numero de guia para que lo sigas.
+                    Una vez confirmado, sale el mismo dia o el siguiente dia hábil.
+                    Te enviamos el número de guía para que lo sigas.
                 </span>
             </li>
             <li class="vn-order-next__step">
@@ -125,10 +125,10 @@ add_action('woocommerce_thankyou', function ($order_id) {
                 <span>
                     <strong><?php echo $is_cod ? 'Pagas al recibirlo' : 'Lo recibes'; ?></strong>
                     <?php if ($is_cod) : ?>
-                        Entrega en 24 a 72 horas segun tu ciudad. Pagas en efectivo al domiciliario.
+                        Entrega en 24 a 72 horas según tu ciudad. Pagas en efectivo al domiciliario.
                         Ten el monto exacto a la mano si puedes.
                     <?php else : ?>
-                        Entrega en 24 a 72 horas segun tu ciudad.
+                        Entrega en 24 a 72 horas según tu ciudad.
                     <?php endif; ?>
                 </span>
             </li>
@@ -142,9 +142,9 @@ add_action('woocommerce_thankyou', function ($order_id) {
    -------------------------------------------------------------------------- */
 
 add_filter('woocommerce_checkout_fields', function ($fields) {
-    // El telefono es OBLIGATORIO: sin el no se puede confirmar el pedido, y la
-    // confirmacion es lo que evita que se caiga entre el 20 y el 25% de los
-    // envios contra entrega.
+    // El teléfono es OBLIGATORIO: sin el no se puede confirmar el pedido, y la
+    // confirmación es lo que evita que se caiga entre el 20 y el 25% de los
+    // envíos contra entrega.
     if (isset($fields['billing']['billing_phone'])) {
         $fields['billing']['billing_phone']['required'] = true;
         $fields['billing']['billing_phone']['label'] = 'Celular (WhatsApp)';
@@ -171,7 +171,7 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
     unset($fields['shipping']['shipping_company']);
 
     if (isset($fields['billing']['billing_address_1'])) {
-        $fields['billing']['billing_address_1']['label'] = 'Direccion';
+        $fields['billing']['billing_address_1']['label'] = 'Dirección';
         $fields['billing']['billing_address_1']['placeholder'] = 'Calle 123 # 45-67, apto 501';
     }
 
@@ -186,7 +186,7 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 /**
  * Valida que el celular parezca colombiano.
  *
- * Un telefono mal escrito equivale a un pedido perdido: no se puede confirmar,
+ * Un teléfono mal escrito equivale a un pedido perdido: no se puede confirmar,
  * y en contraentrega un pedido no confirmado es flete de ida pagado a cambio
  * de nada.
  */

@@ -207,7 +207,7 @@ function visnex_clear_filters_url(): string
  * Aplica los filtros a la consulta principal.
  *
  * WooCommerce trae este comportamiento en el widget de navegacion por capas,
- * pero solo si el widget esta colocado en un sidebar — y aqui no hay sidebar.
+ * pero solo si el widget esta colocado en un sidebar — y aquí no hay sidebar.
  * Por eso se aplica a mano.
  */
 add_action('woocommerce_product_query', function ($q) {
