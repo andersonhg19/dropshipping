@@ -1,0 +1,53 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "Marca" },
+    { "id": "page-2", "name": "Tienda" },
+    { "id": "page-3", "name": "Conversión" }
+  ],
+  "artboards": [
+    { "file": "Logo.dc.html",       "page": "page-1", "x": 0,    "y": 0,    "w": 1200, "h": 1180, "title": "Monograma vectorizado" },
+    { "file": "Paleta.dc.html",     "page": "page-1", "x": 1320, "y": 0,    "w": 1200, "h": 1240, "title": "Paleta y contraste" },
+    { "file": "Tipografia.dc.html", "page": "page-1", "x": 2640, "y": 0,    "w": 1200, "h": 1180, "title": "Tipografía" },
+
+    { "file": "Main.dc.html",       "page": "page-2", "x": 0,    "y": 0,    "w": 1440, "h": 3060, "title": "Home · escritorio" },
+    { "file": "Producto.dc.html",   "page": "page-2", "x": 1560, "y": 0,    "w": 1440, "h": 1320, "title": "Ficha de producto" },
+    { "file": "Checkout.dc.html",   "page": "page-2", "x": 1560, "y": 1560, "w": 1440, "h": 1500, "title": "Checkout" },
+
+    { "file": "LandingCOD.dc.html", "page": "page-3", "x": 0,    "y": 0,    "w": 390,  "h": 2160, "title": "Landing contraentrega · móvil" }
+  ],
+  "annotations": [
+    {
+      "id": "nota-logo",
+      "page": "page-1",
+      "x": 0,
+      "y": -170,
+      "w": 520,
+      "text": "MARCA\n\nMonograma reconstruido como vector limpio. El cambio de fondo: la M pasa a vivir dentro del contraforma de la D en vez de cruzarlo — es lo que hacía que el original se empastara al reducir.\n\nAñadida una versión compacta para 16–32 px, que no existía."
+    },
+    {
+      "id": "nota-paleta",
+      "page": "page-1",
+      "x": 1320,
+      "y": -170,
+      "w": 520,
+      "text": "EL HALLAZGO\n\nEl Dorado Champagne sobre marfil da 2,34:1 — la mitad de lo que exige accesibilidad. Sobre negro da 6,70:1.\n\nPor eso las etiquetas negras con foil se ven impecables y la etiqueta hueso se lee peor. Se añade un Dorado Tinta #836838 para texto sobre claro."
+    },
+    {
+      "id": "nota-tienda",
+      "page": "page-2",
+      "x": 0,
+      "y": -170,
+      "w": 560,
+      "text": "TIENDA\n\nLa marca aplicada al WordPress que ya está construido: marfil como fondo, negro para texto, arena en bordes, oro solo como filete.\n\nEl checkout es el que antes no tenía ni un solo estilo — el cliente navegaba algo premium y aterrizaba en el gris de fábrica justo al pagar."
+    },
+    {
+      "id": "nota-conversion",
+      "page": "page-3",
+      "x": 0,
+      "y": -210,
+      "w": 560,
+      "text": "CONVERSIÓN\n\nEsta es la página a la que apunta la pauta, y sigue reglas opuestas a la home: sin menú, sin hero editorial, precio y formulario arriba del pliegue.\n\nCuatro campos y nada más. Cada campo extra es gente que se cae, y en tráfico frío eso se paga en CPA.\n\nRegla operativa: ningún anuncio apunta nunca a la home."
+    }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}

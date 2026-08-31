@@ -1,0 +1,229 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Jost:wght@300;400;500&family=Parisienne&display=swap">
+  <style>
+    :root {
+      --negro: #171717; --marfil: #F4EFE7; --arena: #D8C7B0;
+      --oro: #B99A5E; --oro-tinta: #836838; --moka: #6F5A4A; --blanco: #FFFFFF;
+      --serif: 'Bodoni Moda', 'Didot', Georgia, serif;
+      --sans: 'Jost', 'Futura', 'Century Gothic', system-ui, sans-serif;
+      --script: 'Parisienne', 'Snell Roundhand', cursive;
+    }
+    body { margin: 0; background: var(--marfil); font-family: var(--sans); color: var(--negro); }
+    a { color: var(--oro-tinta); } a:hover { color: var(--moka); }
+    .eyebrow {
+      font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--moka); font-weight: 500;
+    }
+    .rule { height: 1px; background: var(--arena); border: 0; }
+    .card { background: var(--blanco); border: 1px solid var(--arena); }
+    .cap { font-size: 11px; letter-spacing: .1em; color: var(--moka); }
+  </style>
+</helmet>
+
+<div style="padding: 56px 56px 64px; display: flex; flex-direction: column; gap: 44px">
+
+  <!-- Cabecera -->
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span class="eyebrow">D&#8217;MIKA &middot; Sistema de identidad</span>
+    <h1 style="font-family: var(--serif); font-weight: 400; font-size: 46px; letter-spacing: -.01em; margin: 0">
+      Monograma vectorizado
+    </h1>
+    <p style="max-width: 640px; margin: 0; font-size: 15px; line-height: 1.65; color: var(--moka); font-weight: 300">
+      Reconstruido como vector limpio sobre retícula. La D didone conserva el contraste
+      grueso&ndash;fino y las serifas del original; la M pasa a vivir <em>dentro</em> del
+      contraforma en vez de cruzarlo, que es lo que hacía que el original se
+      empastara al reducir.
+    </p>
+  </div>
+
+  <hr class="rule">
+
+  <!-- Versiones -->
+  <div style="display: flex; flex-direction: column; gap: 18px">
+    <span class="eyebrow">Versiones</span>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px">
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div class="card" style="aspect-ratio: 1; display: grid; place-items: center; padding: 30px">
+          <svg viewBox="0 0 206 240" style="width: 108px" aria-label="Monograma principal">
+            <path fill="#171717" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+            <path fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+            <path fill="#B99A5E" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+          </svg>
+        </div>
+        <span class="cap">Principal &middot; sobre claro</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="aspect-ratio: 1; display: grid; place-items: center; padding: 30px; background: var(--negro)">
+          <svg viewBox="0 0 206 240" style="width: 108px" aria-label="Monograma negativo">
+            <path fill="#F4EFE7" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+            <path fill="none" stroke="#171717" stroke-width="14" stroke-linejoin="round" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+            <path fill="#B99A5E" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+          </svg>
+        </div>
+        <span class="cap">Negativo &middot; etiqueta y empaque</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div class="card" style="aspect-ratio: 1; display: grid; place-items: center; padding: 30px">
+          <svg viewBox="0 0 206 240" style="width: 108px" aria-label="Monograma monocromo">
+            <path fill="#171717" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+            <path fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+            <path fill="#171717" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+          </svg>
+        </div>
+        <span class="cap">Monocromo &middot; bordado y sello seco</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div class="card" style="aspect-ratio: 1; display: grid; place-items: center; padding: 30px; border-color: var(--oro)">
+          <svg viewBox="0 0 206 240" style="width: 108px" aria-label="Monograma compacto">
+            <path fill="#171717" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+            <path fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linejoin="round" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+            <path fill="#B99A5E" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+          </svg>
+        </div>
+        <span class="cap" style="color: var(--oro-tinta); font-weight: 500">Compacto &middot; NUEVO &middot; 16&ndash;32&nbsp;px</span>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- Lockups -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px">
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <span class="eyebrow">Lockup vertical &middot; principal</span>
+      <div class="card" style="padding: 44px; display: grid; place-items: center">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 18px">
+          <svg viewBox="0 0 206 240" style="width: 86px" aria-hidden="true">
+            <path fill="#171717" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+            <path fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+            <path fill="#B99A5E" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+          </svg>
+          <div style="font-family: var(--serif); font-size: 44px; letter-spacing: .1em; line-height: 1">D&#8217;MIKA</div>
+          <div style="display: flex; align-items: center; gap: 12px; width: 100%; max-width: 260px">
+            <span style="flex: 1; height: 1px; background: var(--oro)"></span>
+            <svg viewBox="0 0 24 24" style="width: 12px; fill: var(--oro)" aria-hidden="true"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+            <span style="flex: 1; height: 1px; background: var(--oro)"></span>
+          </div>
+          <div style="font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--moka)">Clothing for every you</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <span class="eyebrow">Lockup horizontal &middot; cabecera web</span>
+      <div style="padding: 44px; display: grid; place-items: center; background: var(--negro)">
+        <div style="display: flex; align-items: center; gap: 18px">
+          <svg viewBox="0 0 206 240" style="width: 46px" aria-hidden="true">
+            <path fill="#F4EFE7" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+            <path fill="none" stroke="#171717" stroke-width="14" stroke-linejoin="round" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+            <path fill="#B99A5E" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+          </svg>
+          <span style="width: 1px; height: 44px; background: rgba(216,199,176,.35)"></span>
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <div style="font-family: var(--serif); font-size: 30px; letter-spacing: .1em; color: var(--marfil); line-height: 1">D&#8217;MIKA</div>
+            <div style="font-family: var(--script); font-size: 17px; color: var(--oro); line-height: 1">Clothing for every you</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="rule">
+
+  <!-- Reglas -->
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <span class="eyebrow">Área de respeto</span>
+      <div class="card" style="padding: 26px; display: grid; place-items: center">
+        <div style="position: relative; padding: 34px; border: 1px dashed var(--oro)">
+          <svg viewBox="0 0 206 240" style="width: 64px; display: block" aria-hidden="true">
+            <path fill="#171717" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+            <path fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+            <path fill="#B99A5E" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+          </svg>
+          <span style="position: absolute; top: 8px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--oro-tinta); letter-spacing: .1em">½ M</span>
+        </div>
+      </div>
+      <p style="margin: 0; font-size: 12px; line-height: 1.6; color: var(--moka)">
+        Margen mínimo libre = <strong>media altura de la M</strong> por los cuatro lados.
+        Nada invade ese aire: ni texto, ni foto, ni borde.
+      </p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <span class="eyebrow">Tamaños mínimos</span>
+      <div class="card" style="padding: 26px; display: flex; align-items: flex-end; justify-content: center; gap: 24px">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px">
+          <svg viewBox="0 0 206 240" style="width: 40px" aria-hidden="true">
+            <path fill="#171717" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+            <path fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+            <path fill="#B99A5E" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+          </svg>
+          <span class="cap">40&nbsp;px</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px">
+          <svg viewBox="0 0 206 240" style="width: 24px" aria-hidden="true">
+            <path fill="#171717" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+            <path fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linejoin="round" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+            <path fill="#B99A5E" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+          </svg>
+          <span class="cap" style="color: var(--oro-tinta)">24&nbsp;px</span>
+        </div>
+      </div>
+      <p style="margin: 0; font-size: 12px; line-height: 1.6; color: var(--moka)">
+        Por debajo de <strong>40&nbsp;px</strong> se usa la versión <strong>compacta</strong>:
+        M más robusta y filete más ancho. Mínimo absoluto <strong>24&nbsp;px</strong>;
+        por debajo, solo la D.
+      </p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <span class="eyebrow">Usos incorrectos</span>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px">
+        <div class="card" style="padding: 16px; display: grid; place-items: center; position: relative">
+          <svg viewBox="0 0 206 240" style="width: 44px; transform: scaleX(1.4)" aria-hidden="true">
+            <path fill="#171717" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+            <path fill="#B99A5E" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+          </svg>
+          <span style="position: absolute; bottom: 6px; font-size: 10px; color: #B3261E">Deformar</span>
+        </div>
+        <div class="card" style="padding: 16px; display: grid; place-items: center; position: relative; background: var(--arena)">
+          <svg viewBox="0 0 206 240" style="width: 44px" aria-hidden="true">
+            <path fill="#B99A5E" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+            <path fill="#D8C7B0" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+          </svg>
+          <span style="position: absolute; bottom: 6px; font-size: 10px; color: #B3261E">Oro sobre arena</span>
+        </div>
+      </div>
+      <p style="margin: 0; font-size: 12px; line-height: 1.6; color: var(--moka)">
+        No deformar, no rotar, no cambiar la relación D/M, y
+        <strong>nunca oro sobre fondo claro</strong>: el contraste cae a 2,3:1.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":1200,"height":1180}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

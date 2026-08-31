@@ -126,10 +126,10 @@ add_action('wp_head', function () {
     ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&family=Archivo:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500;600&family=Parisienne&display=swap">
     <?php /* Inter baja de 6 pesos a 3: el peso semantico lo lleva ahora la
              serifa, no un Inter 800. Son 3 ficheros menos que descargar. */ ?>
-    <meta name="theme-color" content="#0A0A0A">
+    <meta name="theme-color" content="#171717">
     <?php
 }, 1);
 
@@ -348,6 +348,7 @@ add_filter('woocommerce_gallery_image_size', fn() => 'visnex_single', 20);
    ============================================================================= */
 
 require_once get_stylesheet_directory() . '/inc/customizer.php';
+require_once get_stylesheet_directory() . '/inc/marca.php';
 require_once get_stylesheet_directory() . '/inc/home-sections.php';
 require_once get_stylesheet_directory() . '/inc/shop-filters.php';
 require_once get_stylesheet_directory() . '/inc/densidad.php';

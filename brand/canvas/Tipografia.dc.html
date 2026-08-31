@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500;600&family=Parisienne&display=swap">
+  <style>
+    :root {
+      --negro: #171717; --marfil: #F4EFE7; --arena: #D8C7B0;
+      --oro: #B99A5E; --oro-tinta: #836838; --moka: #6F5A4A; --blanco: #FFFFFF;
+      --serif: 'Bodoni Moda', 'Didot', Georgia, serif;
+      --sans: 'Jost', 'Futura', 'Century Gothic', system-ui, sans-serif;
+      --script: 'Parisienne', 'Snell Roundhand', cursive;
+    }
+    body { margin: 0; background: var(--marfil); font-family: var(--sans); color: var(--negro); }
+    a { color: var(--oro-tinta); } a:hover { color: var(--moka); }
+    .eyebrow { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--moka); font-weight: 500; }
+    .rule { height: 1px; background: var(--arena); border: 0; }
+    .meta { font-size: 11px; color: var(--moka); letter-spacing: .06em; font-family: ui-monospace, Menlo, monospace; }
+    .caja { background: var(--blanco); border: 1px solid var(--arena); padding: 26px; }
+  </style>
+</helmet>
+
+<div style="padding: 56px 56px 64px; display: flex; flex-direction: column; gap: 40px">
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span class="eyebrow">D&#8217;MIKA &middot; Sistema de identidad</span>
+    <h1 style="font-family: var(--serif); font-weight: 400; font-size: 46px; margin: 0; letter-spacing: -.01em">
+      Tipografía
+    </h1>
+    <p style="max-width: 660px; margin: 0; font-size: 15px; line-height: 1.65; color: var(--moka); font-weight: 300">
+      Tres familias, cada una con un trabajo. Las tres están en Google Fonts, así que la
+      tienda las carga sin licencias ni archivos sueltos.
+    </p>
+  </div>
+
+  <!-- Las tres familias -->
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
+
+    <div class="caja" style="display: flex; flex-direction: column; gap: 14px">
+      <span class="eyebrow">Titulares</span>
+      <div style="font-family: var(--serif); font-size: 64px; line-height: 1">Aa</div>
+      <div>
+        <strong style="font-size: 15px; display: block; margin-bottom: 3px">Bodoni Moda</strong>
+        <span class="meta">Didone &middot; 400 / 500</span>
+      </div>
+      <p style="margin: 0; font-size: 13px; line-height: 1.65; color: var(--moka)">
+        Es la letra del logotipo. Alto contraste grueso&ndash;fino, serifas de remate fino.
+        Solo para titulares, nombre de marca y precios grandes.
+      </p>
+    </div>
+
+    <div class="caja" style="display: flex; flex-direction: column; gap: 14px">
+      <span class="eyebrow">Interfaz y texto</span>
+      <div style="font-family: var(--sans); font-size: 64px; line-height: 1; font-weight: 300">Aa</div>
+      <div>
+        <strong style="font-size: 15px; display: block; margin-bottom: 3px">Jost</strong>
+        <span class="meta">Geométrica &middot; 300 / 400 / 500 / 600</span>
+      </div>
+      <p style="margin: 0; font-size: 13px; line-height: 1.65; color: var(--moka)">
+        Recoge el aire Futura del lema original. Todo el cuerpo, menús, botones,
+        formularios y etiquetas van aquí.
+      </p>
+    </div>
+
+    <div class="caja" style="display: flex; flex-direction: column; gap: 14px">
+      <span class="eyebrow">Acento</span>
+      <div style="font-family: var(--script); font-size: 64px; line-height: 1; color: var(--oro-tinta)">Aa</div>
+      <div>
+        <strong style="font-size: 15px; display: block; margin-bottom: 3px">Parisienne</strong>
+        <span class="meta">Script &middot; 400</span>
+      </div>
+      <p style="margin: 0; font-size: 13px; line-height: 1.65; color: var(--moka)">
+        Solo para el lema y los mensajes de agradecimiento del empaque.
+        <strong>Nunca en párrafos ni en botones.</strong>
+      </p>
+    </div>
+
+  </div>
+
+  <hr class="rule">
+
+  <!-- Escala -->
+  <div style="display: flex; flex-direction: column; gap: 18px">
+    <span class="eyebrow">Escala &middot; base 16&nbsp;px, razón 1,25</span>
+    <div style="background: var(--blanco); border: 1px solid var(--arena)">
+      <sc-for list="{{escala}}" as="e" hint-placeholder-count="8">
+        <div style="display: grid; grid-template-columns: 118px 1fr 200px; gap: 22px; align-items: baseline; padding: 15px 24px; border-bottom: 1px solid #F0EAE0">
+          <span class="meta">{{e.nombre}}</span>
+          <span style="font-family: {{e.familia}}; font-size: {{e.px}}; font-weight: {{e.peso}}; letter-spacing: {{e.track}}; line-height: 1.15">{{e.muestra}}</span>
+          <span class="meta" style="text-align: right">{{e.detalle}}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- Reglas -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px">
+
+    <div class="caja" style="display: flex; flex-direction: column; gap: 16px">
+      <span class="eyebrow">Cómo se combinan</span>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <span style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--oro-tinta)">Nueva temporada</span>
+        <span style="font-family: var(--serif); font-size: 40px; line-height: 1.08">Ropa que se siente tuya</span>
+        <span style="font-family: var(--script); font-size: 26px; color: var(--oro-tinta); line-height: 1.3">Clothing for every you</span>
+        <p style="margin: 8px 0 0; font-size: 15px; line-height: 1.75; color: var(--moka); font-weight: 300">
+          Prendas en algodón, hechas en Colombia, pensadas para que te queden bien
+          sin pensarlo.
+        </p>
+      </div>
+      <p style="margin: 0; font-size: 12px; line-height: 1.6; color: var(--moka); padding-top: 14px; border-top: 1px solid var(--arena)">
+        El orden es siempre el mismo: <strong>antetítulo en versalitas &rarr; titular
+        serif &rarr; lema script &rarr; cuerpo sans</strong>. Nunca dos serif seguidas
+        ni script encima de 30&nbsp;px en pantalla.
+      </p>
+    </div>
+
+    <div class="caja" style="display: flex; flex-direction: column; gap: 16px">
+      <span class="eyebrow">Reglas duras</span>
+      <div style="display: flex; flex-direction: column; gap: 13px">
+        <sc-for list="{{reglas}}" as="r" hint-placeholder-count="5">
+          <div style="display: grid; grid-template-columns: 18px 1fr; gap: 11px; align-items: start">
+            <span style="color: {{r.color}}; font-size: 14px; line-height: 1.4">{{r.icono}}</span>
+            <span style="font-size: 13px; line-height: 1.6; color: var(--moka)">{{r.texto}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":1200,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const SERIF = "'Bodoni Moda', Georgia, serif";
+    const SANS = "'Jost', system-ui, sans-serif";
+    return {
+      escala: [
+        { nombre: 'display',   px: '64px', peso: 400, track: '-.02em', familia: SERIF, muestra: 'Ropa que se siente tuya', detalle: 'Bodoni 400 · hero' },
+        { nombre: 'h1',        px: '42px', peso: 400, track: '-.01em', familia: SERIF, muestra: 'Colección Esencial',      detalle: 'Bodoni 400 · sección' },
+        { nombre: 'h2',        px: '28px', peso: 400, track: '0',      familia: SERIF, muestra: 'Lo más querido',          detalle: 'Bodoni 400' },
+        { nombre: 'lead',      px: '18px', peso: 300, track: '0',      familia: SANS,  muestra: 'Prendas en algodón, hechas en Colombia', detalle: 'Jost 300' },
+        { nombre: 'body',      px: '16px', peso: 300, track: '0',      familia: SANS,  muestra: 'Texto corrido de la tienda y las fichas', detalle: 'Jost 300 · mínimo web' },
+        { nombre: 'small',     px: '14px', peso: 400, track: '0',      familia: SANS,  muestra: 'Precios, tallas y datos de producto',     detalle: 'Jost 400' },
+        { nombre: 'label',     px: '12px', peso: 500, track: '.18em',  familia: SANS,  muestra: 'AÑADIR AL CARRITO',       detalle: 'Jost 500 · versalitas' },
+        { nombre: 'eyebrow',   px: '11px', peso: 500, track: '.26em',  familia: SANS,  muestra: 'NUEVA TEMPORADA',         detalle: 'Jost 500 · antetítulo' },
+      ],
+      reglas: [
+        { icono: '✓', color: '#1B6B45', texto: 'Cuerpo nunca por debajo de 16 px en web ni de 12 pt en impreso.' },
+        { icono: '✓', color: '#1B6B45', texto: 'Los botones siempre en versalitas Jost 500 con tracking .18em.' },
+        { icono: '✓', color: '#1B6B45', texto: 'Los precios en cifras tabulares para que las columnas alineen.' },
+        { icono: '✗', color: '#A32B22', texto: 'Nada de script en botones, formularios ni párrafos: se lee mal y no es accesible.' },
+        { icono: '✗', color: '#A32B22', texto: 'Bodoni por debajo de 20 px pierde los remates finos y se ensucia. Ahí va Jost.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

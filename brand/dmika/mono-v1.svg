@@ -1,0 +1,6 @@
+<svg viewBox="0 0 246 240" width="480" height="468" xmlns="http://www.w3.org/2000/svg">
+  <rect width="246" height="240" fill="#F4EFE7"/>
+  <path fill="#171717" fill-rule="evenodd" d="M40,30 H118 C160,30 182,70 182,120 C182,170 160,210 118,210 H40 Z M74,42 V198 H114 C142,198 152,170 152,120 C152,70 142,42 114,42 Z"/>
+  <path fill="none" stroke="#F4EFE7" stroke-width="11" stroke-linejoin="round" d="M96,190 V60 H116 L151,138 L186,60 H206 V190 H192 V86 L158,162 H144 L110,86 V190 Z"/>
+  <path fill="#B99A5E" d="M96,190 V60 H116 L151,138 L186,60 H206 V190 H192 V86 L158,162 H144 L110,86 V190 Z"/>
+</svg>

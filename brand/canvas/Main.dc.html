@@ -1,0 +1,268 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500&family=Parisienne&display=swap">
+  <style>
+    :root {
+      --negro: #171717; --marfil: #F4EFE7; --arena: #D8C7B0;
+      --oro: #B99A5E; --oro-tinta: #836838; --moka: #6F5A4A; --blanco: #FFFFFF;
+      --serif: 'Bodoni Moda', 'Didot', Georgia, serif;
+      --sans: 'Jost', 'Futura', system-ui, sans-serif;
+      --script: 'Parisienne', cursive;
+    }
+    body { margin: 0; background: var(--marfil); font-family: var(--sans); color: var(--negro); }
+    a { color: var(--negro); text-decoration: none; } a:hover { color: var(--oro-tinta); }
+    .nav { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; font-weight: 400; }
+    .eyebrow { font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--oro-tinta); font-weight: 500; }
+    .h2 { font-family: var(--serif); font-weight: 400; font-size: 42px; letter-spacing: -.01em; margin: 0; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      min-height: 52px; padding: 0 34px; border: 1px solid var(--negro); background: var(--negro);
+      color: var(--marfil); font-family: var(--sans); font-size: 12px; font-weight: 500;
+      letter-spacing: .18em; text-transform: uppercase; cursor: pointer;
+    }
+    .btn--ghost { background: transparent; color: var(--negro); }
+    .btn--light { background: var(--marfil); border-color: var(--marfil); color: var(--negro); }
+    .precio { font-variant-numeric: tabular-nums; }
+  </style>
+</helmet>
+
+<div style="width: 100%">
+
+  <!-- Barra de aviso -->
+  <div style="background: var(--negro); color: var(--arena); padding: 11px 32px; display: flex; align-items: center; justify-content: center; gap: 22px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase">
+    <span>Envío gratis desde $150.000</span>
+    <span style="color: var(--oro)">&#9670;</span>
+    <span>Pago contra entrega en toda Colombia</span>
+    <span style="color: var(--oro)">&#9670;</span>
+    <span>Hecho en Colombia</span>
+  </div>
+
+  <!-- Cabecera -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 48px; border-bottom: 1px solid var(--arena); background: rgba(244,239,231,.9)">
+    <div style="display: flex; gap: 30px" class="nav">
+      <a href="#">Mujer</a><a href="#">Hombre</a><a href="#">Novedades</a><a href="#">Colección</a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 13px">
+      <svg viewBox="0 0 206 240" style="width: 30px" aria-hidden="true">
+        <path fill="#171717" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+        <path fill="none" stroke="#F4EFE7" stroke-width="16" stroke-linejoin="round" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+        <path fill="#B99A5E" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+      </svg>
+      <span style="font-family: var(--serif); font-size: 27px; letter-spacing: .13em">D&#8217;MIKA</span>
+    </div>
+    <div style="display: flex; gap: 22px; align-items: center">
+      <svg viewBox="0 0 24 24" style="width: 19px" fill="none" stroke="#171717" stroke-width="1.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
+      <svg viewBox="0 0 24 24" style="width: 19px" fill="none" stroke="#171717" stroke-width="1.4" aria-hidden="true"><path d="M20 21a8 8 0 1 0-16 0" stroke-linecap="round"/><circle cx="12" cy="8" r="4"/></svg>
+      <div style="position: relative">
+        <svg viewBox="0 0 24 24" style="width: 19px" fill="none" stroke="#171717" stroke-width="1.4" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z" stroke-linejoin="round"/><path d="M9 7a3 3 0 0 1 6 0" stroke-linecap="round"/></svg>
+        <span style="position: absolute; top: -5px; right: -7px; background: var(--oro); color: var(--negro); font-size: 9px; font-weight: 500; width: 15px; height: 15px; border-radius: 50%; display: grid; place-items: center">2</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero editorial -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); min-height: 560px">
+    <div style="background: var(--negro); display: flex; flex-direction: column; justify-content: center; padding: 72px 64px; gap: 26px">
+      <span class="eyebrow" style="color: var(--oro)">Nueva temporada &middot; 2026</span>
+      <h1 style="font-family: var(--serif); font-weight: 400; font-size: 66px; line-height: 1.06; letter-spacing: -.02em; color: var(--marfil); margin: 0">
+        Ropa que se<br>siente tuya
+      </h1>
+      <p style="font-family: var(--script); font-size: 30px; color: var(--oro); margin: 0; line-height: 1.2">
+        Clothing for every you
+      </p>
+      <p style="max-width: 400px; margin: 0; font-size: 15px; line-height: 1.75; color: var(--arena); font-weight: 300">
+        Prendas en algodón, hechas en Colombia, pensadas para que te queden bien
+        sin pensarlo. Pagas cuando la recibes.
+      </p>
+      <div style="display: flex; gap: 14px; margin-top: 6px">
+        <a href="#" class="btn btn--light">Ver colección</a>
+        <a href="#" class="btn" style="border-color: var(--arena); background: transparent; color: var(--marfil)">Novedades</a>
+      </div>
+    </div>
+    <div style="background: linear-gradient(150deg, #E4DACB 0%, #D8C7B0 55%, #C9B69B 100%); position: relative; display: grid; place-items: center">
+      <div style="width: 74%; aspect-ratio: 3/4; background: linear-gradient(165deg, #EFE8DC, #DCCDB6); border: 1px solid rgba(23,23,23,.07); display: grid; place-items: center">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; opacity: .5">
+          <svg viewBox="0 0 24 24" style="width: 40px" fill="none" stroke="#6F5A4A" stroke-width="1" aria-hidden="true">
+            <path d="M3 8l4-4 5 2 5-2 4 4-3 3v11H6V11L3 8Z" stroke-linejoin="round"/>
+          </svg>
+          <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--moka)">Foto de campaña</span>
+        </div>
+      </div>
+      <span style="position: absolute; bottom: 26px; right: 30px; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--moka)">Colección Esencial</span>
+    </div>
+  </div>
+
+  <!-- Confianza -->
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--arena); background: var(--blanco)">
+    <sc-for list="{{confianza}}" as="c" hint-placeholder-count="4">
+      <div style="padding: 28px 24px; display: flex; align-items: center; gap: 14px; border-right: 1px solid var(--arena)">
+        <span style="color: var(--oro-tinta)"><span style="font-size: 20px">{{c.icono}}</span></span>
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <strong style="font-size: 12px; letter-spacing: .06em">{{c.titulo}}</strong>
+          <span style="font-size: 12px; color: var(--moka)">{{c.detalle}}</span>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- Categorías -->
+  <div style="padding: 76px 48px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px">
+    <span class="eyebrow">Compra por categoría</span>
+    <h2 class="h2">Encuentra lo tuyo</h2>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; padding: 26px 48px 72px">
+    <sc-for list="{{categorias}}" as="cat" hint-placeholder-count="3">
+      <a href="#" style="display: block; position: relative; aspect-ratio: 3/4; background: {{cat.fondo}}; overflow: hidden">
+        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(23,23,23,.62) 0%, rgba(23,23,23,0) 52%)"></div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 28px; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: var(--serif); font-size: 30px; color: var(--marfil)">{{cat.nombre}}</span>
+          <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--oro)">{{cat.cta}}</span>
+        </div>
+      </a>
+    </sc-for>
+  </div>
+
+  <!-- Selección -->
+  <div style="background: var(--blanco); padding: 76px 48px">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 42px">
+      <span class="eyebrow">Selección</span>
+      <h2 class="h2">Lo más querido</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px">
+      <sc-for list="{{productos}}" as="p" hint-placeholder-count="4">
+        <a href="#" style="display: flex; flex-direction: column; gap: 13px">
+          <div style="position: relative; aspect-ratio: 3/4; background: {{p.fondo}}">
+            <sc-if value="{{p.etiqueta}}" hint-placeholder-val="{{true}}">
+              <span style="position: absolute; top: 13px; left: 13px; background: var(--negro); color: var(--marfil); font-size: 9px; letter-spacing: .16em; text-transform: uppercase; padding: 5px 11px">{{p.etiqueta}}</span>
+            </sc-if>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 5px">
+            <span style="font-size: 14px; font-weight: 400">{{p.nombre}}</span>
+            <div style="display: flex; align-items: baseline; gap: 9px">
+              <span class="precio" style="font-size: 15px; font-weight: 500">{{p.precio}}</span>
+              <sc-if value="{{p.antes}}" hint-placeholder-val="{{true}}">
+                <span class="precio" style="font-size: 13px; color: var(--moka); text-decoration: line-through">{{p.antes}}</span>
+              </sc-if>
+            </div>
+            <div style="display: flex; gap: 6px; margin-top: 3px">
+              <sc-for list="{{p.tallas}}" as="t" hint-placeholder-count="4">
+                <span style="font-size: 10px; letter-spacing: .06em; color: var(--moka); border: 1px solid var(--arena); padding: 2px 7px">{{t}}</span>
+              </sc-for>
+            </div>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- Editorial -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); min-height: 460px">
+    <div style="background: linear-gradient(200deg, #D8C7B0, #BFAB90); display: grid; place-items: center">
+      <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--moka); opacity: .7">Detrás de la marca</span>
+    </div>
+    <div style="display: flex; flex-direction: column; justify-content: center; padding: 68px 64px; gap: 22px; background: var(--marfil)">
+      <span class="eyebrow">Nuestra historia</span>
+      <h2 class="h2" style="font-size: 40px; line-height: 1.15">Cada prenda lleva<br>dedicación y amor<br>en cada detalle</h2>
+      <p style="max-width: 420px; margin: 0; font-size: 15px; line-height: 1.8; color: var(--moka); font-weight: 300">
+        D&#8217;MIKA nace en Colombia con una idea simple: que vestirte bien no sea un
+        privilegio. Trabajamos algodón de verdad, tallas que existen y una talla más
+        de las que suelen ofrecerte.
+      </p>
+      <a href="#" style="font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--oro-tinta); border-bottom: 1px solid var(--oro); padding-bottom: 4px; align-self: flex-start">
+        Conocer más
+      </a>
+    </div>
+  </div>
+
+  <!-- Newsletter -->
+  <div style="background: var(--negro); padding: 76px 48px; display: flex; flex-direction: column; align-items: center; gap: 20px">
+    <svg viewBox="0 0 24 24" style="width: 16px; fill: var(--oro)" aria-hidden="true"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+    <h2 class="h2" style="color: var(--marfil); text-align: center">Únete al mundo D&#8217;MIKA</h2>
+    <p style="max-width: 460px; text-align: center; margin: 0; font-size: 14px; line-height: 1.7; color: var(--arena); font-weight: 300">
+      Nuevas colecciones y lanzamientos antes que nadie. Sin spam, lo prometemos.
+    </p>
+    <div style="display: flex; gap: 0; width: 100%; max-width: 440px; margin-top: 6px">
+      <input type="email" placeholder="Tu correo electrónico" aria-label="Correo electrónico"
+             style="flex: 1; min-height: 52px; padding: 0 18px; border: 1px solid var(--arena); border-right: 0; background: transparent; color: var(--marfil); font-family: var(--sans); font-size: 14px">
+      <button class="btn btn--light" style="border-left: 0">Suscribirme</button>
+    </div>
+  </div>
+
+  <!-- Pie -->
+  <div style="background: var(--negro); border-top: 1px solid rgba(216,199,176,.18); padding: 52px 48px 30px; display: flex; flex-direction: column; gap: 38px">
+    <div style="display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); gap: 42px">
+      <div style="display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; align-items: center; gap: 11px">
+          <svg viewBox="0 0 206 240" style="width: 26px" aria-hidden="true">
+            <path fill="#F4EFE7" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+            <path fill="none" stroke="#171717" stroke-width="16" stroke-linejoin="round" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+            <path fill="#B99A5E" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+          </svg>
+          <span style="font-family: var(--serif); font-size: 22px; letter-spacing: .13em; color: var(--marfil)">D&#8217;MIKA</span>
+        </div>
+        <p style="margin: 0; font-size: 13px; line-height: 1.75; color: var(--arena); max-width: 290px; font-weight: 300">
+          Clothing for every you. Hecho en Colombia con algodón de verdad.
+        </p>
+        <div style="display: flex; gap: 16px; margin-top: 4px; font-size: 12px; color: var(--arena)">
+          <a href="#" style="color: var(--arena)">Instagram</a>
+          <a href="#" style="color: var(--arena)">WhatsApp</a>
+          <a href="#" style="color: var(--arena)">TikTok</a>
+        </div>
+      </div>
+      <sc-for list="{{pie}}" as="col" hint-placeholder-count="3">
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--oro)">{{col.titulo}}</span>
+          <sc-for list="{{col.enlaces}}" as="e" hint-placeholder-count="4">
+            <a href="#" style="font-size: 13px; color: var(--arena); font-weight: 300">{{e}}</a>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div style="border-top: 1px solid rgba(216,199,176,.15); padding-top: 22px; display: flex; justify-content: space-between; font-size: 11px; color: var(--moka)">
+      <span>&copy; 2026 D&#8217;MIKA. Todos los derechos reservados.</span>
+      <span>@dmika.co &middot; www.dmika.co</span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":3060}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      confianza: [
+        { icono: '✓', titulo: 'Pago contra entrega', detalle: 'Pagas al recibir' },
+        { icono: '✈', titulo: 'Envío a todo el país', detalle: '24 a 72 horas' },
+        { icono: '↺', titulo: 'Cambios en 15 días', detalle: 'Sin preguntas' },
+        { icono: '♥', titulo: 'Hecho en Colombia', detalle: '100% algodón' },
+      ],
+      categorias: [
+        { nombre: 'Mujer',      cta: 'Ver colección', fondo: 'linear-gradient(165deg,#E4DACB,#C9B69B)' },
+        { nombre: 'Hombre',     cta: 'Ver colección', fondo: 'linear-gradient(165deg,#D6CCC0,#B0A08C)' },
+        { nombre: 'Esenciales', cta: 'Lo más reciente', fondo: 'linear-gradient(165deg,#EFE8DC,#D8C7B0)' },
+      ],
+      productos: [
+        { nombre: 'Camiseta Esencial Marfil', precio: '$79.900',  antes: null,      etiqueta: 'Nuevo',   fondo: 'linear-gradient(165deg,#F2ECE2,#DDD2C2)', tallas: ['XS','S','M','L','XL'] },
+        { nombre: 'Pantalón Paperbag',        precio: '$99.900',  antes: '$149.900', etiqueta: '-33%',   fondo: 'linear-gradient(165deg,#E8DFD1,#CBBAA2)', tallas: ['S','M','L'] },
+        { nombre: 'Blusa Manga Globo',        precio: '$89.900',  antes: null,      etiqueta: null,      fondo: 'linear-gradient(165deg,#EFE6D8,#D3C3AC)', tallas: ['XS','S','M','L'] },
+        { nombre: 'Conjunto Lino Arena',      precio: '$159.900', antes: null,      etiqueta: 'Agotándose', fondo: 'linear-gradient(165deg,#E2D6C4,#C2AF95)', tallas: ['M','L','XL'] },
+      ],
+      pie: [
+        { titulo: 'Tienda',  enlaces: ['Mujer', 'Hombre', 'Novedades', 'Esenciales'] },
+        { titulo: 'Ayuda',   enlaces: ['Envíos', 'Cambios y devoluciones', 'Guía de tallas', 'Contacto'] },
+        { titulo: 'Legal',   enlaces: ['Privacidad', 'Términos', 'Derecho de retracto'] },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

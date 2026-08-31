@@ -61,3 +61,7 @@ planif_asst.txt
 # Claude Code local
 .claude/settings.local.json
 wordpress/config/wp-cli.phar
+
+# Artefactos de trabajo de marca
+brand/dmika/*.png
+brand/dmika/__pycache__/

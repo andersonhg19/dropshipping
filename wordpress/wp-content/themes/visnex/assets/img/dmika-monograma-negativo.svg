@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 206 240" role="img" aria-label="D'MIKA">
+  <title>D'MIKA</title>
+  <path fill="#F4EFE7" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+  <path fill="none" stroke="#171717" stroke-width="14" stroke-linejoin="round" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+  <path fill="#B99A5E" d="M78,174 V66 H93 L108,120 L123,66 H138 V174 H126 V104 L114,152 H102 L90,104 V174 Z"/>
+</svg>

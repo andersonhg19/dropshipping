@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Jost:wght@300;400;500&display=swap">
+  <style>
+    :root {
+      --negro: #171717; --marfil: #F4EFE7; --arena: #D8C7B0;
+      --oro: #B99A5E; --oro-tinta: #836838; --moka: #6F5A4A; --blanco: #FFFFFF;
+      --exito: #1B6B45; --exito-fondo: #E6F2EA;
+      --serif: 'Bodoni Moda', Georgia, serif;
+      --sans: 'Jost', 'Futura', system-ui, sans-serif;
+    }
+    body { margin: 0; background: var(--marfil); font-family: var(--sans); color: var(--negro); }
+    a { color: var(--oro-tinta); } a:hover { color: var(--moka); }
+    .num { font-variant-numeric: tabular-nums; }
+    .eyebrow { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--oro-tinta); font-weight: 500; }
+  </style>
+</helmet>
+
+<div style="width: 100%">
+
+  <!-- Cabecera -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 48px; border-bottom: 1px solid var(--arena)">
+    <div style="display: flex; gap: 30px; font-size: 12px; letter-spacing: .18em; text-transform: uppercase">
+      <a href="#" style="color: var(--negro); text-decoration: none">Mujer</a>
+      <a href="#" style="color: var(--negro); text-decoration: none">Hombre</a>
+      <a href="#" style="color: var(--negro); text-decoration: none">Novedades</a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px">
+      <svg viewBox="0 0 206 240" style="width: 28px" aria-hidden="true">
+        <path fill="#171717" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+        <path fill="none" stroke="#F4EFE7" stroke-width="16" stroke-linejoin="round" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+        <path fill="#B99A5E" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+      </svg>
+      <span style="font-family: var(--serif); font-size: 25px; letter-spacing: .13em">D&#8217;MIKA</span>
+    </div>
+    <div style="width: 150px"></div>
+  </div>
+
+  <!-- Migas -->
+  <div style="padding: 18px 48px; font-size: 12px; color: var(--moka)">
+    <a href="#" style="color: var(--moka); text-decoration: none">Inicio</a> &nbsp;/&nbsp;
+    <a href="#" style="color: var(--moka); text-decoration: none">Mujer</a> &nbsp;/&nbsp;
+    <span style="color: var(--negro)">Pantalón Paperbag en lino</span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 4fr); gap: 44px; padding: 10px 48px 64px; align-items: start">
+
+    <!-- Galería -->
+    <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+      <div style="aspect-ratio: 4/5; background: linear-gradient(165deg,#EFE8DC,#CBBAA2); display: grid; place-items: center; position: relative">
+        <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--moka); opacity: .55">Foto principal</span>
+        <span style="position: absolute; top: 18px; left: 18px; background: var(--negro); color: var(--marfil); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; padding: 6px 12px">-33%</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+        <sc-for list="{{miniaturas}}" as="m" hint-placeholder-count="4">
+          <div style="aspect-ratio: 4/5; background: {{m}}; border: 1px solid var(--arena)"></div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- Compra -->
+    <div style="position: sticky; top: 24px; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+
+      <div style="display: flex; flex-direction: column; gap: 9px">
+        <span class="eyebrow">Colección Esencial</span>
+        <h1 style="font-family: var(--serif); font-weight: 400; font-size: 38px; line-height: 1.12; margin: 0; letter-spacing: -.01em">
+          Pantalón Paperbag en lino
+        </h1>
+        <div style="display: flex; align-items: center; gap: 9px">
+          <span style="color: #C79A3D; letter-spacing: 2px; font-size: 14px">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span style="font-size: 13px; color: var(--moka)">4,8 &middot; 127 reseñas</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: baseline; gap: 13px">
+        <span class="num" style="font-size: 34px; font-weight: 500; letter-spacing: -.01em">$99.900</span>
+        <span class="num" style="font-size: 18px; color: var(--moka); text-decoration: line-through">$149.900</span>
+      </div>
+
+      <!-- Color -->
+      <div style="display: flex; flex-direction: column; gap: 11px">
+        <span style="font-size: 13px; font-weight: 500">Color: <span style="font-weight: 300; color: var(--moka)">Arena</span></span>
+        <div style="display: flex; gap: 10px">
+          <sc-for list="{{colores}}" as="c" hint-placeholder-count="4">
+            <span style="width: 34px; height: 34px; border-radius: 50%; background: {{c.hex}}; border: 1px solid var(--arena); box-shadow: {{c.sombra}}"></span>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- Tallas -->
+      <div style="display: flex; flex-direction: column; gap: 11px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <span style="font-size: 13px; font-weight: 500">Talla</span>
+          <a href="#" style="font-size: 13px">Guía de tallas</a>
+        </div>
+        <div style="display: flex; gap: 9px; flex-wrap: wrap">
+          <sc-for list="{{tallas}}" as="t" hint-placeholder-count="5">
+            <button type="button" aria-pressed="{{t.activa}}" disabled="{{t.agotada}}"
+                    style="min-width: 52px; min-height: 46px; border: 1px solid {{t.borde}}; background: {{t.fondo}}; color: {{t.texto}}; font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: {{t.cursor}}; opacity: {{t.opacidad}}">{{t.nombre}}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- Añadir -->
+      <div style="display: flex; gap: 12px; margin-top: 4px">
+        <div style="display: inline-flex; align-items: center; border: 1px solid var(--arena); background: var(--blanco)">
+          <button type="button" aria-label="Quitar uno" style="width: 46px; height: 54px; border: 0; background: transparent; font-size: 19px; cursor: pointer">&minus;</button>
+          <span class="num" style="width: 40px; text-align: center; font-weight: 500">1</span>
+          <button type="button" aria-label="Añadir uno" style="width: 46px; height: 54px; border: 0; background: transparent; font-size: 19px; cursor: pointer">+</button>
+        </div>
+        <button style="flex: 1; min-height: 54px; background: var(--negro); border: 1px solid var(--negro); color: var(--marfil); font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; cursor: pointer">
+          Añadir al carrito
+        </button>
+      </div>
+
+      <!-- Contraentrega -->
+      <div style="display: flex; gap: 12px; padding: 15px 17px; background: var(--exito-fondo); border-left: 3px solid var(--exito)">
+        <svg viewBox="0 0 24 24" style="width: 19px; flex-shrink: 0; color: var(--exito); margin-top: 1px" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="font-size: 13px; line-height: 1.6">
+          <strong>Pago contra entrega disponible.</strong> Pagas en efectivo cuando lo recibas.
+          Envío gratis desde $150.000.
+        </span>
+      </div>
+
+      <!-- Acordeones -->
+      <div style="border-top: 1px solid var(--arena); margin-top: 4px">
+        <sc-for list="{{detalles}}" as="d" hint-placeholder-count="4">
+          <div style="border-bottom: 1px solid var(--arena); padding: 16px 0; display: flex; justify-content: space-between; align-items: center; gap: 16px">
+            <span style="font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase">{{d.titulo}}</span>
+            <span style="font-size: 18px; color: var(--moka); font-weight: 300">+</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- Ficha técnica: la marca ya la tiene definida en su marquilla -->
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--moka); padding-top: 4px">
+        <sc-for list="{{ficha}}" as="f" hint-placeholder-count="4">
+          <div style="display: flex; justify-content: space-between; gap: 16px">
+            <span>{{f.k}}</span><span style="color: var(--negro)">{{f.v}}</span>
+          </div>
+        </sc-for>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":1320}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const talla = (nombre, estado) => {
+      const activa = estado === 'activa', agotada = estado === 'agotada';
+      return {
+        nombre, activa, agotada,
+        fondo: activa ? '#171717' : '#FFFFFF',
+        texto: activa ? '#F4EFE7' : '#171717',
+        borde: activa ? '#171717' : '#D8C7B0',
+        cursor: agotada ? 'not-allowed' : 'pointer',
+        opacidad: agotada ? '.4' : '1',
+      };
+    };
+    return {
+      miniaturas: [
+        'linear-gradient(165deg,#E4DACB,#C9B69B)',
+        'linear-gradient(165deg,#F2ECE2,#DDD2C2)',
+        'linear-gradient(165deg,#DDD2C2,#B8A78E)',
+        'linear-gradient(165deg,#EFE8DC,#D8C7B0)',
+      ],
+      colores: [
+        { hex: '#D8C7B0', sombra: '0 0 0 2px #171717, 0 0 0 3px #FFFFFF' },
+        { hex: '#171717', sombra: 'none' },
+        { hex: '#F4EFE7', sombra: 'none' },
+        { hex: '#6F5A4A', sombra: 'none' },
+      ],
+      tallas: [talla('XS','normal'), talla('S','normal'), talla('M','activa'), talla('L','normal'), talla('XL','agotada')],
+      detalles: [
+        { titulo: 'Descripción' },
+        { titulo: 'Composición y cuidados' },
+        { titulo: 'Envíos y entregas' },
+        { titulo: 'Cambios y devoluciones' },
+      ],
+      ficha: [
+        { k: 'Composición', v: '95% algodón · 5% elastano' },
+        { k: 'Origen',      v: 'Hecho en Colombia' },
+        { k: 'Lavado',      v: 'Ciclo suave, colores similares' },
+        { k: 'Modelo',      v: 'Mide 1,68 m · lleva talla M' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

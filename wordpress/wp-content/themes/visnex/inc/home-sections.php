@@ -387,7 +387,7 @@ add_action('storefront_footer', function () {
     <div class="vn-footer">
         <div class="vn-footer__grid">
             <div>
-                <div class="vn-footer__brand-name">VISNEX</div>
+                <div class="vn-footer__brand-name"><?php echo dm_logotipo(24, 'oscuro'); ?></div>
                 <p class="vn-footer__brand-desc">Ropa de diario para España y Colombia. Pocas prendas, elegidas despacio, con las mismas condiciones de cambio en los dos países.</p>
             </div>
             <div>
@@ -412,7 +412,7 @@ add_action('storefront_footer', function () {
             </div>
         </div>
         <div class="vn-footer__bottom">
-            &copy; <?php echo esc_html(date('Y')); ?> VISNEX. Todos los derechos reservados.
+            &copy; <?php echo esc_html(date('Y')); ?> D&#8217;MIKA. Todos los derechos reservados. &nbsp;&middot;&nbsp; @dmika.co
         </div>
     </div>
     <?php

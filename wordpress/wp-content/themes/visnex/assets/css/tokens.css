@@ -17,13 +17,13 @@
   --vn-off-white:    #FAFAFA;
 
   /* --- Color: neutros --------------------------------------------------- */
-  --vn-gray-100:     #F5F5F7;
-  --vn-gray-200:     #E8E8ED;
-  --vn-gray-300:     #D2D2D7;
-  --vn-gray-400:     #A1A1A6;
-  --vn-gray-500:     #6E6E73;  /* subido desde #86868B: aquel fallaba WCAG AA */
-  --vn-gray-700:     #424245;
-  --vn-gray-900:     #1D1D1F;
+  --vn-gray-100:     #F0E9DE;
+  --vn-gray-200:     #E4DACB;
+  --vn-gray-300:     #D8C7B0;
+  --vn-gray-400:     #A8967F;
+  --vn-gray-500:     #6F5A4A;  /* Marron Moka: 5,67:1 sobre marfil */
+  --vn-gray-700:     #4A3B31;
+  --vn-gray-900:     #171717;
 
   /* --- Color: semanticos ------------------------------------------------ */
   --vn-text:         var(--vn-gray-900);
@@ -66,8 +66,9 @@
      los numeros tengan su propia voz —estrecha, neutra, de ancho fijo— es lo
      que separa una ficha de producto de un formulario.
      ---------------------------------------------------------------------- */
-  --vn-font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --vn-font-serif:   'Instrument Serif', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --vn-font-sans:    'Jost', 'Futura', 'Century Gothic', system-ui, -apple-system, sans-serif;
+  --vn-font-script:  'Parisienne', 'Snell Roundhand', cursive;
+  --vn-font-serif:   'Bodoni Moda', 'Didot', Georgia, 'Times New Roman', serif;
   --vn-font-datos:   'Archivo', 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif;
 
   /* --- ESCALA BIMODAL -----------------------------------------------------
@@ -191,15 +192,27 @@
      No se sustituyen --vn-black ni --vn-white: siguen existiendo para donde de
      verdad hace falta el blanco puro (fondo de una foto de producto recortada).
      Estos son las SUPERFICIES. */
-  --vn-paper:        #FAF8F4;   /* fondo de pagina: hueso calido */
-  --vn-paper-deep:   #F2EEE7;   /* bandas alternas */
-  --vn-ink:          #12110F;   /* tinta: negro con algo de marron */
-  --vn-ink-soft:     #1C1A17;
+  --vn-paper:        #F4EFE7;   /* Marfil Calido — fondo de pagina */
+  --vn-paper-deep:   #EAE1D3;   /* bandas alternas: marfil sobre arena */
+  --vn-ink:          #171717;   /* Negro Carbon */
+  --vn-ink-soft:     #241F1B;
+
+  /* --- Paleta D'MIKA -----------------------------------------------------
+     Valores oficiales de la marca. El septimo (Dorado Tinta) se anadio porque
+     el Champagne da 2,34:1 sobre marfil y no pasa accesibilidad para texto;
+     sobre negro da 6,70:1 y ahi si. */
+  --dm-negro:        #171717;   /* Negro Carbon */
+  --dm-marfil:       #F4EFE7;   /* Marfil Calido */
+  --dm-arena:        #D8C7B0;   /* Beige Arena */
+  --dm-oro:          #B99A5E;   /* Dorado Champagne — decorativo */
+  --dm-oro-tinta:    #836838;   /* Dorado Tinta — texto sobre claro */
+  --dm-moka:         #6F5A4A;   /* Marron Moka */
+  --dm-blanco:       #FFFFFF;   /* Blanco Limpio */
 
   /* Un unico acento, y muy contenido: el laton de una placa o un herraje.
      Se usa en filetes y detalles, nunca en bloques grandes. */
-  --vn-brass:        #8A6A3B;
-  --vn-brass-light:  #B99A6B;
+  --vn-brass:        #836838;   /* Dorado Tinta: 4,58:1 sobre marfil, apto para texto */
+  --vn-brass-light:  #B99A5E;   /* Dorado Champagne: SOLO filete o sobre negro (2,34:1 sobre claro) */
 
   /* --- Curvas de movimiento -----------------------------------------------
      Nada rebota. El rebote es simpatico, y lo simpatico no es caro.

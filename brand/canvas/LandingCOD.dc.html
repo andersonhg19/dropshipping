@@ -1,0 +1,261 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Jost:wght@300;400;500;600&display=swap">
+  <style>
+    :root {
+      --negro: #171717; --marfil: #F4EFE7; --arena: #D8C7B0;
+      --oro: #B99A5E; --oro-tinta: #836838; --moka: #6F5A4A; --blanco: #FFFFFF;
+      --exito: #1B6B45; --exito-fondo: #E6F2EA; --alerta: #8A5A00; --alerta-fondo: #FFF6E5;
+      --serif: 'Bodoni Moda', Georgia, serif;
+      --sans: 'Jost', 'Futura', system-ui, sans-serif;
+    }
+    body { margin: 0; background: var(--marfil); font-family: var(--sans); color: var(--negro); }
+    a { color: var(--oro-tinta); } a:hover { color: var(--moka); }
+    .inp {
+      width: 100%; min-height: 50px; padding: 0 14px; box-sizing: border-box;
+      border: 1px solid var(--arena); background: var(--blanco); color: var(--negro);
+      font-family: var(--sans); font-size: 16px;
+    }
+    .campo { display: flex; flex-direction: column; gap: 6px; }
+    .lbl { font-size: 13px; font-weight: 500; }
+    .num { font-variant-numeric: tabular-nums; }
+  </style>
+</helmet>
+
+<div style="width: 100%; padding-bottom: 76px">
+
+  <!-- Barra mínima: marca sin salidas -->
+  <div style="background: var(--negro); padding: 12px; display: flex; align-items: center; justify-content: center; gap: 9px">
+    <svg viewBox="0 0 206 240" style="width: 19px" aria-hidden="true">
+      <path fill="#F4EFE7" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+      <path fill="none" stroke="#171717" stroke-width="16" stroke-linejoin="round" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+      <path fill="#B99A5E" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+    </svg>
+    <span style="font-family: var(--serif); font-size: 15px; letter-spacing: .18em; color: var(--marfil)">D&#8217;MIKA</span>
+  </div>
+
+  <!-- Foto -->
+  <div style="aspect-ratio: 1; background: linear-gradient(165deg,#EFE8DC,#CBBAA2); position: relative; display: grid; place-items: center">
+    <span style="font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--moka); opacity: .6">Foto del producto</span>
+    <span style="position: absolute; top: 14px; left: 14px; background: #A32B22; color: var(--blanco); font-size: 11px; font-weight: 600; letter-spacing: .08em; padding: 5px 11px">-33%</span>
+  </div>
+
+  <div style="display: flex; gap: 7px; padding: 10px 14px; overflow-x: auto">
+    <sc-for list="{{miniaturas}}" as="m" hint-placeholder-count="4">
+      <span style="width: 62px; height: 62px; flex-shrink: 0; background: {{m}}; border: 2px solid transparent"></span>
+    </sc-for>
+  </div>
+
+  <div style="padding: 18px 20px 0; display: flex; flex-direction: column; gap: 14px">
+
+    <!-- Prueba social ANTES del precio -->
+    <div style="display: flex; align-items: center; gap: 8px">
+      <span style="color: #C79A3D; letter-spacing: 2px; font-size: 15px">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+      <span style="font-size: 13px; color: var(--moka)">4,8 &middot; 127 clientas</span>
+    </div>
+
+    <h1 style="font-family: var(--serif); font-weight: 400; font-size: 28px; line-height: 1.15; margin: 0; letter-spacing: -.01em">
+      Pantalón Paperbag<br>en lino
+    </h1>
+
+    <!-- Precio -->
+    <div style="display: flex; align-items: baseline; flex-wrap: wrap; gap: 11px">
+      <span class="num" style="font-size: 38px; font-weight: 600; letter-spacing: -.02em; line-height: 1">$99.900</span>
+      <span class="num" style="font-size: 18px; color: var(--moka); text-decoration: line-through">$149.900</span>
+    </div>
+    <p style="margin: -4px 0 0; font-size: 14px; font-weight: 500; color: var(--exito)">
+      Pagas cuando lo recibes en tu casa
+    </p>
+
+    <!-- Beneficios -->
+    <div style="display: flex; flex-direction: column; gap: 11px; margin-top: 4px">
+      <sc-for list="{{beneficios}}" as="b" hint-placeholder-count="4">
+        <div style="display: grid; grid-template-columns: 21px 1fr; gap: 11px; align-items: start">
+          <svg viewBox="0 0 24 24" style="width: 21px; color: var(--exito); margin-top: 1px" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span style="font-size: 15px; line-height: 1.4">{{b}}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- Escasez honesta -->
+    <div style="display: flex; align-items: center; gap: 9px; padding: 12px 14px; background: var(--alerta-fondo); font-size: 13px; font-weight: 500; color: var(--alerta)">
+      <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--alerta); flex-shrink: 0"></span>
+      <span>Quedan 12 unidades en talla M</span>
+    </div>
+
+    <!-- Formulario COD: cuatro campos y nada más -->
+    <div style="background: var(--blanco); border: 2px solid var(--negro); padding: 22px; margin-top: 6px">
+      <h2 style="font-size: 18px; font-weight: 600; margin: 0 0 4px">Pídelo ahora, paga al recibir</h2>
+      <p style="font-size: 13px; color: var(--moka); margin: 0 0 20px">Sin registro y sin tarjeta.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 15px">
+        <div class="campo">
+          <label class="lbl" for="lp-n">Nombre completo</label>
+          <input class="inp" id="lp-n" type="text" placeholder="Como aparece en tu cédula">
+        </div>
+        <div class="campo">
+          <label class="lbl" for="lp-t">Celular (WhatsApp)</label>
+          <input class="inp" id="lp-t" type="tel" inputmode="tel" placeholder="300 123 4567">
+        </div>
+        <div class="campo">
+          <label class="lbl" for="lp-c">Ciudad</label>
+          <input class="inp" id="lp-c" type="text" placeholder="Bogotá, Medellín, Cali...">
+        </div>
+        <div class="campo">
+          <label class="lbl" for="lp-d">Dirección de entrega</label>
+          <input class="inp" id="lp-d" type="text" placeholder="Calle 123 # 45-67, apto 501">
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px">
+          <span class="lbl">Talla</span>
+          <div style="display: flex; gap: 7px">
+            <sc-for list="{{tallas}}" as="t" hint-placeholder-count="4">
+              <button type="button" aria-pressed="{{t.activa}}"
+                      style="min-width: 46px; min-height: 44px; border: 1px solid {{t.borde}}; background: {{t.fondo}}; color: {{t.texto}}; font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: pointer">{{t.nombre}}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px">
+          <span class="lbl">Cantidad</span>
+          <div style="display: inline-flex; align-items: center; border: 1px solid var(--arena)">
+            <button type="button" aria-label="Quitar uno" style="width: 44px; height: 44px; border: 0; background: transparent; font-size: 19px; cursor: pointer; color: var(--negro)">&minus;</button>
+            <span class="num" style="width: 46px; text-align: center; font-weight: 600">1</span>
+            <button type="button" aria-label="Añadir uno" style="width: 44px; height: 44px; border: 0; background: transparent; font-size: 19px; cursor: pointer; color: var(--negro)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen -->
+      <div style="margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--arena); display: flex; flex-direction: column; gap: 9px">
+        <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--moka)">
+          <span>Producto</span><span class="num">$99.900</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--moka)">
+          <span>Envío</span><span class="num">$9.000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 10px; border-top: 1px solid var(--arena)">
+          <strong style="font-size: 16px">Total a pagar</strong>
+          <strong class="num" style="font-size: 22px; font-family: var(--serif); font-weight: 400">$108.900</strong>
+        </div>
+      </div>
+
+      <button style="width: 100%; min-height: 58px; margin-top: 20px; background: var(--negro); border: 0; color: var(--marfil); font-family: var(--sans); font-size: 14px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; cursor: pointer">
+        Ordenar ahora &middot; pago contra entrega
+      </button>
+
+      <p style="margin: 12px 0 0; font-size: 11px; color: var(--moka); text-align: center; line-height: 1.5">
+        Al ordenar aceptas nuestros <a href="#">términos</a> y <a href="#">política de privacidad</a>.
+      </p>
+
+      <!-- Sellos -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--arena); text-align: center">
+        <sc-for list="{{sellos}}" as="s" hint-placeholder-count="3">
+          <div style="font-size: 11px; color: var(--moka); line-height: 1.4">
+            <strong style="display: block; color: var(--negro); font-size: 11px; font-weight: 600">{{s.titulo}}</strong>
+            {{s.texto}}
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Reseñas -->
+  <div style="padding: 34px 20px; background: var(--blanco); margin-top: 26px">
+    <h2 style="font-family: var(--serif); font-weight: 400; font-size: 24px; text-align: center; margin: 0 0 22px">
+      Lo que dicen quienes ya lo tienen
+    </h2>
+    <div style="display: flex; flex-direction: column; gap: 13px">
+      <sc-for list="{{resenas}}" as="r" hint-placeholder-count="2">
+        <div style="border: 1px solid var(--arena); padding: 17px">
+          <div style="color: #C79A3D; letter-spacing: 2px; margin-bottom: 9px; font-size: 13px">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p style="margin: 0 0 11px; font-size: 14px; line-height: 1.6">{{r.texto}}</p>
+          <span style="font-size: 12px; color: var(--moka); font-weight: 500">{{r.autora}}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- Preguntas -->
+  <div style="padding: 34px 20px">
+    <h2 style="font-family: var(--serif); font-weight: 400; font-size: 24px; text-align: center; margin: 0 0 20px">
+      Preguntas frecuentes
+    </h2>
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <sc-for list="{{faq}}" as="f" hint-placeholder-count="4">
+        <div style="background: var(--blanco); border: 1px solid var(--arena)">
+          <div style="padding: 15px 17px; display: flex; justify-content: space-between; align-items: center; gap: 14px">
+            <strong style="font-size: 14px; font-weight: 500">{{f.p}}</strong>
+            <span style="font-size: 19px; color: var(--oro-tinta); flex-shrink: 0">+</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- Barra fija -->
+  <div style="position: sticky; bottom: 0; display: flex; align-items: center; gap: 13px; padding: 13px 16px; background: rgba(244,239,231,.97); border-top: 1px solid var(--arena)">
+    <div style="display: flex; flex-direction: column">
+      <span class="num" style="font-size: 19px; font-weight: 600; line-height: 1.1">$108.900</span>
+      <span style="font-size: 10px; color: var(--moka)">envío incluido</span>
+    </div>
+    <button style="flex: 1; min-height: 50px; background: var(--negro); border: 0; color: var(--marfil); font-family: var(--sans); font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; cursor: pointer">
+      Ordenar ahora
+    </button>
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":390,"height":2160}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const talla = (nombre, activa) => ({
+      nombre, activa,
+      fondo: activa ? '#171717' : '#FFFFFF',
+      texto: activa ? '#F4EFE7' : '#171717',
+      borde: activa ? '#171717' : '#D8C7B0',
+    });
+    return {
+      miniaturas: [
+        'linear-gradient(165deg,#EFE8DC,#CBBAA2)',
+        'linear-gradient(165deg,#E4DACB,#B8A78E)',
+        'linear-gradient(165deg,#F2ECE2,#D8C7B0)',
+        'linear-gradient(165deg,#DDD2C2,#C2AF95)',
+      ],
+      beneficios: [
+        'Pago contra entrega: no pagas nada por adelantado',
+        'Envío a todo Colombia en 24 a 72 horas',
+        'Te confirmamos por WhatsApp antes de despachar',
+        'Cambio de talla gratis dentro de tu ciudad',
+      ],
+      tallas: [talla('S', false), talla('M', true), talla('L', false), talla('XL', false)],
+      sellos: [
+        { titulo: 'Sin adelantos', texto: 'Pagas al recibir' },
+        { titulo: 'Envío nacional', texto: '24 a 72 horas' },
+        { titulo: 'Retracto', texto: '5 días hábiles' },
+      ],
+      resenas: [
+        { texto: 'Me llegó en dos días a Medellín y la tela es de verdad buena. Pedí la M y me quedó perfecta.', autora: 'Laura G. · Medellín' },
+        { texto: 'Al principio desconfié por lo del contra entrega, pero me escribieron por WhatsApp antes de mandarlo. Todo clarísimo.', autora: 'Daniela R. · Bogotá' },
+      ],
+      faq: [
+        { p: '¿Tengo que pagar algo ahora?' },
+        { p: '¿Cuánto tarda en llegar?' },
+        { p: '¿Y si no me queda bien?' },
+        { p: '¿Cómo sé que es confiable?' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

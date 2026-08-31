@@ -1,0 +1,239 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Jost:wght@300;400;500&display=swap">
+  <style>
+    :root {
+      --negro: #171717; --marfil: #F4EFE7; --arena: #D8C7B0;
+      --oro: #B99A5E; --oro-tinta: #836838; --moka: #6F5A4A; --blanco: #FFFFFF;
+      --exito: #1B6B45; --exito-fondo: #E6F2EA;
+      --serif: 'Bodoni Moda', Georgia, serif;
+      --sans: 'Jost', 'Futura', system-ui, sans-serif;
+    }
+    body { margin: 0; background: var(--marfil); font-family: var(--sans); color: var(--negro); }
+    a { color: var(--oro-tinta); } a:hover { color: var(--moka); }
+    .lbl { font-size: 12px; font-weight: 500; letter-spacing: .04em; }
+    .inp {
+      width: 100%; min-height: 48px; padding: 0 15px; box-sizing: border-box;
+      border: 1px solid var(--arena); background: var(--blanco); color: var(--negro);
+      font-family: var(--sans); font-size: 15px;
+    }
+    .campo { display: flex; flex-direction: column; gap: 7px; }
+    .hint { font-size: 11px; color: var(--moka); }
+    .caja { background: var(--blanco); border: 1px solid var(--arena); padding: 26px; }
+    .h3 { font-size: 15px; font-weight: 500; letter-spacing: .04em; margin: 0 0 18px; padding-bottom: 13px; border-bottom: 1px solid var(--arena); }
+    .num { font-variant-numeric: tabular-nums; }
+  </style>
+</helmet>
+
+<div style="width: 100%; padding-bottom: 56px">
+
+  <!-- Cabecera reducida: sin menú, para no dar salidas -->
+  <div style="display: flex; align-items: center; justify-content: center; gap: 12px; padding: 20px; border-bottom: 1px solid var(--arena)">
+    <svg viewBox="0 0 206 240" style="width: 26px" aria-hidden="true">
+      <path fill="#171717" fill-rule="evenodd" d="M28,30 H112 C156,30 178,68 178,120 C178,172 156,210 112,210 H28 V202 L40,196 V44 L28,38 Z M68,41 V199 H108 C138,199 148,168 148,120 C148,72 138,41 108,41 Z"/>
+      <path fill="none" stroke="#F4EFE7" stroke-width="16" stroke-linejoin="round" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+      <path fill="#B99A5E" d="M74,178 V62 H92 L108,124 L124,62 H142 V178 H128 V100 L115,148 H101 L88,100 V178 Z"/>
+    </svg>
+    <span style="font-family: var(--serif); font-size: 24px; letter-spacing: .13em">D&#8217;MIKA</span>
+  </div>
+
+  <!-- Pasos -->
+  <div style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 34px 0 30px">
+    <div style="display: flex; align-items: center; gap: 9px; color: var(--exito)">
+      <span style="width: 25px; height: 25px; border-radius: 50%; background: var(--exito); color: var(--blanco); display: grid; place-items: center; font-size: 12px">&#10003;</span>
+      <span style="font-size: 13px; letter-spacing: .06em">Carrito</span>
+    </div>
+    <span style="width: 46px; height: 1px; background: var(--arena)"></span>
+    <div style="display: flex; align-items: center; gap: 9px">
+      <span style="width: 25px; height: 25px; border-radius: 50%; background: var(--negro); color: var(--marfil); display: grid; place-items: center; font-size: 12px">2</span>
+      <span style="font-size: 13px; font-weight: 500; letter-spacing: .06em">Datos y pago</span>
+    </div>
+    <span style="width: 46px; height: 1px; background: var(--arena)"></span>
+    <div style="display: flex; align-items: center; gap: 9px; color: var(--moka)">
+      <span style="width: 25px; height: 25px; border-radius: 50%; border: 1px solid var(--arena); display: grid; place-items: center; font-size: 12px">3</span>
+      <span style="font-size: 13px; letter-spacing: .06em">Confirmación</span>
+    </div>
+  </div>
+
+  <div style="max-width: 1180px; margin: 0 auto; padding: 0 40px">
+
+    <!-- Aviso contraentrega -->
+    <div style="display: flex; gap: 13px; padding: 17px 20px; background: var(--exito-fondo); border-left: 3px solid var(--exito); margin-bottom: 26px">
+      <svg viewBox="0 0 24 24" style="width: 21px; flex-shrink: 0; color: var(--exito)" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span style="font-size: 14px; line-height: 1.65">
+        <strong>Puedes pagar contra entrega.</strong> Eliges &laquo;Pago contra entrega&raquo;
+        más abajo y pagas en efectivo al recibir. Te escribimos por WhatsApp para confirmar
+        antes de despacharlo.
+      </span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 30px; align-items: start">
+
+      <!-- Formulario -->
+      <div style="display: flex; flex-direction: column; gap: 20px; min-width: 0">
+
+        <div class="caja">
+          <h3 class="h3">Datos de contacto</h3>
+          <div style="display: flex; flex-direction: column; gap: 17px">
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px">
+              <div class="campo">
+                <label class="lbl" for="ck-n">Nombre <span style="color: #A32B22">*</span></label>
+                <input class="inp" id="ck-n" type="text" value="María Fernanda">
+              </div>
+              <div class="campo">
+                <label class="lbl" for="ck-a">Apellido <span style="color: #A32B22">*</span></label>
+                <input class="inp" id="ck-a" type="text" value="López">
+              </div>
+            </div>
+            <div class="campo">
+              <label class="lbl" for="ck-t">Celular (WhatsApp) <span style="color: #A32B22">*</span></label>
+              <input class="inp" id="ck-t" type="tel" value="300 123 4567">
+              <span class="hint">Lo necesitamos para confirmar tu pedido antes de despacharlo.</span>
+            </div>
+            <div class="campo">
+              <label class="lbl" for="ck-e">Correo electrónico <span style="color: var(--moka); font-weight: 300">(opcional)</span></label>
+              <input class="inp" id="ck-e" type="email" placeholder="Para enviarte la guía de rastreo">
+            </div>
+          </div>
+        </div>
+
+        <div class="caja">
+          <h3 class="h3">Dirección de entrega</h3>
+          <div style="display: flex; flex-direction: column; gap: 17px">
+            <div class="campo">
+              <label class="lbl" for="ck-d">Dirección <span style="color: #A32B22">*</span></label>
+              <input class="inp" id="ck-d" type="text" value="Calle 100 # 15-20, apto 302">
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px">
+              <div class="campo">
+                <label class="lbl" for="ck-c">Ciudad <span style="color: #A32B22">*</span></label>
+                <input class="inp" id="ck-c" type="text" value="Bogotá D.C.">
+              </div>
+              <div class="campo">
+                <label class="lbl" for="ck-dep">Departamento <span style="color: #A32B22">*</span></label>
+                <input class="inp" id="ck-dep" type="text" value="Cundinamarca">
+              </div>
+            </div>
+            <div class="campo">
+              <label class="lbl" for="ck-i">Indicaciones para la entrega <span style="color: var(--moka); font-weight: 300">(opcional)</span></label>
+              <input class="inp" id="ck-i" type="text" placeholder="Punto de referencia, torre, horario preferido...">
+            </div>
+          </div>
+        </div>
+
+        <div class="caja">
+          <h3 class="h3">Forma de pago</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+
+            <div style="border: 1px solid var(--negro); box-shadow: 0 0 0 1px var(--negro); background: var(--marfil); padding: 17px">
+              <div style="display: flex; align-items: center; gap: 13px">
+                <span style="width: 17px; height: 17px; border-radius: 50%; border: 5px solid var(--negro); flex-shrink: 0"></span>
+                <strong style="font-size: 14px; flex: 1">Pago contra entrega</strong>
+                <span style="font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--exito); background: var(--exito-fondo); padding: 4px 9px">Más usado</span>
+              </div>
+              <p style="margin: 13px 0 0 30px; font-size: 13px; line-height: 1.65; color: var(--moka)">
+                Pagas en efectivo al transportador cuando recibas el pedido.
+                Ten el monto exacto a la mano si puedes.
+              </p>
+            </div>
+
+            <div style="border: 1px solid var(--arena); padding: 17px">
+              <div style="display: flex; align-items: center; gap: 13px">
+                <span style="width: 17px; height: 17px; border-radius: 50%; border: 1px solid var(--arena); flex-shrink: 0"></span>
+                <strong style="font-size: 14px; flex: 1; font-weight: 400">Nequi, PSE o tarjeta</strong>
+                <span style="font-size: 11px; color: var(--moka)">Wompi &middot; Mercado Pago</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Resumen -->
+      <div style="position: sticky; top: 20px; display: flex; flex-direction: column; gap: 18px">
+        <div class="caja">
+          <h3 class="h3">Tu pedido</h3>
+
+          <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px">
+            <sc-for list="{{items}}" as="i" hint-placeholder-count="2">
+              <div style="display: flex; gap: 13px; align-items: center">
+                <div style="width: 54px; height: 72px; background: {{i.fondo}}; flex-shrink: 0; position: relative">
+                  <span style="position: absolute; top: -6px; right: -6px; background: var(--negro); color: var(--marfil); width: 19px; height: 19px; border-radius: 50%; display: grid; place-items: center; font-size: 10px">{{i.cantidad}}</span>
+                </div>
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+                  <span style="font-size: 13px; line-height: 1.4">{{i.nombre}}</span>
+                  <span style="font-size: 11px; color: var(--moka)">Talla {{i.talla}}</span>
+                </div>
+                <span class="num" style="font-size: 13px; font-weight: 500">{{i.total}}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 11px; padding-top: 17px; border-top: 1px solid var(--arena)">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--moka)">
+              <span>Subtotal</span><span class="num">$179.800</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--moka)">
+              <span>Envío &middot; Bogotá</span><span class="num" style="color: var(--exito); font-weight: 500">Gratis</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 13px; border-top: 1px solid var(--arena)">
+              <strong style="font-size: 15px">Total a pagar</strong>
+              <strong class="num" style="font-size: 22px; font-family: var(--serif); font-weight: 400">$179.800</strong>
+            </div>
+            <span style="font-size: 11px; color: var(--moka); text-align: right">Lo pagas al recibir</span>
+          </div>
+
+          <button style="width: 100%; min-height: 56px; margin-top: 22px; background: var(--negro); border: 1px solid var(--negro); color: var(--marfil); font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; cursor: pointer">
+            Confirmar pedido
+          </button>
+
+          <!-- Confianza: responde las tres dudas que hacen abandonar -->
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--arena)">
+            <sc-for list="{{confianza}}" as="c" hint-placeholder-count="3">
+              <div style="display: flex; gap: 10px; align-items: flex-start">
+                <svg viewBox="0 0 24 24" style="width: 16px; flex-shrink: 0; margin-top: 2px; color: var(--exito)" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span style="font-size: 12px; line-height: 1.55; color: var(--moka)"><strong style="color: var(--negro); font-weight: 500">{{c.titulo}}</strong> {{c.texto}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 11px; color: var(--moka); letter-spacing: .06em">
+          <svg viewBox="0 0 24 24" style="width: 14px" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          Compra protegida &middot; Ley 1480 de 2011
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      items: [
+        { nombre: 'Camiseta Esencial Marfil', talla: 'M', cantidad: 1, total: '$79.900',  fondo: 'linear-gradient(165deg,#F2ECE2,#DDD2C2)' },
+        { nombre: 'Pantalón Paperbag',        talla: 'M', cantidad: 1, total: '$99.900',  fondo: 'linear-gradient(165deg,#E8DFD1,#CBBAA2)' },
+      ],
+      confianza: [
+        { titulo: 'Pagas al recibir.',        texto: 'No entregas dinero hasta tener la prenda en la mano.' },
+        { titulo: 'Cambios en 15 días.',      texto: 'Y 5 días hábiles de retracto garantizados por ley.' },
+        { titulo: 'Te escribimos antes.',     texto: 'Confirmamos por WhatsApp antes de despachar. Sin sorpresas.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Jost:wght@300;400;500&display=swap">
+  <style>
+    :root {
+      --negro: #171717; --marfil: #F4EFE7; --arena: #D8C7B0;
+      --oro: #B99A5E; --oro-tinta: #836838; --moka: #6F5A4A; --blanco: #FFFFFF;
+      --serif: 'Bodoni Moda', 'Didot', Georgia, serif;
+      --sans: 'Jost', 'Futura', system-ui, sans-serif;
+    }
+    body { margin: 0; background: var(--marfil); font-family: var(--sans); color: var(--negro); }
+    a { color: var(--oro-tinta); } a:hover { color: var(--moka); }
+    .eyebrow { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--moka); font-weight: 500; }
+    .rule { height: 1px; background: var(--arena); border: 0; }
+    .chip { font-size: 10px; font-weight: 500; letter-spacing: .08em; padding: 2px 7px; border-radius: 2px; }
+    .ok { background: #E6F2EA; color: #1B6B45; }
+    .no { background: #FBE9E7; color: #A32B22; }
+    .mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: .04em; }
+  </style>
+</helmet>
+
+<div style="padding: 56px 56px 64px; display: flex; flex-direction: column; gap: 40px">
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span class="eyebrow">D&#8217;MIKA &middot; Sistema de identidad</span>
+    <h1 style="font-family: var(--serif); font-weight: 400; font-size: 46px; margin: 0; letter-spacing: -.01em">
+      Paleta con roles y contraste
+    </h1>
+    <p style="max-width: 660px; margin: 0; font-size: 15px; line-height: 1.65; color: var(--moka); font-weight: 300">
+      Los seis colores originales, más un séptimo que hacía falta. Cada uno lleva ahora
+      un <strong>rol</strong> y su <strong>contraste medido</strong>, para que nadie tenga
+      que adivinar dónde se puede usar.
+    </p>
+  </div>
+
+  <!-- Paleta -->
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+
+    <div style="display: flex; flex-direction: column">
+      <div style="height: 132px; background: #171717"></div>
+      <div style="padding: 14px 4px; display: flex; flex-direction: column; gap: 5px">
+        <strong style="font-size: 13px; letter-spacing: .04em">Negro Carbón</strong>
+        <span class="mono" style="color: var(--moka)">#171717</span>
+        <span style="font-size: 12px; color: var(--moka); line-height: 1.5">Texto principal, cabecera, etiquetas.</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column">
+      <div style="height: 132px; background: #F4EFE7; border: 1px solid var(--arena)"></div>
+      <div style="padding: 14px 4px; display: flex; flex-direction: column; gap: 5px">
+        <strong style="font-size: 13px; letter-spacing: .04em">Marfil Cálido</strong>
+        <span class="mono" style="color: var(--moka)">#F4EFE7</span>
+        <span style="font-size: 12px; color: var(--moka); line-height: 1.5">Fondo por defecto de toda la tienda.</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column">
+      <div style="height: 132px; background: #D8C7B0"></div>
+      <div style="padding: 14px 4px; display: flex; flex-direction: column; gap: 5px">
+        <strong style="font-size: 13px; letter-spacing: .04em">Beige Arena</strong>
+        <span class="mono" style="color: var(--moka)">#D8C7B0</span>
+        <span style="font-size: 12px; color: var(--moka); line-height: 1.5">Bordes, separadores, fondos de sección.</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column">
+      <div style="height: 132px; background: linear-gradient(135deg, #C7A96B 0%, #B99A5E 45%, #A8874C 100%)"></div>
+      <div style="padding: 14px 4px; display: flex; flex-direction: column; gap: 5px">
+        <strong style="font-size: 13px; letter-spacing: .04em">Dorado Champagne</strong>
+        <span class="mono" style="color: var(--moka)">#B99A5E</span>
+        <span style="font-size: 12px; color: var(--moka); line-height: 1.5">Acento. Filetes, iconos, foil. <strong>Nunca texto sobre claro.</strong></span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column">
+      <div style="height: 132px; background: #6F5A4A"></div>
+      <div style="padding: 14px 4px; display: flex; flex-direction: column; gap: 5px">
+        <strong style="font-size: 13px; letter-spacing: .04em">Marrón Moka</strong>
+        <span class="mono" style="color: var(--moka)">#6F5A4A</span>
+        <span style="font-size: 12px; color: var(--moka); line-height: 1.5">Texto secundario. Es el gris de esta marca.</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column">
+      <div style="height: 132px; background: #FFFFFF; border: 1px solid var(--arena)"></div>
+      <div style="padding: 14px 4px; display: flex; flex-direction: column; gap: 5px">
+        <strong style="font-size: 13px; letter-spacing: .04em">Blanco Limpio</strong>
+        <span class="mono" style="color: var(--moka)">#FFFFFF</span>
+        <span style="font-size: 12px; color: var(--moka); line-height: 1.5">Tarjetas de producto y fondo de foto.</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; grid-column: span 2">
+      <div style="height: 132px; background: #836838; display: flex; align-items: flex-end; padding: 14px">
+        <span style="color: #F4EFE7; font-size: 11px; letter-spacing: .2em; text-transform: uppercase">Nuevo</span>
+      </div>
+      <div style="padding: 14px 4px; display: flex; flex-direction: column; gap: 5px">
+        <strong style="font-size: 13px; letter-spacing: .04em; color: var(--oro-tinta)">Dorado Tinta &middot; añadido</strong>
+        <span class="mono" style="color: var(--moka)">#836838</span>
+        <span style="font-size: 12px; color: var(--moka); line-height: 1.5">
+          El champagne no puede llevar texto sobre fondo claro. Este es el mismo dorado
+          oscurecido hasta pasar accesibilidad: <strong>4,58:1 sobre marfil</strong>.
+          Para precios, enlaces y cualquier texto dorado sobre claro.
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="rule">
+
+  <!-- Auditoría de contraste -->
+  <div style="display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span class="eyebrow">Contraste medido &middot; WCAG 2.1</span>
+      <p style="margin: 0; font-size: 13px; color: var(--moka); max-width: 720px; line-height: 1.6">
+        Ratios calculados sobre la luminancia relativa real de cada par. AA exige
+        <strong>4,5:1</strong> para texto normal y <strong>3:1</strong> para texto grande.
+      </p>
+    </div>
+
+    <div style="border: 1px solid var(--arena); background: var(--blanco)">
+      <div style="display: grid; grid-template-columns: 1.6fr repeat(4, 1fr); background: var(--marfil); border-bottom: 1px solid var(--arena)">
+        <div style="padding: 12px 16px" class="eyebrow">Texto</div>
+        <div style="padding: 12px 16px" class="eyebrow">sobre Marfil</div>
+        <div style="padding: 12px 16px" class="eyebrow">sobre Blanco</div>
+        <div style="padding: 12px 16px" class="eyebrow">sobre Negro</div>
+        <div style="padding: 12px 16px" class="eyebrow">sobre Arena</div>
+      </div>
+
+      <sc-for list="{{filas}}" as="f" hint-placeholder-count="7">
+        <div style="display: grid; grid-template-columns: 1.6fr repeat(4, 1fr); border-bottom: 1px solid #F0EAE0; align-items: center">
+          <div style="padding: 11px 16px; display: flex; align-items: center; gap: 10px">
+            <span style="width: 15px; height: 15px; border: 1px solid rgba(0,0,0,.12); background: {{f.hex}}"></span>
+            <span style="font-size: 13px">{{f.nombre}}</span>
+          </div>
+          <div style="padding: 11px 16px; display: flex; align-items: center; gap: 8px">
+            <span class="mono">{{f.marfil}}</span><span class="chip {{f.marfilClase}}">{{f.marfilNota}}</span>
+          </div>
+          <div style="padding: 11px 16px; display: flex; align-items: center; gap: 8px">
+            <span class="mono">{{f.blanco}}</span><span class="chip {{f.blancoClase}}">{{f.blancoNota}}</span>
+          </div>
+          <div style="padding: 11px 16px; display: flex; align-items: center; gap: 8px">
+            <span class="mono">{{f.negro}}</span><span class="chip {{f.negroClase}}">{{f.negroNota}}</span>
+          </div>
+          <div style="padding: 11px 16px; display: flex; align-items: center; gap: 8px">
+            <span class="mono">{{f.arena}}</span><span class="chip {{f.arenaClase}}">{{f.arenaNota}}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; gap: 12px; padding: 16px 18px; background: #FBE9E7; border-left: 3px solid #A32B22">
+      <span style="font-size: 13px; line-height: 1.6; color: #171717">
+        <strong>El hallazgo que importa:</strong> el Dorado Champagne sobre marfil da
+        <strong>2,34:1</strong> &mdash; la mitad de lo que exige la norma. Sobre negro da
+        <strong>6,70:1</strong> y pasa de sobra. Por eso las etiquetas negras con foil se
+        ven impecables y la etiqueta hueso se lee peor. Regla: <strong>oro sobre negro para
+        texto, oro sobre claro solo como filete decorativo.</strong>
+      </span>
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- Combinaciones -->
+  <div style="display: flex; flex-direction: column; gap: 16px">
+    <span class="eyebrow">Combinaciones &middot; dónde se usa cada una</span>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; height: 68px">
+          <span style="flex: 1; background: #171717"></span>
+          <span style="flex: 1; background: #F4EFE7"></span>
+          <span style="flex: 1; background: #B99A5E"></span>
+        </div>
+        <strong style="font-size: 12px; letter-spacing: .04em">Clásica &amp; Elegante</strong>
+        <span style="font-size: 12px; color: var(--moka); line-height: 1.5">Cabecera, pie, etiquetas colgantes, empaque.</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; height: 68px">
+          <span style="flex: 1; background: #F4EFE7"></span>
+          <span style="flex: 1; background: #D8C7B0"></span>
+          <span style="flex: 1; background: #6F5A4A"></span>
+        </div>
+        <strong style="font-size: 12px; letter-spacing: .04em">Cálida &amp; Natural</strong>
+        <span style="font-size: 12px; color: var(--moka); line-height: 1.5">Cuerpo de la tienda, fichas de producto, editorial.</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; height: 68px">
+          <span style="flex: 1; background: #171717"></span>
+          <span style="flex: 1; background: #D8C7B0"></span>
+          <span style="flex: 1; background: #6F5A4A"></span>
+        </div>
+        <strong style="font-size: 12px; letter-spacing: .04em">Sofisticada &amp; Moderna</strong>
+        <span style="font-size: 12px; color: var(--moka); line-height: 1.5">Landing de campaña y piezas para pauta.</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; height: 68px">
+          <span style="flex: 1; background: #F4EFE7"></span>
+          <span style="flex: 1; background: #B99A5E"></span>
+          <span style="flex: 1; background: #D8C7B0"></span>
+        </div>
+        <strong style="font-size: 12px; letter-spacing: .04em">Femenina &amp; Delicada</strong>
+        <span style="font-size: 12px; color: var(--moka); line-height: 1.5">Colecciones cápsula y comunicación estacional.</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":1200,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    // Ratios calculados sobre la luminancia relativa real (WCAG 2.1).
+    const nota = (r) => r >= 4.5 ? ['AA', 'ok'] : (r >= 3 ? ['AA grande', 'ok'] : ['No usar', 'no']);
+    const crudo = [
+      ['Negro Carbón',      '#171717', 15.66, 17.93,  1.00, 10.86],
+      ['Marrón Moka',       '#6F5A4A',  5.67,  6.49,  2.76,  3.93],
+      ['Dorado Tinta',      '#836838',  4.58,  5.25,  3.42,  3.17],
+      ['Dorado Champagne',  '#B99A5E',  2.34,  2.68,  6.70,  1.62],
+      ['Beige Arena',       '#D8C7B0',  1.44,  1.65, 10.86,  1.00],
+      ['Marfil Cálido',     '#F4EFE7',  1.00,  1.14, 15.66,  1.44],
+      ['Blanco Limpio',     '#FFFFFF',  1.14,  1.00, 17.93,  1.65],
+    ];
+    const filas = crudo.map(([nombre, hex, ma, bl, ne, ar]) => {
+      const [mn, mc] = nota(ma), [bn, bc] = nota(bl), [nn, nc] = nota(ne), [an, ac] = nota(ar);
+      return {
+        nombre, hex,
+        marfil: ma.toFixed(2), marfilNota: mn, marfilClase: mc,
+        blanco: bl.toFixed(2), blancoNota: bn, blancoClase: bc,
+        negro:  ne.toFixed(2), negroNota:  nn, negroClase:  nc,
+        arena:  ar.toFixed(2), arenaNota:  an, arenaClase:  ac,
+      };
+    });
+    return { filas };
+  }
+}
+</script>
+</body>
+</html>
