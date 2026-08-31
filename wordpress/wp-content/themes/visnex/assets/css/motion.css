@@ -880,17 +880,20 @@ body.visnex-store {
 
 .vn-split__title {
   font-family: var(--vn-font-serif);
-  font-size: var(--vn-display-1);          /* hasta 152px; antes topaba en 48 */
+  /* Antes: --vn-display-1, hasta 152px. Un titular asi obliga a una tarjeta de
+     900px, y esa tarjeta tapaba los dos paneles del hero — con lo que la
+     entrada doble Ella/El dejaba de verse. Se baja a 60px de tope: sigue
+     mandando en la composicion, pero deja respirar las fotos. */
+  font-size: clamp(2.25rem, 3.6vw, 3.75rem);   /* 36 -> 60px */
   line-height: var(--vn-leading-display);
   letter-spacing: var(--vn-tracking-display);
   font-weight: 400;
   margin: 0 0 var(--vn-space-5);
 }
 
-/* Si la tarjeta sigue midiendo 540px, 152px de titular no caben. */
 .vn-split__statement {
-  width: min(94vw, 900px);
-  padding: clamp(2.5rem, 4vw, 4.5rem) clamp(2rem, 3.5vw, 4rem);
+  width: min(92vw, 640px);
+  padding: clamp(2.25rem, 3.2vw, 3.5rem) clamp(1.75rem, 3vw, 3rem);
   background: var(--vn-paper);
   box-shadow: none;
 }
@@ -2447,4 +2450,38 @@ p.no-comments {
   border: 0;
   border-left: 2px solid var(--vn-brass);
   border-radius: 0;
+}
+
+/* ==========================================================================
+   Portada en movil — correccion de desbordamiento
+   --------------------------------------------------------------------------
+   motion.css se encola EL ULTIMO, asi que su `.vn-split__statement { width:
+   min(92vw, 640px) }` — declarado sin media query — pisaba el `width: 100%`
+   que editorial.css da a la tarjeta cuando el hero se apila. Resultado: en
+   390 px el titular y el parrafo se salian por la derecha, cortados a media
+   palabra.
+
+   Se corrige aqui, al final de la cascada, que es donde vive el problema.
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .vn-split__statement {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    transform: none;
+    padding: var(--vn-space-8) var(--vn-space-5);
+    box-sizing: border-box;
+  }
+
+  /* 3,6vw sobre 390 px da 14 px, asi que el clamp caia siempre en su minimo
+     de 36 px — demasiado para esta caja. En movil manda el ancho de pantalla. */
+  .vn-split__title {
+    font-size: clamp(1.75rem, 7.6vw, 2.5rem);   /* 28 -> 40px */
+  }
+
+  /* Red de seguridad: ninguna palabra larga vuelve a empujar la caja. */
+  .vn-split__title,
+  .vn-split__text,
+  .vn-split__eyebrow { overflow-wrap: break-word; }
 }

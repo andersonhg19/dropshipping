@@ -114,14 +114,9 @@ add_action('save_post_product', function () {
    Barra de anuncio
    -------------------------------------------------------------------------- */
 
-add_action('storefront_before_header', function () {
-    ?>
-    <div class="vn-announcement" id="vn-announcement">
-        <span><?php echo wp_kses_post(visnex_text('aviso')); ?></span>
-        <button class="vn-announcement__close" type="button" data-vn-dismiss="vn-announcement" aria-label="Cerrar aviso">&times;</button>
-    </div>
-    <?php
-}, 5);
+// El aviso vive ahora en inc/cabecera.php, con tres mensajes que rotan en el
+// mismo sitio. El de aqui salia ADEMAS del nuevo: dos barras negras apiladas.
+// Ademas era una sola linea larga que en movil se cortaba a media palabra.
 
 /* -----------------------------------------------------------------------------
    Contenido de la portada

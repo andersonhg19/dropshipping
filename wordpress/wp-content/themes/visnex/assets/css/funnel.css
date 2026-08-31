@@ -758,3 +758,43 @@
 .woocommerce form .form-row.woocommerce-validated input.input-text {
   border-color: var(--vn-success);
 }
+
+/* ==========================================================================
+   Checkout — colocacion explicita en la rejilla
+   --------------------------------------------------------------------------
+   Con solo `grid-column: 2`, la colocacion automatica mete el resumen en la
+   FILA siguiente: "Tu pedido" acababa al fondo de la pagina, a media pantalla
+   por debajo del formulario, con un hueco enorme al lado. Se fijan fila y
+   columna a mano.
+   ========================================================================== */
+
+@media (min-width: 981px) {
+  .woocommerce-checkout form.checkout {
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+
+  .woocommerce-checkout #customer_details {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .woocommerce-checkout #order_review_heading {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: 0;
+  }
+
+  .woocommerce-checkout #order_review {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
+
+/* Los avisos (cupon, errores) van a lo ancho de las dos columnas, no colgando
+   del formulario. */
+.woocommerce-checkout .woocommerce-form-coupon-toggle,
+.woocommerce-checkout .woocommerce-notices-wrapper {
+  max-width: var(--vn-container-max, 1440px);
+  margin-inline: auto;
+}

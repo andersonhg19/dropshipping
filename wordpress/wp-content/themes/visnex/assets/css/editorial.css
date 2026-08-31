@@ -785,3 +785,52 @@ body:not(.home) .site-content {
 .vn-editorial__text {
   max-width: 52ch;
 }
+
+/* ==========================================================================
+   Tinte unificador del hero partido
+   --------------------------------------------------------------------------
+   Las dos fotos del hero vienen de sitios distintos y casi nunca combinan de
+   temperatura: una gris fria y otra verde palida se leen como dos piezas
+   pegadas, no como una portada. Este tinte calido las lleva a la familia de la
+   marca (arena sobre negro carbon) para que CUALQUIER par funcione junto.
+
+   Va sobre el velo existente, no lo sustituye: el velo da contraste al rotulo,
+   este da coherencia cromatica.
+   ========================================================================== */
+
+.vn-split__panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;                       /* sobre la foto y el velo, bajo el rotulo */
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(23, 23, 23, .18) 0%, rgba(23, 23, 23, .34) 100%),
+    var(--dm-arena);
+  mix-blend-mode: multiply;
+  opacity: .34;
+  transition: opacity var(--vn-duration-base, 300ms) var(--vn-ease, ease);
+}
+
+.vn-split__panel:hover::after,
+.vn-split__panel:focus-visible::after { opacity: .22; }
+
+/* El rotulo y el CTA tienen que quedar por encima del tinte. */
+.vn-split__label,
+.vn-split__name,
+.vn-split__cta { position: relative; z-index: 3; }
+
+/* El rotulo del panel no tenia `right`: al ser absoluto y sin tope se estiraba
+   mas alla del panel y empujaba la pagina a lo ancho. Con los dos bordes
+   fijados no puede desbordar, salga el texto que salga. */
+.vn-split__label {
+  right: var(--vn-space-7);
+  max-width: calc(100% - var(--vn-space-7) * 2);
+}
+
+@media (max-width: 900px) {
+  .vn-split__label {
+    right: var(--vn-space-5);
+    max-width: calc(100% - var(--vn-space-5) * 2);
+  }
+}

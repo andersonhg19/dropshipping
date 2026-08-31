@@ -46,6 +46,7 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('visnex-tokens',     $dir . 'tokens.css',     ['storefront-style'], $ver('tokens.css'));
     wp_enqueue_style('visnex-base',       $dir . 'base.css',       ['visnex-tokens'],    $ver('base.css'));
     wp_enqueue_style('visnex-components', $dir . 'components.css', ['visnex-base'],      $ver('components.css'));
+    wp_enqueue_style('visnex-cabecera',   $dir . 'cabecera.css',   ['visnex-components'], $ver('cabecera.css'));
 
     // home.css lleva la cabecera, el pie, la barra de confianza y el boletin:
     // hace falta en TODAS las paginas, no solo en la portada. Antes se encolaba
@@ -209,6 +210,15 @@ add_filter('loop_shop_per_page', fn() => 24, 20);
  */
 add_filter('wc_get_price_decimals', fn() => 0, 20);
 add_filter('wc_get_price_thousand_separator', fn() => '.', 20);
+
+/**
+ * Formato de precio: "$289.900", no "$ 289.900".
+ *
+ * WooCommerce mete un espacio duro entre el simbolo y la cifra. En pesos
+ * colombianos no se escribe asi, y ese hueco hace que el precio se lea como
+ * dos cosas en vez de una.
+ */
+add_filter('woocommerce_price_format', fn() => '%1$s%2$s', 20);
 add_filter('wc_get_price_decimal_separator', fn() => ',', 20);
 
 /**
@@ -349,6 +359,7 @@ add_filter('woocommerce_gallery_image_size', fn() => 'visnex_single', 20);
 
 require_once get_stylesheet_directory() . '/inc/customizer.php';
 require_once get_stylesheet_directory() . '/inc/marca.php';
+require_once get_stylesheet_directory() . '/inc/cabecera.php';
 require_once get_stylesheet_directory() . '/inc/home-sections.php';
 require_once get_stylesheet_directory() . '/inc/shop-filters.php';
 require_once get_stylesheet_directory() . '/inc/densidad.php';

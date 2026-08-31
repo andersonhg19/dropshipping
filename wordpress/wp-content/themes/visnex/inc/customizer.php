@@ -239,13 +239,13 @@ function visnex_text_slots(): array
      */
     return [
         // Avisos
-        'aviso'         => ['label' => 'Barra de aviso',         'default' => 'Envíos a España y Colombia   ·   Cambios y devoluciones en 30 días', 'section' => 'visnex_general'],
+        'aviso'         => ['label' => 'Barra de aviso',         'default' => 'Envíos a España y Colombia', 'section' => 'visnex_general'],
         'marquee'       => ['label' => 'Banda deslizante',       'default' => 'Envíos a España y Colombia · Cambios en 30 días · Pago seguro · Te respondemos por WhatsApp', 'section' => 'visnex_general'],
 
         // Portada
-        'hero_eyebrow'  => ['label' => 'Antetítulo',         'default' => 'Fondo de armario', 'section' => 'visnex_hero'],
-        'hero_titulo'   => ['label' => 'Título',             'default' => 'El arte de vestir bien', 'section' => 'visnex_hero'],
-        'hero_texto'    => ['label' => 'Descripción',        'default' => 'Prendas de diario elegidas una a una. Buen corte, buen tejido y el mismo cuidado en cada pieza.', 'section' => 'visnex_hero'],
+        'hero_eyebrow'  => ['label' => 'Antetítulo',         'default' => 'Clothing for every you', 'section' => 'visnex_hero'],
+        'hero_titulo'   => ['label' => 'Título',             'default' => 'Ropa que se siente tuya', 'section' => 'visnex_hero'],
+        'hero_texto'    => ['label' => 'Descripción',        'default' => 'Prendas de algodón pensadas para el día a día. Buen corte, buen tejido y el mismo cuidado en cada pieza.', 'section' => 'visnex_hero'],
         'hero_ella_label' => ['label' => 'Etiqueta del panel Ella', 'default' => 'Ella', 'section' => 'visnex_hero'],
         'hero_el_label' => ['label' => 'Etiqueta del panel Él', 'default' => 'Él', 'section' => 'visnex_hero'],
 

@@ -95,20 +95,9 @@ function dm_divisor(string $sobre = 'claro'): string
 }
 
 /* -----------------------------------------------------------------------------
-   Sustituir el titulo de texto de Storefront por el logotipo
+   La cabecera vive en inc/cabecera.php, que desmonta la de Storefront entera.
+   Aqui solo quedan las piezas de marca reutilizables y el favicon.
    -------------------------------------------------------------------------- */
-
-add_action('init', function () {
-    remove_action('storefront_header', 'storefront_site_branding', 20);
-});
-
-add_action('storefront_header', function () {
-    $inicio = esc_url(home_url('/'));
-    echo '<div class="site-branding dm-branding" style="display:flex;justify-content:center">'
-        . '<a href="' . $inicio . '" rel="home" style="text-decoration:none">'
-        . dm_logotipo(30, 'claro')
-        . '</a></div>';
-}, 20);
 
 /** Favicon y icono de pantalla: la version compacta, que es la que aguanta. */
 add_action('wp_head', function () {

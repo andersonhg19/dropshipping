@@ -277,3 +277,105 @@
     init();
   }
 })();
+
+/* ---------------------------------------------------------------------
+   Cabecera D'MIKA: aviso rotativo, buscador desplegable y panel móvil.
+   ------------------------------------------------------------------ */
+(function () {
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function avisoRotativo() {
+    var aviso = document.getElementById('dm-aviso');
+    if (!aviso) return;
+
+    try {
+      if (sessionStorage.getItem('dm-aviso-cerrado') === '1') { aviso.style.display = 'none'; return; }
+    } catch (e) { /* almacenamiento bloqueado: se ignora */ }
+
+    var cerrar = aviso.querySelector('[data-dm-cerrar-aviso]');
+    if (cerrar) {
+      cerrar.addEventListener('click', function () {
+        aviso.style.display = 'none';
+        try { sessionStorage.setItem('dm-aviso-cerrado', '1'); } catch (e) {}
+      });
+    }
+
+    var msgs = aviso.querySelectorAll('.dm-aviso__msg');
+    if (msgs.length < 2 || reduce) return;
+    var i = 0;
+    setInterval(function () {
+      msgs[i].classList.remove('is-activo');
+      i = (i + 1) % msgs.length;
+      msgs[i].classList.add('is-activo');
+    }, 4200);
+  }
+
+  function buscador() {
+    var btn = document.querySelector('[data-dm-abrir-busqueda]');
+    var caja = document.getElementById('dm-busqueda');
+    if (!btn || !caja) return;
+
+    btn.addEventListener('click', function () {
+      var abierto = !caja.hidden;
+      caja.hidden = abierto;
+      btn.setAttribute('aria-expanded', String(!abierto));
+      if (!abierto) {
+        var campo = caja.querySelector('input[type="search"]');
+        if (campo) campo.focus();
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !caja.hidden) {
+        caja.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+        btn.focus();
+      }
+    });
+  }
+
+  function panelMovil() {
+    var abrir = document.querySelector('[data-dm-abrir-menu]');
+    var panel = document.getElementById('dm-panel');
+    if (!abrir || !panel) return;
+
+    var previo = null;
+
+    function abrirPanel() {
+      previo = document.activeElement;
+      panel.hidden = false;
+      // Un cuadro para que la transición arranque desde el estado cerrado.
+      requestAnimationFrame(function () { panel.classList.add('is-abierto'); });
+      document.body.classList.add('dm-sin-scroll');
+      abrir.setAttribute('aria-expanded', 'true');
+      var primero = panel.querySelector('a, button');
+      if (primero) primero.focus();
+    }
+
+    function cerrarPanel() {
+      panel.classList.remove('is-abierto');
+      document.body.classList.remove('dm-sin-scroll');
+      abrir.setAttribute('aria-expanded', 'false');
+      var esperar = reduce ? 0 : 380;
+      setTimeout(function () { panel.hidden = true; }, esperar);
+      if (previo && previo.focus) previo.focus();
+    }
+
+    abrir.addEventListener('click', abrirPanel);
+    panel.querySelectorAll('[data-dm-cerrar-menu]').forEach(function (el) {
+      el.addEventListener('click', cerrarPanel);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !panel.hidden) cerrarPanel();
+    });
+  }
+
+  function arrancar() { avisoRotativo(); buscador(); panelMovil(); }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', arrancar);
+  } else {
+    arrancar();
+  }
+})();

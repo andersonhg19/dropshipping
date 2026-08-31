@@ -1,0 +1,318 @@
+/* ==========================================================================
+   D'MIKA — Cabecera, aviso, buscador y panel móvil
+   --------------------------------------------------------------------------
+   Sustituye a la cabecera de Storefront. Una sola fila de 72 px en vez de
+   tres filas de ~170. Y un menú móvil, que antes sencillamente no existía.
+   ========================================================================== */
+
+/* --- Aviso superior ----------------------------------------------------- */
+
+.dm-aviso {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 44px;
+  background: var(--dm-negro);
+  color: var(--dm-arena);
+  font-family: var(--vn-font-sans);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  overflow: hidden;
+}
+
+/* Los mensajes rotan en el mismo sitio: uno largo se cortaba en móvil. */
+.dm-aviso__pista { position: relative; display: grid; place-items: center; width: 100%; }
+.dm-aviso__msg {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .5s var(--vn-ease-lux, ease), transform .5s var(--vn-ease-lux, ease);
+  white-space: nowrap;
+  text-align: center;
+}
+.dm-aviso__msg.is-activo { opacity: 1; transform: none; }
+
+.dm-aviso__cerrar {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: transparent;
+  color: var(--dm-arena);
+  cursor: pointer;
+  opacity: .6;
+}
+.dm-aviso__cerrar:hover { opacity: 1; }
+
+/* --- Cabecera ------------------------------------------------------------ */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--vn-z-header, 200);
+  margin: 0;
+  padding: 0;
+  background: rgba(244, 239, 231, .92);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--dm-arena);
+}
+
+.dm-cab {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: var(--vn-container-max, 1440px);
+  margin-inline: auto;
+  padding: 0 28px;
+  min-height: 72px;
+}
+
+.dm-cab__izq { display: flex; align-items: center; gap: 6px; justify-self: start; }
+.dm-cab__der { display: flex; align-items: center; gap: 2px; justify-self: end; }
+
+/* El logotipo: solo la palabra. El monograma a este tamaño pierde la M. */
+.dm-cab__marca { justify-self: center; text-decoration: none; }
+.dm-cab__palabra {
+  font-family: var(--vn-font-serif);
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: .17em;
+  line-height: 1;
+  color: var(--dm-negro);
+  white-space: nowrap;
+  /* La letra alta compensa el tracking: sin esto el logotipo se ve descentrado. */
+  padding-left: .17em;
+}
+
+/* --- Navegación ---------------------------------------------------------- */
+
+.dm-nav__lista {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dm-nav__lista li { margin: 0; }
+.dm-nav__lista a {
+  position: relative;
+  display: block;
+  padding: 6px 0;
+  font-family: var(--vn-font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--dm-negro);
+  text-decoration: none;
+}
+/* El subrayado crece desde la izquierda, no aparece de golpe. */
+.dm-nav__lista a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--dm-oro);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .34s var(--vn-ease-lux, ease);
+}
+.dm-nav__lista a:hover::after,
+.dm-nav__lista .current-menu-item > a::after { transform: scaleX(1); }
+
+/* --- Acciones ------------------------------------------------------------ */
+
+.dm-cab__accion {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  background: transparent;
+  color: var(--dm-negro);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color .2s ease;
+}
+.dm-cab__accion:hover { color: var(--dm-oro-tinta); }
+.dm-cab__accion:focus-visible { outline: 2px solid var(--dm-negro); outline-offset: -4px; }
+
+.dm-cab__contador {
+  position: absolute;
+  top: 6px;
+  right: 5px;
+  display: grid;
+  place-items: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--dm-oro);
+  color: var(--dm-negro);
+  font-family: var(--vn-font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Buscador desplegable ------------------------------------------------ */
+
+.dm-busqueda {
+  border-bottom: 1px solid var(--dm-arena);
+  background: var(--dm-marfil);
+}
+.dm-busqueda form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 720px;
+  margin-inline: auto;
+  padding: 18px 28px;
+}
+.dm-busqueda svg { color: var(--vn-gray-500); flex-shrink: 0; }
+.dm-busqueda input[type="search"] {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--dm-negro);
+  font-family: var(--vn-font-sans);
+  font-size: 16px;          /* 16 px: por debajo, iOS hace zoom al enfocar */
+  box-shadow: none;
+}
+.dm-busqueda input[type="search"]:focus { outline: none; }
+.dm-busqueda button[type="submit"] {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0 22px;
+  border: 1px solid var(--dm-negro);
+  background: var(--dm-negro);
+  color: var(--dm-marfil);
+  font-family: var(--vn-font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* --- Panel móvil --------------------------------------------------------- */
+
+.dm-panel { position: fixed; inset: 0; z-index: var(--vn-z-modal, 400); }
+.dm-panel__velo {
+  position: absolute;
+  inset: 0;
+  background: rgba(23, 23, 23, .42);
+  opacity: 0;
+  transition: opacity .34s var(--vn-ease-veil, ease);
+}
+.dm-panel.is-abierto .dm-panel__velo { opacity: 1; }
+
+.dm-panel__caja {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: min(84vw, 340px);
+  display: flex;
+  flex-direction: column;
+  background: var(--dm-marfil);
+  transform: translateX(-100%);
+  transition: transform .38s var(--vn-ease-lux, ease);
+  box-shadow: 0 0 60px rgba(23, 23, 23, .18);
+}
+.dm-panel.is-abierto .dm-panel__caja { transform: none; }
+
+.dm-panel__cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 12px 16px 22px;
+  border-bottom: 1px solid var(--dm-arena);
+}
+
+.dm-panel__lista {
+  flex: 1;
+  margin: 0;
+  padding: 12px 0;
+  list-style: none;
+  overflow-y: auto;
+}
+.dm-panel__lista li { margin: 0; }
+.dm-panel__lista a {
+  display: block;
+  padding: 17px 22px;
+  font-family: var(--vn-font-serif);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--dm-negro);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(216, 199, 176, .5);
+}
+.dm-panel__lista a:hover { color: var(--dm-oro-tinta); }
+
+.dm-panel__pie {
+  padding: 22px;
+  border-top: 1px solid var(--dm-arena);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.dm-panel__pie a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--vn-font-sans);
+  font-size: 12px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--dm-negro);
+  text-decoration: none;
+}
+.dm-panel__lema {
+  font-family: var(--vn-font-script);
+  font-size: 20px;
+  color: var(--dm-oro-tinta);
+  line-height: 1;
+}
+
+/* Con el panel abierto, el fondo no se mueve. */
+body.dm-sin-scroll { overflow: hidden; }
+
+/* --- Conmutación de vistas ------------------------------------------------ */
+
+.dm-solo-movil { display: none; }
+
+@media (max-width: 860px) {
+  .dm-solo-escritorio { display: none !important; }
+  .dm-solo-movil { display: grid; }
+
+  .dm-cab { padding: 0 12px; min-height: 62px; }
+  .dm-cab__palabra { font-size: 21px; letter-spacing: .15em; }
+  .dm-aviso { font-size: 10px; letter-spacing: .12em; padding: 0 40px; min-height: 34px; }
+  .dm-busqueda form { padding: 14px 16px; gap: 10px; }
+  .dm-busqueda button[type="submit"] { padding: 0 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dm-panel__caja,
+  .dm-panel__velo,
+  .dm-aviso__msg,
+  .dm-nav__lista a::after { transition-duration: 1ms; }
+}

@@ -473,3 +473,61 @@
 }
 .vn-empty__title { font-size: var(--vn-text-xl); font-weight: var(--vn-weight-semibold); margin-bottom: var(--vn-space-3); }
 .vn-empty__text { color: var(--vn-text-muted); margin-bottom: var(--vn-space-6); }
+
+/* ==========================================================================
+   Barra de herramientas de la tienda — orden
+   --------------------------------------------------------------------------
+   Estaba en tres bloques que competian: buscador a la izquierda, filtros de
+   talla en medio y paginacion a la derecha, con el contador y el orden
+   colgando debajo. Se lee como cuatro cosas sueltas.
+
+   Ahora son DOS filas con jerarquia clara:
+     1. Buscar  ·  contador  ·  ordenar
+     2. Filtros de talla y color, a lo ancho
+   La paginacion vuelve a su sitio, al pie de la rejilla.
+   ========================================================================== */
+
+.vn-shop-tools {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto auto;
+  align-items: center;
+  gap: var(--vn-space-4) var(--vn-space-6);
+  padding-bottom: var(--vn-space-5);
+  border-bottom: 1px solid var(--dm-arena);
+}
+
+.vn-shop-tools .vn-shop-search { max-width: none; }
+
+/* El contador deja de ser un dato suelto y pasa a ser una etiqueta discreta. */
+.vn-shop-tools .woocommerce-result-count {
+  order: 0;
+  white-space: nowrap;
+  font-size: var(--vn-text-xs);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+}
+
+/* Los filtros pasan a ocupar toda la fila siguiente, con aire. */
+.vn-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vn-space-5);
+  align-items: center;
+  padding-top: var(--vn-space-5);
+  padding-bottom: var(--vn-space-6);
+}
+
+.vn-filter-group { flex-wrap: wrap; row-gap: var(--vn-space-2); }
+
+/* La paginacion superior se retira en PHP (inc/shop-filters.php): la anadia
+   Storefront y aqui solo competia con los filtros. */
+
+@media (max-width: 860px) {
+  .vn-shop-tools {
+    grid-template-columns: 1fr;
+    gap: var(--vn-space-3);
+  }
+  .vn-shop-tools .woocommerce-result-count { order: 2; }
+  .vn-filters { gap: var(--vn-space-4); }
+}
