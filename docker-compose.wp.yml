@@ -14,7 +14,13 @@ volumes:
 services:
   mysql:
     image: mysql:8.0
+    # `unless-stopped` y no `always`: si el usuario lo para a mano, se queda
+    # parado. Pero si Docker Desktop se reinicia, vuelve solo.
     restart: unless-stopped
+    # MySQL tarda mas de 10 s en cerrar sus tablas. Con el margen por defecto,
+    # un `compose down` lo remata con SIGKILL y sale con codigo 137 — que es
+    # exactamente lo que parecia "se esta cayendo por memoria" y no lo era.
+    stop_grace_period: 60s
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-vnroot2026}
       MYSQL_DATABASE: wordpress_vn
@@ -93,6 +99,14 @@ services:
       - "8850:80"
     networks:
       - visnex-network
+    healthcheck:
+      # Si WordPress deja de responder, que se note y se reinicie solo en vez
+      # de quedarse muerto hasta que alguien lo mire.
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost/ || exit 1"]
+      interval: 45s
+      timeout: 15s
+      retries: 3
+      start_period: 90s
 
   phpmyadmin:
     image: phpmyadmin:latest
