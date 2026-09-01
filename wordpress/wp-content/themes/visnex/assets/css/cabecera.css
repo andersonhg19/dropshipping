@@ -316,3 +316,71 @@ body.dm-sin-scroll { overflow: hidden; }
   .dm-aviso__msg,
   .dm-nav__lista a::after { transition-duration: 1ms; }
 }
+
+/* ==========================================================================
+   Objetivos táctiles en móvil
+   --------------------------------------------------------------------------
+   La auditoría a 390 px encontró 33 elementos pulsables por debajo de 40 px de
+   alto: el logotipo (23), los once enlaces del pie (29), las migas (18), los
+   chips de talla (36) y varios enlaces sueltos (15-22).
+
+   WCAG 2.5.8 pide 24 px como mínimo, pero en una tienda donde el tráfico
+   pagado llega por móvil eso se queda corto: el estándar de la industria son
+   44 px, y fallar un botón por 5 px es una venta perdida.
+
+   Se amplía el ÁREA PULSABLE sin mover el diseño: padding y márgenes
+   negativos, para que el texto siga donde estaba.
+   ========================================================================== */
+
+@media (max-width: 860px) {
+
+  /* Logotipo de la cabecera: el <a> solo envolvía el texto (23 px). */
+  .dm-cab__marca {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: var(--vn-space-2);
+  }
+
+  /* Enlaces del pie: eran 29 px. */
+  .vn-footer__link,
+  .vn-footer a:not(.dm-logo) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* Migas de pan: eran 18 px. */
+  .vn-migas a,
+  .vn-migas__actual {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+
+  /* Chips de talla y color, en tienda y en ficha: eran 36 px. */
+  .vn-chip,
+  .vn-talla,
+  .vn-swatch {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Controles sueltos que parecen enlace pero son botones. */
+  .vn-ficha__guia,
+  .vn-reset-variaciones,
+  .vn-active-filters__clear {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* Enlaces de acción al final de una sección ("Ver todo el catálogo →"). */
+  .vn-empty .vn-btn,
+  .vn-editorial__link,
+  .vn-strip__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}

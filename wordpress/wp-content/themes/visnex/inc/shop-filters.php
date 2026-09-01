@@ -114,24 +114,8 @@ function visnex_render_filters(): void
         }
         $terms = get_terms(['taxonomy' => $taxonomy, 'hide_empty' => true]);
 
-        // WordPress devuelve los terminos alfabeticamente, y en tallas eso da
-        // "28, XS, 30, S, 32, M, 34, L, 36, XL": ilegible. Se ordenan por
-        // escala real — primero las alfabeticas de menor a mayor, despues las
-        // numericas de menor a mayor.
-        if (!is_wp_error($terms) && $taxonomy === 'pa_talla') {
-            $escala = ['XXS' => 1, 'XS' => 2, 'S' => 3, 'M' => 4, 'L' => 5, 'XL' => 6, 'XXL' => 7, '2XL' => 7, '3XL' => 8];
-            usort($terms, static function ($a, $b) use ($escala) {
-                $ka = strtoupper(trim($a->name));
-                $kb = strtoupper(trim($b->name));
-                $pa = $escala[$ka] ?? null;
-                $pb = $escala[$kb] ?? null;
-                // Las alfabeticas van antes que las numericas.
-                if ($pa !== null && $pb !== null) return $pa <=> $pb;
-                if ($pa !== null) return -1;
-                if ($pb !== null) return 1;
-                return (float) $ka <=> (float) $kb;
-            });
-        }
+        // El orden por escala lo aplica inc/tallas.php con un filtro global de
+        // get_terms, asi que aqui llegan ya ordenados. No se duplica.
         if (is_wp_error($terms) || empty($terms)) {
             continue;
         }

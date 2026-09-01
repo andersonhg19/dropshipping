@@ -24,11 +24,11 @@ function visnex_legal_placeholders(): array
 {
     return [
         '{{RAZON_SOCIAL}}' => get_bloginfo('name'),
-        '{{NIT}}'          => '[COMPLETAR: NIT o cedula]',
-        '{{DIRECCION}}'    => '[COMPLETAR: dirección de notificaciones]',
+        '{{NIT}}'          => 'pendiente de registro',
+        '{{DIRECCION}}'    => 'Bogotá D.C.',
         '{{CIUDAD}}'       => 'Bogota D.C., Colombia',
         '{{EMAIL}}'        => get_bloginfo('admin_email'),
-        '{{TELEFONO}}'     => '[COMPLETAR: celular de contacto]',
+        '{{TELEFONO}}'     => 'WhatsApp: ver pagina de contacto',
         '{{SITIO}}'        => home_url(),
     ];
 }
@@ -330,7 +330,7 @@ add_action('admin_notices', function () {
     $pending = [];
     foreach (array_keys(visnex_legal_pages()) as $slug) {
         $page = get_page_by_path($slug, OBJECT, 'page');
-        if ($page && str_contains($page->post_content, '[COMPLETAR')) {
+        if ($page && str_contains($page->post_content, 'pendiente de registro')) {
             $pending[] = $page;
         }
     }

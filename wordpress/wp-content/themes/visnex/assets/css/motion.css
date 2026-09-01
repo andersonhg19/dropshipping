@@ -2351,12 +2351,30 @@ p.no-comments {
   color: var(--vn-ink);
 }
 
-/* Boton bloqueado hasta elegir talla: que se note que espera algo. */
+/* Boton bloqueado hasta elegir talla: que se note que ESPERA algo.
+   Antes era el boton negro al 38% de opacidad, y eso no se lee como "falta un
+   paso" sino como "esto esta roto". Ahora se dibuja como boton de contorno:
+   sigue claramente inactivo, pero parece intencionado. */
 .woocommerce div.product form.cart .button:disabled,
 .woocommerce div.product form.cart .button.disabled {
-  opacity: .38;
+  background: transparent;
+  border: 1px dashed var(--vn-gray-400, #A8967F);
+  color: var(--vn-text-muted, #6F5A4A);
+  opacity: 1;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
+
+/* Pista bajo el boton mientras no hay talla elegida. */
+.vn-ficha__pista-talla {
+  display: block;
+  margin-top: var(--vn-space-3);
+  font-size: var(--vn-text-xs);
+  letter-spacing: .06em;
+  color: var(--vn-text-muted);
+}
+.vn-ficha__pista-talla[hidden] { display: none; }
 
 /* ---------- 27.1 - EL ULTIMO VERDE -------------------------------------- */
 /*
@@ -2484,4 +2502,23 @@ p.no-comments {
   .vn-split__title,
   .vn-split__text,
   .vn-split__eyebrow { overflow-wrap: break-word; }
+}
+
+/* ==========================================================================
+   Objetivos táctiles — capa global
+   --------------------------------------------------------------------------
+   motion.css es el único que se encola SIN condición y EL ÚLTIMO, así que es
+   el sitio correcto para las reglas táctiles que deben valer en toda la
+   tienda. (shop.css solo carga en páginas de WooCommerce: la regla puesta allí
+   no llegaba nunca a la portada.)
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  .vn-link-arrow,
+  .vn-editorial__link,
+  .vn-strip__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
 }

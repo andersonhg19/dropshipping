@@ -44,7 +44,10 @@ services:
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD:-vnpass2026}
       WORDPRESS_DB_NAME: wordpress_vn
       WORDPRESS_TABLE_PREFIX: vn_
-      WORDPRESS_DEBUG: 1
+      # 0 a proposito: con 1, los avisos de PHP se imprimen DENTRO de la
+      # tienda. Un "Deprecated:" en mitad de la descripcion de un producto
+      # es lo menos comercial que puede pasar.
+      WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-0}
     volumes:
       - ./wordpress/wp-content:/var/www/html/wp-content
       - ./wordpress/config/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini

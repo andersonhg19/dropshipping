@@ -358,8 +358,10 @@ add_filter('woocommerce_gallery_image_size', fn() => 'visnex_single', 20);
    ============================================================================= */
 
 require_once get_stylesheet_directory() . '/inc/customizer.php';
+require_once get_stylesheet_directory() . '/inc/paleta-storefront.php';
 require_once get_stylesheet_directory() . '/inc/marca.php';
 require_once get_stylesheet_directory() . '/inc/cabecera.php';
+require_once get_stylesheet_directory() . '/inc/ficha-producto.php';
 require_once get_stylesheet_directory() . '/inc/home-sections.php';
 require_once get_stylesheet_directory() . '/inc/shop-filters.php';
 require_once get_stylesheet_directory() . '/inc/densidad.php';
@@ -508,10 +510,28 @@ add_action('init', function () {
     // `inc/shop-filters.php` con `.vn-shop-head__title`.
     add_filter('woocommerce_show_page_title', '__return_false');
 
-    // La cabecera de entrada en paginas: la portada monta la suya.
-    remove_action('storefront_page', 'storefront_page_header', 10);
     remove_action('storefront_single_post', 'storefront_post_header', 10);
 }, 20);
+
+/**
+ * La cabecera de entrada (que contiene el <h1>) se quita SOLO donde el tema ya
+ * pone uno propio.
+ *
+ * Antes se quitaba globalmente en 'init'. Resultado: el carrito, mi cuenta y
+ * las cinco paginas legales se quedaban SIN NINGUN <h1> — malo para
+ * accesibilidad (un lector de pantalla no sabe donde esta) y para SEO.
+ * Verificado con la auditoria: "h1: hay 0" en esas tres.
+ */
+add_action('wp', function () {
+    $tiene_h1_propio =
+        is_front_page()                       // el <h1> del hero partido
+        || (function_exists('is_shop') && (is_shop() || is_product_taxonomy()))  // .vn-shop-head__title
+        || (function_exists('is_product') && is_product());                      // .product_title
+
+    if ($tiene_h1_propio) {
+        remove_action('storefront_page', 'storefront_page_header', 10);
+    }
+}, 5);
 
 /**
  * La portada no necesita cabecera de entrada: su H1 es el de la portada partida.

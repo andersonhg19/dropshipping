@@ -33,6 +33,11 @@ add_action('init', function () {
     remove_action('storefront_header', 'storefront_primary_navigation', 50);
     remove_action('storefront_header', 'storefront_header_cart', 60);
     remove_action('storefront_header', 'storefront_primary_navigation_wrapper_close', 68);
+
+    // La barra inferior movil de Storefront sobra: ya tenemos menu propio con
+    // hamburguesa, y ademas trae un <a href=""> ("Buscar") que es un enlace
+    // muerto — lo detecto la auditoria en TODAS las paginas.
+    remove_action('storefront_footer', 'storefront_handheld_footer_bar', 999);
     // La de marca.php tambien sobra: aqui se pinta todo junto.
     remove_action('storefront_header', 'dm_branding_header', 20);
 }, 20);

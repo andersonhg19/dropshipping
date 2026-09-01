@@ -531,3 +531,288 @@
   .vn-shop-tools .woocommerce-result-count { order: 2; }
   .vn-filters { gap: var(--vn-space-4); }
 }
+
+/* ==========================================================================
+   FICHA DE PRODUCTO
+   --------------------------------------------------------------------------
+   Era titulo, precio pequeño, una linea de texto, tallas y un boton gris. En
+   la pagina donde se decide la compra faltaba todo lo que responde a las
+   dudas que hacen abandonar.
+   ========================================================================== */
+
+/* --- Migas ---------------------------------------------------------------- */
+
+.vn-migas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vn-space-2);
+  margin-bottom: var(--vn-space-6);
+  font-size: var(--vn-text-xs);
+  letter-spacing: .06em;
+  color: var(--vn-text-muted);
+}
+.vn-migas a { color: var(--vn-text-muted); text-decoration: none; }
+.vn-migas a:hover { color: var(--dm-oro-tinta); }
+.vn-migas__actual { color: var(--dm-negro); }
+
+/* --- Precio: manda en la ficha ------------------------------------------- */
+
+.woocommerce div.product p.price,
+.woocommerce div.product span.price {
+  font-family: var(--vn-font-sans);
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -.01em;
+  color: var(--dm-negro);
+  margin: 0 0 var(--vn-space-5);
+}
+.woocommerce div.product p.price del {
+  font-size: .62em;
+  font-weight: 400;
+  color: var(--vn-text-muted);
+  margin-right: var(--vn-space-3);
+}
+.woocommerce div.product p.price ins { text-decoration: none; }
+
+/* --- Selector de talla ---------------------------------------------------- */
+
+.vn-ficha__tallas-cab {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--vn-space-4);
+  margin-bottom: var(--vn-space-3);
+}
+.vn-ficha__tallas-etq {
+  font-size: var(--vn-text-xs);
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.vn-ficha__guia {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-sm);
+  color: var(--dm-oro-tinta);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.vn-ficha__guia:hover { color: var(--dm-moka); }
+
+/* --- Boton de compra: el negro de la marca, no el gris de fabrica -------- */
+
+.woocommerce div.product form.cart .button,
+.woocommerce div.product .single_add_to_cart_button {
+  min-height: 54px;
+  padding: 0 var(--vn-space-7);
+  border: 1px solid var(--dm-negro);
+  border-radius: 0;                 /* el sistema es recto; nada de pildoras */
+  background: var(--dm-negro);
+  color: var(--dm-marfil);
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-xs);
+  font-weight: 500;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.woocommerce div.product form.cart .button:hover,
+.woocommerce div.product .single_add_to_cart_button:hover {
+  background: var(--vn-ink-soft, #241F1B);
+  color: var(--dm-marfil);
+}
+
+.woocommerce div.product form.cart div.quantity input.qty {
+  min-height: 54px;
+  border: 1px solid var(--dm-arena);
+  border-radius: 0;
+  background: var(--dm-blanco);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Promesas bajo el boton ---------------------------------------------- */
+
+.vn-ficha__promesas {
+  display: grid;
+  gap: var(--vn-space-3);
+  margin: var(--vn-space-6) 0 var(--vn-space-7);
+  padding-top: var(--vn-space-5);
+  border-top: 1px solid var(--dm-arena);
+}
+.vn-ficha__promesa {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: var(--vn-space-3);
+  align-items: start;
+  font-size: var(--vn-text-sm);
+  line-height: var(--vn-leading-snug);
+  color: var(--vn-text-muted);
+}
+.vn-ficha__promesa svg { color: var(--vn-text-muted); margin-top: 1px; }
+.vn-ficha__promesa strong { color: var(--dm-negro); font-weight: 500; }
+
+/* La contraentrega es el argumento principal: va con fondo propio. */
+.vn-ficha__promesa--destacada {
+  padding: var(--vn-space-4);
+  background: var(--vn-success-bg, #E8F5EE);
+  border-left: 3px solid var(--vn-success, #1B7F4F);
+}
+.vn-ficha__promesa--destacada svg { color: var(--vn-success, #1B7F4F); }
+.vn-ficha__promesa--destacada span { color: var(--dm-negro); }
+
+/* --- Acordeones ----------------------------------------------------------- */
+
+.vn-ficha__detalle { border-top: 1px solid var(--dm-arena); }
+.vn-ficha__detalle details { border-bottom: 1px solid var(--dm-arena); }
+.vn-ficha__detalle summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vn-space-4);
+  padding: var(--vn-space-4) 0;
+  font-size: var(--vn-text-xs);
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+}
+.vn-ficha__detalle summary::-webkit-details-marker { display: none; }
+.vn-ficha__detalle summary::after {
+  content: '+';
+  font-size: var(--vn-text-lg);
+  font-weight: 300;
+  color: var(--vn-text-muted);
+}
+.vn-ficha__detalle details[open] summary::after { content: '\2212'; }
+
+.vn-ficha__detalle-cuerpo {
+  padding-bottom: var(--vn-space-5);
+  font-size: var(--vn-text-sm);
+  line-height: var(--vn-leading-relaxed);
+  color: var(--vn-text-muted);
+}
+.vn-ficha__detalle-cuerpo p:last-child { margin-bottom: 0; }
+
+.vn-ficha__lista { margin: 0; padding-left: var(--vn-space-5); }
+.vn-ficha__lista li { margin-bottom: var(--vn-space-2); }
+
+.vn-ficha__tabla { width: 100%; border-collapse: collapse; margin-bottom: var(--vn-space-4); }
+.vn-ficha__tabla th,
+.vn-ficha__tabla td {
+  padding: var(--vn-space-2) var(--vn-space-3);
+  border-bottom: 1px solid var(--dm-arena);
+  text-align: left;
+  font-size: var(--vn-text-sm);
+  font-weight: 400;
+}
+.vn-ficha__tabla thead th {
+  font-size: var(--vn-text-xs);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--vn-text-muted);
+}
+.vn-ficha__tabla tbody th { color: var(--dm-negro); font-weight: 500; }
+
+/* --- Guía de tallas -------------------------------------------------------- */
+
+.vn-guia { position: fixed; inset: 0; z-index: var(--vn-z-modal, 400); }
+.vn-guia__velo { position: absolute; inset: 0; background: rgba(23,23,23,.45); }
+.vn-guia__caja {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 560px);
+  max-height: 86vh;
+  overflow: auto;
+  background: var(--dm-marfil);
+  box-shadow: 0 30px 80px rgba(23,23,23,.28);
+}
+.vn-guia__cab {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vn-space-4);
+  padding: var(--vn-space-5) var(--vn-space-6);
+  background: var(--dm-marfil);
+  border-bottom: 1px solid var(--dm-arena);
+}
+.vn-guia__cab h2 {
+  margin: 0;
+  font-family: var(--vn-font-serif);
+  font-size: var(--vn-text-xl);
+  font-weight: 400;
+}
+.vn-guia__cab button { border: 0; background: none; cursor: pointer; color: var(--dm-negro); padding: 4px; }
+.vn-guia__cuerpo { padding: var(--vn-space-6); font-size: var(--vn-text-sm); line-height: var(--vn-leading-normal); }
+.vn-guia__nota {
+  margin: 0;
+  padding: var(--vn-space-4);
+  background: var(--dm-blanco);
+  border-left: 3px solid var(--dm-oro);
+  color: var(--vn-text-muted);
+}
+
+/* La etiqueta nativa de WooCommerce ("Talla" en el <th> de variaciones) se
+   oculta cuando ya pintamos la nuestra, que ademas lleva la guia de tallas.
+   Si no, salen dos etiquetas iguales pegadas. */
+.woocommerce div.product .vn-ficha__tallas-cab ~ form.cart table.variations th.label,
+.woocommerce div.product form.cart table.variations th.label { display: none; }
+
+.woocommerce div.product form.cart table.variations,
+.woocommerce div.product form.cart table.variations td { border: 0; padding: 0; }
+
+/* El "Limpiar seleccion" pasa de <a href="#"> a <button>: se le devuelve el
+   aspecto de enlace discreto. */
+.vn-reset-variaciones {
+  border: 0;
+  background: none;
+  padding: 0;
+  margin-top: var(--vn-space-2);
+  font-family: var(--vn-font-sans);
+  font-size: var(--vn-text-xs);
+  letter-spacing: .06em;
+  color: var(--vn-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.vn-reset-variaciones:hover { color: var(--dm-negro); }
+
+/* ==========================================================================
+   Objetivos táctiles — remate
+   --------------------------------------------------------------------------
+   shop.css se encola DESPUÉS de cabecera.css, así que su `.vn-chip
+   { min-height: 36px }` ganaba a la regla táctil de allí. Se repite aquí, que
+   es donde manda la cascada. Mismo motivo para los enlaces de categoría y los
+   de "ver más": sus clases viven en este archivo y en editorial.css.
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  .vn-chip,
+  .vn-talla,
+  .vn-swatch {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* "Ver todo el catálogo →", "Descubrir más →" */
+  .vn-link-arrow {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* "Categoría: Chaquetas" bajo el botón de compra */
+  .woocommerce div.product .product_meta a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+}

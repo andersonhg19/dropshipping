@@ -26,20 +26,24 @@ defined('ABSPATH') || exit;
  */
 function visnex_orden_tallas(): array
 {
+    // Las alfabeticas ocupan la decena 1-9 y las numericas la 20-29 A PROPOSITO:
+    // antes 'xs' y '28' valian los dos 1, asi que al ordenar quedaban
+    // intercaladas — "28, XS, 30, S, 32, M..." — que es ilegible.
     return [
-        'xs' => 1, 's' => 2, 'm' => 3, 'l' => 4, 'xl' => 5, 'xxl' => 6,
-        '28' => 1, '30' => 2, '32' => 3, '34' => 4, '36' => 5, '38' => 6,
-        'unica' => 1,
+        'xxs' => 1, 'xs' => 2, 's' => 3, 'm' => 4, 'l' => 5, 'xl' => 6, 'xxl' => 7, '3xl' => 8,
+        '26' => 20, '28' => 21, '30' => 22, '32' => 23, '34' => 24, '36' => 25, '38' => 26, '40' => 27,
+        'unica' => 0,
     ];
 }
 
 /**
  * Ordena los términos de talla en toda consulta.
+ *
+ * Aqui habia ademas un add_filter('woocommerce_get_product_attributes', ...)
+ * que se limitaba a devolver lo que recibia: no hacia nada, y encima ese
+ * gancho esta obsoleto desde WooCommerce 3.0, asi que imprimia un aviso de
+ * "Deprecated" VISIBLE dentro de la descripcion del producto. Retirado.
  */
-add_filter('woocommerce_get_product_attributes', function ($atributos) {
-    return $atributos;
-});
-
 add_filter('get_terms', function ($terminos, $taxonomias) {
     if (!in_array('pa_talla', (array) $taxonomias, true) || empty($terminos)) {
         return $terminos;

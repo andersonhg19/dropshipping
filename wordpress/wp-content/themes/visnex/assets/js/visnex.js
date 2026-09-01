@@ -379,3 +379,79 @@
     arrancar();
   }
 })();
+
+/* ---------------------------------------------------------------------
+   Guía de tallas de la ficha de producto.
+   ------------------------------------------------------------------ */
+(function () {
+  'use strict';
+  function init() {
+    var abrir = document.querySelector('[data-vn-guia-tallas]');
+    var guia = document.getElementById('vn-guia-tallas');
+    if (!abrir || !guia) return;
+
+    var previo = null;
+
+    function abrirGuia() {
+      previo = document.activeElement;
+      guia.hidden = false;
+      document.body.classList.add('dm-sin-scroll');
+      abrir.setAttribute('aria-expanded', 'true');
+      var cerrar = guia.querySelector('[data-vn-cerrar-guia]');
+      if (cerrar && cerrar.focus) cerrar.focus();
+    }
+
+    function cerrarGuia() {
+      guia.hidden = true;
+      document.body.classList.remove('dm-sin-scroll');
+      abrir.setAttribute('aria-expanded', 'false');
+      if (previo && previo.focus) previo.focus();
+    }
+
+    abrir.addEventListener('click', abrirGuia);
+    guia.querySelectorAll('[data-vn-cerrar-guia]').forEach(function (el) {
+      el.addEventListener('click', cerrarGuia);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !guia.hidden) cerrarGuia();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+})();
+
+/* Oculta la pista de talla en cuanto se elige una. */
+(function () {
+  'use strict';
+  function init() {
+    var pista = document.querySelector('[data-vn-pista-talla]');
+    if (!pista) return;
+    var form = pista.closest('form.cart');
+    if (!form) return;
+    var boton = form.querySelector('.single_add_to_cart_button, button[type="submit"]');
+    if (!boton) return;
+
+    function revisar() {
+      var listo = !boton.disabled && !boton.classList.contains('disabled');
+      pista.hidden = listo;
+    }
+
+    // Un MutationObserver en vez de un setTimeout: WooCommerce habilita el
+    // boton cuando le da la gana (tras resolver la variacion), y adivinar el
+    // retardo es como fallaba antes — la pista se quedaba puesta.
+    if ('MutationObserver' in window) {
+      new MutationObserver(revisar).observe(boton, {
+        attributes: true,
+        attributeFilter: ['disabled', 'class'],
+      });
+    } else {
+      form.addEventListener('change', function () { setTimeout(revisar, 250); });
+      form.addEventListener('click', function () { setTimeout(revisar, 250); });
+    }
+    revisar();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
