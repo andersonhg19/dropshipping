@@ -9,6 +9,7 @@ networks:
 
 volumes:
   mysql-data:
+  wpcontent:
 
 services:
   mysql:
@@ -48,9 +49,46 @@ services:
       # tienda. Un "Deprecated:" en mitad de la descripcion de un producto
       # es lo menos comercial que puede pasar.
       WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-0}
+      # -----------------------------------------------------------------
+      # RENDIMIENTO: la tienda tardaba 15-19 SEGUNDOS en responder.
+      # El tiempo NO se iba en disco ni en red (medido: 14 ms un CSS, 4 ms
+      # un PHP trivial). Se iba en llamadas HTTP salientes que se quedaban
+      # esperando, porque el contenedor no alcanza bien internet:
+      #   - Mercado Pago manda telemetria a api.mercadopago.com EN CADA CARGA
+      #   - WordPress y los plugins comprueban actualizaciones
+      #   - wp-cron se dispara en cada visita
+      # -----------------------------------------------------------------
+      WORDPRESS_CONFIG_EXTRA: |
+        /* Nada de peticiones salientes salvo las que se autoricen abajo. */
+        define('WP_HTTP_BLOCK_EXTERNAL', true);
+        /* Cuando toque cobrar de verdad, se anaden aqui los hosts de la
+           pasarela. Mientras sea tienda de pruebas, ninguno hace falta. */
+        define('WP_ACCESSIBLE_HOSTS', 'localhost');
+        /* wp-cron deja de correr en cada visita del cliente. */
+        define('DISABLE_WP_CRON', true);
+        /* Sin comprobacion automatica de actualizaciones en un entorno local. */
+        define('AUTOMATIC_UPDATER_DISABLED', true);
+        define('WP_AUTO_UPDATE_CORE', false);
     volumes:
-      - ./wordpress/wp-content:/var/www/html/wp-content
+      # ---------------------------------------------------------------------
+      #  RENDIMIENTO — por que wp-content NO se monta entero desde Windows
+      #
+      #  Medido: el bind mount de Docker Desktop tarda ~78 ms en LEER cada
+      #  archivo PHP (lo normal son 0,05 ms). WooCommerce tiene 3.561 archivos.
+      #  Con wp-content entero montado, la portada tardaba 14-20 s; sin plugins,
+      #  0,18 s. El disco era el cuello de botella, no el tema ni la base.
+      #
+      #  Solucion: wp-content vive en un VOLUMEN de Docker (dentro de la VM,
+      #  rapido) y solo se montan encima las tres carpetas que editamos
+      #  nosotros. Asi WooCommerce se lee rapido y nuestro codigo sigue
+      #  recargando al guardar, sin copiar nada a mano.
+      # ---------------------------------------------------------------------
+      - wpcontent:/var/www/html/wp-content
+      - ./wordpress/wp-content/themes/visnex:/var/www/html/wp-content/themes/visnex
+      - ./wordpress/wp-content/plugins/visnex-colombia:/var/www/html/wp-content/plugins/visnex-colombia
+      - ./wordpress/wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
       - ./wordpress/config/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./wordpress/config/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
     ports:
       - "8850:80"
     networks:

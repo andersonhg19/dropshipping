@@ -114,8 +114,12 @@ add_action('storefront_header', function () {
             </nav>
         </div>
 
-        <!-- Centro: el logotipo -->
+        <!-- Centro: monograma + palabra.
+             Antes iba solo la palabra porque el monograma a 30 px pierde la M.
+             La respuesta correcta no era esconderlo: es darle el tamano que
+             necesita (44 px) y separarlo con aire. El monograma ES la marca. -->
         <a class="dm-cab__marca" href="<?php echo $inicio; ?>" rel="home" aria-label="D&#8217;MIKA, inicio">
+            <?php echo dm_monograma(44, 'claro'); ?>
             <span class="dm-cab__palabra">D&#8217;MIKA</span>
         </a>
 

@@ -384,3 +384,44 @@ body.dm-sin-scroll { overflow: hidden; }
     min-height: 44px;
   }
 }
+
+/* ==========================================================================
+   El monograma vuelve a la cabecera
+   --------------------------------------------------------------------------
+   Se habia quitado porque a 30 px la M se empastaba. Esconder la marca no era
+   la respuesta: se le da 44 px, que es donde la M ya respira, y se separa de
+   la palabra con un filete dorado que ademas mete el Dorado Champagne en la
+   pieza mas vista de la tienda.
+   ========================================================================== */
+
+.dm-cab__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.dm-cab__marca .dm-mono { flex-shrink: 0; }
+
+/* Filete de separacion en oro: el acento de marca, donde se ve. */
+.dm-cab__marca::after { content: none; }
+.dm-cab__marca .dm-cab__palabra {
+  position: relative;
+  padding-left: 14px;
+}
+.dm-cab__marca .dm-cab__palabra::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 26px;
+  background: var(--dm-oro);
+}
+
+@media (max-width: 860px) {
+  .dm-cab__marca { gap: 9px; }
+  .dm-cab__marca .dm-cab__palabra { padding-left: 9px; }
+  .dm-cab__marca .dm-cab__palabra::before { height: 19px; }
+  .dm-cab__marca .dm-mono { width: 32px; height: 37px; }
+}
