@@ -60,14 +60,35 @@ body::after {
   height: 10px;
   border-radius: 50%;
   background: var(--dm-negro);
+  color: var(--vn-ink, #171717);
+  display: grid;
+  place-items: center;
   pointer-events: none;
+  /* Se centra con `translate` y NO con `transform`, porque el bucle de
+     inmersivo.js escribe `transform` cada cuadro para moverlo. Si el centrado
+     viviera tambien en `transform`, cada cuadro lo borraria. */
   translate: -50% -50%;
   transition: width .32s var(--vn-ease-lux, ease), height .32s var(--vn-ease-lux, ease),
-              background .32s ease, opacity .3s ease, border-color .32s ease;
+              background .32s ease, opacity .3s ease, border-color .32s ease,
+              backdrop-filter .32s ease;
   will-change: transform;
   opacity: 0;
 }
 .vn-cursor.is-vivo { opacity: 1; }
+
+/* La etiqueta: existe siempre, pero solo pesa sobre una foto. Va en su propio
+   elemento para poder quedarse a cero sin desbordar el disco de 10 px. */
+.vn-cursor__txt {
+  font-family: var(--vn-font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  scale: .6;
+  transition: opacity .26s var(--vn-ease-lux, ease), scale .34s var(--vn-ease-lux, ease);
+}
 
 /* Sobre algo pulsable crece y se vacia: pasa de punto a anillo. */
 .vn-cursor.is-activo {
@@ -76,17 +97,27 @@ body::after {
   background: transparent;
   border: 1px solid var(--dm-oro);
 }
-/* Sobre una foto se vuelve dorado y translucido. */
-.vn-cursor.is-media {
-  width: 68px;
-  height: 68px;
-  background: rgba(185, 154, 94, .22);
-  border: 1px solid var(--dm-oro);
-  backdrop-filter: invert(4%);
-}
 
-/* Solo con raton de verdad. En tactil no existe el cursor. */
-@media (hover: none), (pointer: coarse) { .vn-cursor { display: none; } }
+/* Sobre una foto se convierte en el disco de papel que dice VER. Es la firma
+   de las casas de moda en web y funciona porque convierte una imagen quieta en
+   algo en lo que se puede entrar. */
+.vn-cursor.is-media {
+  width: 84px;
+  height: 84px;
+  background: color-mix(in srgb, var(--vn-paper, #F4EFE7) 92%, transparent);
+  border: 1px solid var(--dm-oro);
+  backdrop-filter: blur(2px);
+}
+.vn-cursor.is-media .vn-cursor__txt { opacity: 1; scale: 1; }
+
+/* Donde el disco hace de cursor, el del sistema estorba: si se ven los dos, el
+   disco parece un adorno pegado a la pagina y no el puntero. */
+.vn-cursor-zone { cursor: none; }
+
+@media (hover: none), (pointer: coarse) {
+  .vn-cursor { display: none; }
+  .vn-cursor-zone { cursor: auto; }
+}
 
 /* ==========================================================================
    3. REVELADO POR LINEAS
@@ -157,6 +188,13 @@ body::after {
      tiene que ir sobre un envoltorio propio, no sobre el panel que sostiene
      el rotulo y la tarjeta.
      ------------------------------------------------------------------ */
+}   /* <- cierra el @supports (animation-timeline: view()) abierto en la
+         seccion 4. Este cierre se perdio al retirar `vn-carta` y
+         `vn-hero-sale`, y la consecuencia era grave y silenciosa: TODO lo que
+         viene despues —inclinacion 3D, grano, carriles, marca de agua,
+         transicion entre paginas— quedaba dentro del @supports, o sea que solo
+         existia en navegadores con `animation-timeline: view()`.
+         En Firefox y en Safari la mitad de la capa inmersiva no se aplicaba. */
 
 /* ==========================================================================
    5. TARJETAS QUE SIGUEN AL CURSOR

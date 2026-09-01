@@ -1,0 +1,60 @@
+/* ==========================================================================
+   D'MIKA — Tejido (soporte CSS de la capa WebGL del hero)
+   --------------------------------------------------------------------------
+   Este archivo solo pone el lienzo en su sitio y apaga lo que el shader pasa a
+   hacer por su cuenta. Todo cuelga de `.vn-tejido-on`, una clase que tejido.js
+   NO anade hasta que hay un cuadro pintado de verdad.
+
+   Ese detalle es el que evita el fallo clasico de estas capas: ocultar la foto
+   confiando en que el WebGL va a arrancar, y dejar un agujero negro a quien
+   tenga la GPU en lista negra, la aceleracion desactivada o simplemente un
+   navegador viejo. Aqui, si el shader no llega a pintar, la clase no existe,
+   nada de esto se aplica y el hero se ve exactamente como antes.
+   ========================================================================== */
+
+.vn-tejido {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* z-index explicito y no `auto`: el lienzo tiene que quedar por DEBAJO de
+     los paneles (velo, rotulos) y de la tarjeta central. */
+  z-index: 0;
+  /* El raton se sigue desde `.vn-split`, no desde el lienzo. Si el lienzo
+     capturara eventos se comeria los clics de los dos enlaces del hero. */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 620ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.vn-tejido-on .vn-tejido { opacity: 1; }
+
+/* La foto original deja de verse, pero sigue en el documento: es la que el
+   shader esta leyendo como textura, y es la que ve un lector de pantalla o un
+   buscador. Por eso `opacity`, y no `display:none` ni `visibility:hidden`,
+   que descargarian el recurso o lo sacarian del arbol. */
+.vn-tejido-on .vn-split__img {
+  opacity: 0;
+  /* El zoom al pasar por encima lo hace ahora el shader (uniforme uHover), con
+     el resto de la deformacion. Dos zooms a la vez se notaban como un salto. */
+  transform: none !important;
+}
+
+/* El tinte de marca tambien lo aplica el shader, dentro de la misma operacion
+   que el desplazamiento. Dejar ademas la capa CSS lo duplicaba. */
+.vn-tejido-on .vn-split__panel::after { opacity: 0; }
+
+/* El velo se queda: es lo que da contraste a "Ella" y "El" sobre cualquier
+   foto, y eso no puede depender de que el WebGL este vivo. */
+
+/* --------------------------------------------------------------------------
+   Sin movimiento
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  /* tejido.js ni siquiera arranca, asi que la clase no llega a existir. Esto
+     es un cinturon por si alguien la pone a mano desde el inspector. */
+  .vn-tejido { display: none; }
+  .vn-tejido-on .vn-split__img { opacity: 1; }
+  .vn-tejido-on .vn-split__panel::after { opacity: .3; }
+}

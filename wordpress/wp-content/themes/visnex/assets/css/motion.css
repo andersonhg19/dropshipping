@@ -536,54 +536,13 @@ body.visnex-store {
 }
 
 /* ===================================================
-   9. CURSOR
+   9. CURSOR — se define en inmersivo.css
    ===================================================
-   Solo con raton de verdad (`pointer: fine`) y solo sobre las zonas de imagen.
-   Un disco pequeño que crece y dice VER. Es la firma de las casas de moda en
-   web, y funciona porque convierte una foto en algo que invita a entrar.
-
-   Nunca sustituye al cursor del sistema en formularios ni en texto: ahi el
-   cursor tiene que decir donde se escribe.
+   El disco que dice VER sobre las fotos sigue existiendo, pero como uno de los
+   tres estados del cursor unico que monta inmersivo.js. Tenerlo definido
+   tambien aqui era lo que producia el choque: dos reglas para `.vn-cursor` en
+   dos archivos, ganando la que se cargaba mas tarde.
    =================================================== */
-
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .vn-cursor {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 84px;
-    height: 84px;
-    margin: -42px 0 0 -42px;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--vn-paper) 92%, transparent);
-    color: var(--vn-ink);
-    display: grid;
-    place-items: center;
-    font-family: var(--vn-font-sans);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    pointer-events: none;
-    z-index: 9997;
-    opacity: 0;
-    transform: translate3d(-100px, -100px, 0) scale(.4);
-    transition:
-      opacity 260ms var(--vn-ease-lux),
-      scale   380ms var(--vn-ease-lux);
-    backdrop-filter: blur(2px);
-  }
-
-  .vn-cursor.is-on {
-    opacity: 1;
-    scale: 1;
-  }
-
-  /* Sobre una zona con cursor propio, se esconde el del sistema. */
-  .vn-cursor-zone {
-    cursor: none;
-  }
-}
 
 /* ===================================================
    10. HERO: EL AIRE SE MUEVE
@@ -606,9 +565,6 @@ body.visnex-store {
    arreglar.
 
    Ese presupuesto se gasta ahora en un hover que si se percibe (seccion 18). */
-
-
-}
 
 /* La tarjeta central llega la ultima, cuando las dos fotos ya estan. */
 @media (prefers-reduced-motion: no-preference) {

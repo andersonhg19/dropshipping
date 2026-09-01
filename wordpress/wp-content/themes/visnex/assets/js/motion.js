@@ -342,55 +342,22 @@
     });
   }
 
-  function cursor() {
-    if (!hayRaton.matches || quietoPorFavor.matches) return;
+  /* =====================================================================
+     4. CURSOR — se hace en inmersivo.js
+     ---------------------------------------------------------------------
+     Aqui vivia un disco de papel que ponia "Ver" sobre las fotos. La idea era
+     buena y se conserva; lo que no se podia conservar eran DOS scripts creando
+     cada uno un `.vn-cursor`.
 
-    var zonas = document.querySelectorAll(
-      '.vn-split__panel, .vn-card-cat, .vn-duo__item, .vn-editorial__image'
-    );
-    if (!zonas.length) return;
+     Que pasaba: inmersivo.css se carga despues que motion.css, asi que su
+     `.vn-cursor` de 10 px ganaba la cascada y le caia encima a ESTE disco. El
+     resultado en pantalla era un punto negro de 10 px con la palabra "Ver"
+     desbordandose por el lado — se leia "er" flotando junto al raton.
 
-    var disco = document.createElement('div');
-    disco.className = 'vn-cursor';
-    disco.setAttribute('aria-hidden', 'true');
-    disco.textContent = 'Ver';
-    document.body.appendChild(disco);
-
-    var x = -200, y = -200, pendiente = false;
-
-    function pintar() {
-      disco.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
-      pendiente = false;
-    }
-
-    document.addEventListener(
-      'mousemove',
-      function (e) {
-        x = e.clientX;
-        y = e.clientY;
-        if (!pendiente) {
-          pendiente = true;
-          requestAnimationFrame(pintar);
-        }
-      },
-      { passive: true }
-    );
-
-    zonas.forEach(function (zona) {
-      zona.classList.add('vn-cursor-zone');
-      zona.addEventListener('mouseenter', function () {
-        disco.classList.add('is-on');
-      });
-      zona.addEventListener('mouseleave', function () {
-        disco.classList.remove('is-on');
-      });
-    });
-
-    // Si el ratón se va de la ventana, el disco no se queda colgado.
-    document.addEventListener('mouseleave', function () {
-      disco.classList.remove('is-on');
-    });
-  }
+     Se queda una sola implementacion, la de inmersivo.js, que ademas persigue
+     con inercia y distingue tres estados. El disco de papel es ahora su estado
+     `is-media`.
+     ================================================================== */
 
   /* =====================================================================
      5. BARRA DE PROGRESO
@@ -423,7 +390,6 @@
       redDeSeguridad();
       densidad();
       tallas();
-      cursor();
       progreso();
     } catch (e) {
       // Si algo falla, la tienda se queda quieta pero completa. Se registra

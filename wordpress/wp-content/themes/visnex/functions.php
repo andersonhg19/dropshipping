@@ -143,6 +143,25 @@ add_action('wp_enqueue_scripts', function () {
         $verInm,
         true
     );
+
+    // Tejido: el hero en WebGL. Solo en la portada, que es donde vive
+    // `.vn-split` — cargarlo en el resto seria descargar un shader para
+    // ejecutar tres lineas y salir.
+    if (is_front_page() || is_home()) {
+        $verTej = file_exists($path . 'tejido.css')
+            ? (string) filemtime($path . 'tejido.css')
+            : VISNEX_VERSION;
+        wp_enqueue_style('visnex-tejido', $dir . 'tejido.css', ['visnex-inmersivo'], $verTej);
+
+        $jsPath = get_stylesheet_directory() . '/assets/js/tejido.js';
+        wp_enqueue_script(
+            'visnex-tejido',
+            get_stylesheet_directory_uri() . '/assets/js/tejido.js',
+            [],
+            file_exists($jsPath) ? (string) filemtime($jsPath) : VISNEX_VERSION,
+            true
+        );
+    }
 }, 99);
 
 /**

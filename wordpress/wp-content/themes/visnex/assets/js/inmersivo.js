@@ -21,13 +21,34 @@
      Cursor
      ================================================================== */
 
+  // Las zonas que se comportan como "foto en la que se puede entrar". Se
+  // declara fuera para que la use tanto el marcado (cursor: none) como la
+  // deteccion por elementFromPoint, y no se puedan desincronizar.
+  var ZONAS = '.vn-split__panel, .vn-card-cat, .vn-duo__item, .vn-editorial__image, .vn-strip';
+
   function cursor() {
     if (tactil) return;
 
     var p = document.createElement('div');
     p.className = 'vn-cursor';
     p.setAttribute('aria-hidden', 'true');
+
+    // La etiqueta va en su propio elemento y no como texto suelto del disco:
+    // asi puede aparecer y desaparecer con su propia transicion, y sobre todo
+    // no desborda cuando el disco mide 10 px. Esa era exactamente la averia
+    // que dejaba un "er" flotando junto al raton.
+    var txt = document.createElement('span');
+    txt.className = 'vn-cursor__txt';
+    txt.textContent = 'Ver';
+    p.appendChild(txt);
+
     document.body.appendChild(p);
+
+    // Sobre las zonas de foto se esconde el cursor del sistema: si se ven los
+    // dos, el disco parece un adorno pegado y no el cursor.
+    document.querySelectorAll(ZONAS).forEach(function (z) {
+      z.classList.add('vn-cursor-zone');
+    });
 
     var x = innerWidth / 2, y = innerHeight / 2;   // destino
     var cx = x, cy = y;                            // posicion actual
@@ -77,8 +98,10 @@
       var el = document.elementFromPoint(e.clientX, e.clientY);
       var estado = '';
       if (el) {
-        if (el.closest('a, button, input, select, textarea, [role="button"], summary')) estado = 'is-activo';
-        else if (el.closest('img, picture, .vn-split__panel, .vn-card-cat, .vn-duo, .vn-strip')) estado = 'is-media';
+        // El orden importa: una zona de foto suele SER un enlace. Si se
+        // preguntara antes por el enlace, el disco de "Ver" no saldria nunca.
+        if (el.closest(ZONAS)) estado = 'is-media';
+        else if (el.closest('a, button, input, select, textarea, [role="button"], summary')) estado = 'is-activo';
       }
       if (estado !== ultimo) {
         p.classList.remove('is-activo', 'is-media');
