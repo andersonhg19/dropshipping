@@ -815,8 +815,14 @@ body:not(.home) .site-content {
 .vn-split__panel:hover::after,
 .vn-split__panel:focus-visible::after { opacity: .22; }
 
-/* El rotulo y el CTA tienen que quedar por encima del tinte. */
-.vn-split__label,
+/* El rotulo y el CTA tienen que quedar por encima del tinte.
+   OJO: `.vn-split__label` YA es `position: absolute` (anclado al pie del
+   panel). Ponerle `relative` aqui lo sacaba del anclaje y lo empujaba 59 px
+   por debajo del hero, donde la banda deslizante se lo comia por la mitad.
+   Al rotulo solo se le sube la capa; el `relative` es para sus hijos, que si
+   son estaticos. */
+.vn-split__label { z-index: 3; }
+
 .vn-split__name,
 .vn-split__cta { position: relative; z-index: 3; }
 
