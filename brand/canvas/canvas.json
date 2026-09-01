@@ -1,19 +1,95 @@
 {
   "pages": [
-    { "id": "page-1", "name": "Marca" },
-    { "id": "page-2", "name": "Tienda" },
-    { "id": "page-3", "name": "Conversión" }
+    {
+      "id": "page-1",
+      "name": "Marca"
+    },
+    {
+      "id": "page-2",
+      "name": "Tienda"
+    },
+    {
+      "id": "page-3",
+      "name": "Conversión"
+    },
+    {
+      "id": "page-4",
+      "name": "Estado"
+    }
   ],
   "artboards": [
-    { "file": "Logo.dc.html",       "page": "page-1", "x": 0,    "y": 0,    "w": 1200, "h": 1180, "title": "Monograma vectorizado" },
-    { "file": "Paleta.dc.html",     "page": "page-1", "x": 1320, "y": 0,    "w": 1200, "h": 1240, "title": "Paleta y contraste" },
-    { "file": "Tipografia.dc.html", "page": "page-1", "x": 2640, "y": 0,    "w": 1200, "h": 1180, "title": "Tipografía" },
-
-    { "file": "Main.dc.html",       "page": "page-2", "x": 0,    "y": 0,    "w": 1440, "h": 3060, "title": "Home · escritorio" },
-    { "file": "Producto.dc.html",   "page": "page-2", "x": 1560, "y": 0,    "w": 1440, "h": 1320, "title": "Ficha de producto" },
-    { "file": "Checkout.dc.html",   "page": "page-2", "x": 1560, "y": 1560, "w": 1440, "h": 1500, "title": "Checkout" },
-
-    { "file": "LandingCOD.dc.html", "page": "page-3", "x": 0,    "y": 0,    "w": 390,  "h": 2160, "title": "Landing contraentrega · móvil" }
+    {
+      "file": "Logo.dc.html",
+      "page": "page-1",
+      "x": 0,
+      "y": 0,
+      "w": 1200,
+      "h": 1180,
+      "title": "Monograma vectorizado"
+    },
+    {
+      "file": "Paleta.dc.html",
+      "page": "page-1",
+      "x": 1320,
+      "y": 0,
+      "w": 1200,
+      "h": 1240,
+      "title": "Paleta y contraste"
+    },
+    {
+      "file": "Tipografia.dc.html",
+      "page": "page-1",
+      "x": 2640,
+      "y": 0,
+      "w": 1200,
+      "h": 1180,
+      "title": "Tipografía"
+    },
+    {
+      "file": "Main.dc.html",
+      "page": "page-2",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 3060,
+      "title": "Home · escritorio"
+    },
+    {
+      "file": "Producto.dc.html",
+      "page": "page-2",
+      "x": 1560,
+      "y": 0,
+      "w": 1440,
+      "h": 1320,
+      "title": "Ficha de producto"
+    },
+    {
+      "file": "Checkout.dc.html",
+      "page": "page-2",
+      "x": 1560,
+      "y": 1560,
+      "w": 1440,
+      "h": 1500,
+      "title": "Checkout"
+    },
+    {
+      "file": "LandingCOD.dc.html",
+      "page": "page-3",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 2160,
+      "title": "Landing contraentrega · móvil"
+    },
+    {
+      "file": "Auditoria.dc.html",
+      "page": "page-4",
+      "x": 0,
+      "y": 0,
+      "w": 1200,
+      "h": 1560,
+      "title": "Auditoría y bugs corregidos"
+    }
   ],
   "annotations": [
     {
@@ -47,7 +123,18 @@
       "y": -210,
       "w": 560,
       "text": "CONVERSIÓN\n\nEsta es la página a la que apunta la pauta, y sigue reglas opuestas a la home: sin menú, sin hero editorial, precio y formulario arriba del pliegue.\n\nCuatro campos y nada más. Cada campo extra es gente que se cae, y en tráfico frío eso se paga en CPA.\n\nRegla operativa: ningún anuncio apunta nunca a la home."
+    },
+    {
+      "id": "nota-estado",
+      "page": "page-4",
+      "x": 0,
+      "y": -190,
+      "w": 560,
+      "text": "ESTADO\n\nMedido, no estimado: un auditor recorre la tienda y comprueba desbordamiento real, enlaces muertos, avisos de PHP, encabezados y objetivos táctiles a 390 px. Las interacciones se prueban pulsando de verdad.\n\nOnce páginas, todas 200, cero avisos, un H1 cada una."
     }
   ],
-  "launch": { "view": "canvas", "page": "page-1" }
+  "launch": {
+    "view": "canvas",
+    "page": "page-4"
+  }
 }

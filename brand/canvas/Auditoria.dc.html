@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Jost:wght@300;400;500&display=swap">
+  <style>
+    :root {
+      --negro: #171717; --marfil: #F4EFE7; --arena: #D8C7B0;
+      --oro: #B99A5E; --oro-tinta: #836838; --moka: #6F5A4A; --blanco: #FFFFFF;
+      --ok: #1B6B45; --ok-bg: #E6F2EA; --mal: #A32B22; --mal-bg: #FBE9E7;
+      --serif: 'Bodoni Moda', Georgia, serif;
+      --sans: 'Jost', 'Futura', system-ui, sans-serif;
+    }
+    body { margin: 0; background: var(--marfil); font-family: var(--sans); color: var(--negro); }
+    a { color: var(--oro-tinta); } a:hover { color: var(--moka); }
+    .eyebrow { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--moka); font-weight: 500; }
+    .rule { height: 1px; background: var(--arena); border: 0; }
+    .mono { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+    .pill { display: inline-block; padding: 2px 9px; border-radius: 2px; font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+    .pill--ok { background: var(--ok-bg); color: var(--ok); }
+    .pill--mal { background: var(--mal-bg); color: var(--mal); }
+  </style>
+</helmet>
+
+<div style="padding: 56px 56px 64px; display: flex; flex-direction: column; gap: 40px">
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span class="eyebrow">D&#8217;MIKA &middot; Estado de la tienda</span>
+    <h1 style="font-family: var(--serif); font-weight: 400; font-size: 46px; margin: 0; letter-spacing: -.01em">
+      Auditoría y bugs corregidos
+    </h1>
+    <p style="max-width: 680px; margin: 0; font-size: 15px; line-height: 1.65; color: var(--moka); font-weight: 300">
+      Medido con un auditor que recorre la tienda, no a ojo: desbordamiento real,
+      enlaces muertos, avisos de PHP, encabezados, objetivos táctiles a 390&nbsp;px
+      y pruebas que pulsan de verdad.
+    </p>
+  </div>
+
+  <!-- Marcador -->
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+    <sc-for list="{{marcador}}" as="m" hint-placeholder-count="4">
+      <div style="background: var(--blanco); border: 1px solid var(--arena); padding: 22px">
+        <div style="font-size: 34px; font-weight: 500; letter-spacing: -.02em; color: {{m.color}}; line-height: 1">{{m.cifra}}</div>
+        <div style="font-size: 12px; color: var(--moka); margin-top: 6px; line-height: 1.45">{{m.etiqueta}}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <hr class="rule">
+
+  <!-- Bugs -->
+  <div style="display: flex; flex-direction: column; gap: 16px">
+    <span class="eyebrow">Lo que estaba roto</span>
+    <div style="background: var(--blanco); border: 1px solid var(--arena)">
+      <sc-for list="{{bugs}}" as="b" hint-placeholder-count="10">
+        <div style="display: grid; grid-template-columns: 26px 1fr; gap: 16px; padding: 18px 22px; border-bottom: 1px solid #F0EAE0; align-items: start">
+          <span class="mono" style="color: var(--moka); padding-top: 2px">{{b.n}}</span>
+          <div style="display: flex; flex-direction: column; gap: 5px; min-width: 0">
+            <strong style="font-size: 14px; font-weight: 500">{{b.titulo}}</strong>
+            <span style="font-size: 13px; line-height: 1.6; color: var(--moka)">{{b.detalle}}</span>
+            <sc-if value="{{b.leccion}}" hint-placeholder-val="{{true}}">
+              <span style="font-size: 12px; line-height: 1.55; color: var(--oro-tinta); border-left: 2px solid var(--oro); padding-left: 10px; margin-top: 3px">{{b.leccion}}</span>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- Pruebas -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px">
+
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <span class="eyebrow">Interacciones probadas</span>
+      <div style="background: var(--blanco); border: 1px solid var(--arena)">
+        <sc-for list="{{pruebas}}" as="p" hint-placeholder-count="4">
+          <div style="padding: 15px 20px; border-bottom: 1px solid #F0EAE0">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+              <strong style="font-size: 13px; font-weight: 500">{{p.nombre}}</strong>
+              <span class="pill pill--ok">{{p.estado}}</span>
+            </div>
+            <span style="font-size: 12px; color: var(--moka); line-height: 1.5">{{p.pasos}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <span class="eyebrow">Páginas verificadas</span>
+      <div style="background: var(--blanco); border: 1px solid var(--arena)">
+        <div style="display: grid; grid-template-columns: 1fr auto auto auto; background: var(--marfil); border-bottom: 1px solid var(--arena)">
+          <span style="padding: 10px 16px" class="eyebrow">Ruta</span>
+          <span style="padding: 10px 12px" class="eyebrow">HTTP</span>
+          <span style="padding: 10px 12px" class="eyebrow">Avisos</span>
+          <span style="padding: 10px 16px" class="eyebrow">H1</span>
+        </div>
+        <sc-for list="{{paginas}}" as="pg" hint-placeholder-count="11">
+          <div style="display: grid; grid-template-columns: 1fr auto auto auto; border-bottom: 1px solid #F0EAE0">
+            <span class="mono" style="padding: 9px 16px; color: var(--negro)">{{pg.ruta}}</span>
+            <span class="mono" style="padding: 9px 12px; color: var(--ok)">{{pg.http}}</span>
+            <span class="mono" style="padding: 9px 12px; color: var(--ok)">0</span>
+            <span class="mono" style="padding: 9px 16px; color: var(--ok)">1</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="rule">
+
+  <!-- Lo que falta -->
+  <div style="display: flex; flex-direction: column; gap: 14px">
+    <span class="eyebrow">Lo que sigue pendiente &mdash; y depende de ti</span>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+      <sc-for list="{{pendiente}}" as="p" hint-placeholder-count="3">
+        <div style="background: var(--blanco); border: 1px solid var(--arena); border-left: 3px solid var(--oro); padding: 20px; display: flex; flex-direction: column; gap: 7px">
+          <strong style="font-size: 13px; font-weight: 500">{{p.titulo}}</strong>
+          <span style="font-size: 12px; line-height: 1.6; color: var(--moka)">{{p.texto}}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":1200,"height":1560}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      marcador: [
+        { cifra: '10',  etiqueta: 'bugs reales corregidos',            color: '#171717' },
+        { cifra: '33',  etiqueta: 'objetivos táctiles ampliados a 44 px', color: '#171717' },
+        { cifra: '11',  etiqueta: 'páginas verificadas, todas limpias', color: '#1B6B45' },
+        { cifra: '0',   etiqueta: 'avisos de PHP en toda la tienda',    color: '#1B6B45' },
+      ],
+      bugs: [
+        { n: '01', titulo: 'Aviso de PHP visible dentro de la descripción del producto',
+          detalle: 'Un add_filter nuestro sobre woocommerce_get_product_attributes, obsoleto desde WooCommerce 3.0, que además solo devolvía lo que recibía: código muerto.',
+          leccion: 'Mi primera comprobación buscaba "Warning" y esto era "Deprecated". Por eso ahora audita una herramienta y no yo leyendo.' },
+        { n: '02', titulo: 'Tallas desordenadas: 28, XS, 30, S, 32, M…',
+          detalle: 'El mapa de orden daba xs=1 y 28=1, así que colisionaban y quedaban intercaladas.', leccion: null },
+        { n: '03', titulo: '«Talla» aparecía tres veces seguidas',
+          detalle: 'La guía estaba enganchada a dos hooks que en un producto variable disparan los dos, más la etiqueta nativa de WooCommerce.', leccion: null },
+        { n: '04', titulo: 'Carrito, mi cuenta y las cinco legales sin ningún H1',
+          detalle: 'El remove_action se aplicaba globalmente aunque el comentario decía que era solo para la portada.',
+          leccion: 'Sin H1 un lector de pantalla no sabe dónde está, y Google tampoco.' },
+        { n: '05', titulo: 'Enlace muerto <a href=""> en todas las páginas',
+          detalle: 'La barra móvil de Storefront, redundante desde que hay menú propio.', leccion: null },
+        { n: '06', titulo: 'El acento de la tienda era el morado de WooCommerce',
+          detalle: 'Storefront seguía con #7f54b3 y botones en gris #eeeeee. Genera su CSS desde el Personalizador y lo inyecta DESPUÉS de nuestras hojas, así que ganaba siempre.',
+          leccion: 'Se le cambia el origen con filtros theme_mod_*, no se pelea con !important.' },
+        { n: '07', titulo: '33 objetivos táctiles por debajo de 40 px en móvil',
+          detalle: 'Logotipo (23), los once enlaces del pie (29), migas (18), chips de talla (36).',
+          leccion: 'shop.css solo carga en páginas de WooCommerce: la regla puesta allí no llegaba a la portada.' },
+        { n: '08', titulo: 'El botón de compra deshabilitado parecía roto',
+          detalle: 'Negro al 38% de opacidad. Pasa a botón de contorno con la pista «Elige una talla para continuar».', leccion: null },
+        { n: '09', titulo: '«[COMPLETAR: NIT]» visible para cualquier visitante',
+          detalle: 'En las cinco páginas legales, también en las ya creadas en la base de datos.', leccion: null },
+        { n: '10', titulo: 'WORDPRESS_DEBUG seguía en 1',
+          detalle: 'Solo lo había apagado en el compose principal, no en el de WordPress, que es el que se usa.', leccion: null },
+      ],
+      pruebas: [
+        { nombre: 'Menú móvil',      estado: 'todo ok', pasos: 'Abre, marca aria-expanded, 6 enlaces dentro, cierra.' },
+        { nombre: 'Guía de tallas',  estado: 'todo ok', pasos: 'Abre como diálogo, tabla de medidas de 6 filas, cierra con Escape.' },
+        { nombre: 'Buscador',        estado: 'todo ok', pasos: 'Se despliega desde el icono y enfoca el campo.' },
+        { nombre: 'Selección de talla', estado: 'todo ok', pasos: 'Empieza bloqueado, se activa al elegir, la talla queda marcada y la pista se oculta.' },
+      ],
+      paginas: [
+        { ruta: '/',                             http: '200' },
+        { ruta: '/tienda/',                      http: '200' },
+        { ruta: '/product/…',                    http: '200' },
+        { ruta: '/carrito/',                     http: '200' },
+        { ruta: '/mi-cuenta/',                   http: '200' },
+        { ruta: '/politica-de-privacidad/',      http: '200' },
+        { ruta: '/politica-de-devoluciones/',    http: '200' },
+        { ruta: '/politica-de-envios/',          http: '200' },
+        { ruta: '/terminos-y-condiciones/',      http: '200' },
+        { ruta: '/contacto/',                    http: '200' },
+        { ruta: '/product-category/ropa/',       http: '200' },
+      ],
+      pendiente: [
+        { titulo: 'Datos legales reales',
+          texto: 'NIT y dirección de notificaciones. Ahora dicen «pendiente de registro»: no parece roto, pero para vender de verdad tienen que ser los tuyos.' },
+        { titulo: 'Credenciales de pago',
+          texto: 'Mercado Pago y Wompi están instalados y activos. Solo faltan tus claves para que cobren.' },
+        { titulo: 'Fotografía propia',
+          texto: 'Las fotos actuales son de prueba y de fuentes distintas. El hero ya lleva un tinte que las unifica, pero la sesión propia es lo que cambia el nivel.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
