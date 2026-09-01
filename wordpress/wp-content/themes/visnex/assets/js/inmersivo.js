@@ -43,12 +43,32 @@
 
     // Persecucion con retardo: el punto llega un instante despues que el
     // raton. Ese retardo es lo que se percibe como "peso".
-    (function seguir() {
-      cx += (x - cx) * 0.18;
-      cy += (y - cy) * 0.18;
+    //
+    // El bucle SE PARA cuando el punto alcanza al raton. Antes era un
+    // requestAnimationFrame infinito: gastaba un cuadro cada 16 ms aunque
+    // nadie moviera el raton, y ademas dejaba la pagina permanentemente
+    // "ocupada" — cualquier herramienta que espere a que el navegador quede
+    // en reposo se quedaba esperando para siempre.
+    var corriendo = false;
+    function seguir() {
+      var dx = x - cx, dy = y - cy;
+      cx += dx * 0.18;
+      cy += dy * 0.18;
       p.style.transform = 'translate3d(' + cx.toFixed(1) + 'px,' + cy.toFixed(1) + 'px,0)';
+      // Medio pixel de margen: por debajo, el ojo no distingue y no hay
+      // motivo para seguir gastando cuadros.
+      if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+        requestAnimationFrame(seguir);
+      } else {
+        corriendo = false;
+      }
+    }
+    function despertar() {
+      if (corriendo) return;
+      corriendo = true;
       requestAnimationFrame(seguir);
-    })();
+    }
+    addEventListener('mousemove', despertar, { passive: true });
 
     // El estado se decide por lo que hay DEBAJO del raton, no por listeners en
     // cada elemento: asi funciona tambien con lo que se anada despues.

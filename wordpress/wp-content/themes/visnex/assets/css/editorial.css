@@ -804,16 +804,17 @@ body:not(.home) .site-content {
   inset: 0;
   z-index: 2;                       /* sobre la foto y el velo, bajo el rotulo */
   pointer-events: none;
-  background:
-    linear-gradient(180deg, rgba(23, 23, 23, .18) 0%, rgba(23, 23, 23, .34) 100%),
-    var(--dm-arena);
-  mix-blend-mode: multiply;
-  opacity: .34;
+  /* Medido: con .34 de opacidad y `multiply` sobre el velo que ya trae el
+     panel, las dos fotos bajaban a 84/255 de luminancia — practicamente
+     negras. El tinte tiene que UNIFICAR la temperatura, no tapar la foto. */
+  background: var(--dm-arena);
+  mix-blend-mode: soft-light;
+  opacity: .3;
   transition: opacity var(--vn-duration-base, 300ms) var(--vn-ease, ease);
 }
 
 .vn-split__panel:hover::after,
-.vn-split__panel:focus-visible::after { opacity: .22; }
+.vn-split__panel:focus-visible::after { opacity: .16; }
 
 /* El rotulo y el CTA tienen que quedar por encima del tinte.
    OJO: `.vn-split__label` YA es `position: absolute` (anclado al pie del

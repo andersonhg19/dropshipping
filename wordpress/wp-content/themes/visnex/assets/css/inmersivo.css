@@ -139,28 +139,24 @@ body::after {
     to   { scale: 1.02; translate: 0 3.5%; }
   }
 
-  /* El hero se aleja y se oscurece al salir: da profundidad al scroll. */
-  .vn-split__panel {
-    animation: vn-hero-sale linear both;
-    animation-timeline: view();
-    animation-range: exit -10% exit 100%;
-  }
-  @keyframes vn-hero-sale {
-    from { scale: 1; filter: brightness(1); }
-    to   { scale: .93; filter: brightness(.62); }
-  }
+  /* ------------------------------------------------------------------
+     AQUI HABIA DOS ANIMACIONES DEL HERO. SE RETIRAN, Y ESTE ES EL MOTIVO.
 
-  /* La tarjeta del hero se queda un momento y luego sube. */
-  .vn-split__statement {
-    animation: vn-carta linear both;
-    animation-timeline: view();
-    animation-range: exit 0% exit 90%;
-  }
-  @keyframes vn-carta {
-    from { translate: -50% -50%; opacity: 1; }
-    to   { translate: -50% -140%; opacity: 0; }
-  }
-}
+     1) `vn-carta` animaba la propiedad `translate` de .vn-split__statement.
+        Ese elemento YA se centra con `transform: translate(-50%,-50%)`, y
+        `translate` y `transform` NO se sustituyen: se COMPONEN. El resultado
+        era un desplazamiento doble — la tarjeta se iba a la izquierda y hacia
+        arriba, fuera de su sitio.
+
+     2) `vn-hero-sale` aplicaba `filter: brightness(.62)` con un rango de
+        scroll que empezaba ANTES de que el hero saliera de pantalla, asi que
+        las dos fotos se veian casi negras nada mas cargar.
+
+     Leccion: no animar `translate`/`scale`/`rotate` sueltos sobre elementos
+     que ya usan `transform` para colocarse. Y el paralaje del hero, si vuelve,
+     tiene que ir sobre un envoltorio propio, no sobre el panel que sostiene
+     el rotulo y la tarjeta.
+     ------------------------------------------------------------------ */
 
 /* ==========================================================================
    5. TARJETAS QUE SIGUEN AL CURSOR
