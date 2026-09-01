@@ -117,6 +117,16 @@ add_action('wp_enqueue_scripts', function () {
     $ver  = file_exists($path . 'motion.css') ? (string) filemtime($path . 'motion.css') : VISNEX_VERSION;
 
     wp_enqueue_style('visnex-motion', $dir . 'motion.css', ['visnex-components'], $ver);
+
+    // marca-visible.css va DESPUES de motion.css a proposito: es la capa que
+    // mete el ritmo de superficies y el dorado estructural, y tiene que ganar
+    // a todo lo anterior sin recurrir a !important.
+    // En ESTE hook $ver es una cadena, no el ayudante que hay arriba: se
+    // calcula aparte para que la version siga saliendo del mtime del archivo.
+    $verMarca = file_exists($path . 'marca-visible.css')
+        ? (string) filemtime($path . 'marca-visible.css')
+        : VISNEX_VERSION;
+    wp_enqueue_style('visnex-marca', $dir . 'marca-visible.css', ['visnex-motion'], $verMarca);
 }, 99);
 
 /**

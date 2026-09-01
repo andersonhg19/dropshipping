@@ -1,0 +1,198 @@
+/* ==========================================================================
+   D'MIKA — Hacer que la marca SE VEA
+   --------------------------------------------------------------------------
+   Diagnostico que motiva este archivo: se contaron los colores de marca en el
+   HTML servido de la portada.
+
+       Marfil            33 veces
+       Negro             32
+       Moka              16
+       Beige Arena        2   <- practicamente ausente
+       Dorado Champagne   2   <- practicamente ausente
+
+   Los tokens estaban bien puestos, pero los DOS colores que hacen la marca no
+   aparecian en ninguna parte. Y como el tema ya era crema y negro de antes,
+   cambiar #FAF8F4 por #F4EFE7 son cuatro unidades que el ojo no registra: la
+   tienda se veia igual, y con razon.
+
+   El arreglo no es "mas color": es RITMO. Una portada que va
+   crema → crema → crema → crema no tiene cadencia, y sin cadencia no hay
+   marca. Aqui se alternan superficies (marfil / arena / negro) y se mete el
+   dorado como estructura fina — filetes, antetitulos, cifras — nunca como
+   bloque, porque sobre claro no llega a contraste de texto (2,34:1).
+   ========================================================================== */
+
+/* ==========================================================================
+   1. RITMO DE SUPERFICIES
+   ========================================================================== */
+
+/* La barra de confianza pasa a arena: rompe el crema justo despues del hero
+   y las fotos, que es donde la pagina se aplanaba. */
+.vn-trust {
+  background: var(--dm-arena);
+  border-top: 1px solid rgba(23, 23, 23, .08);
+  border-bottom: 1px solid rgba(23, 23, 23, .08);
+}
+.vn-trust__item { color: var(--dm-negro); }
+.vn-trust__icon { color: var(--vn-brass, #836838); }
+
+/* El bloque editorial gana un fondo arena muy suave: separa sin cortar. */
+.vn-editorial { background: linear-gradient(180deg, var(--dm-marfil) 0%, #EFE7DA 100%); }
+
+/* Una banda de aire arena entre la rejilla de categorias y lo siguiente. */
+.vn-section + .vn-section__inner,
+.vn-duo { background: #EFE7DA; }
+
+/* ==========================================================================
+   2. EL DORADO COMO ESTRUCTURA
+   --------------------------------------------------------------------------
+   Filetes de 1 px, no bloques. Es como se usa el foil en las etiquetas de la
+   marca: una linea fina que se nota sin gritar.
+   ========================================================================== */
+
+/* Antetitulos de seccion: eran gris; pasan al dorado legible. */
+.vn-section__eyebrow,
+.vn-strip__eyebrow,
+.vn-editorial__eyebrow,
+.vn-split__eyebrow {
+  color: var(--vn-brass, #836838);
+}
+
+/* Filete dorado bajo el antetitulo, como el divisor del logotipo. */
+.vn-section__header .vn-section__eyebrow::after,
+.vn-editorial__eyebrow::after {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 1px;
+  margin: 10px auto 0;
+  background: var(--dm-oro);
+}
+.vn-editorial__eyebrow::after { margin-left: 0; margin-right: auto; }
+
+/* Titulos de seccion: un filete fino debajo, centrado, en oro. */
+.vn-section__title::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 1px;
+  margin: 18px auto 0;
+  background: linear-gradient(90deg, transparent, var(--dm-oro), transparent);
+}
+
+/* ==========================================================================
+   3. CATEGORIAS
+   ========================================================================== */
+
+/* La cifra de prendas pasa a oro: es el dato, y de paso mete el acento en la
+   rejilla mas visible de la portada. */
+.vn-card-cat__count,
+.vn-card-cat__meta {
+  color: var(--dm-oro);
+  letter-spacing: .18em;
+}
+
+/* Marco dorado que aparece al pasar por encima. */
+.vn-card-cat { position: relative; }
+.vn-card-cat::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1px solid var(--dm-oro);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--vn-dur-micro, 420ms) var(--vn-ease-lux, ease);
+}
+.vn-card-cat:hover::after,
+.vn-card-cat:focus-visible::after { opacity: .55; }
+
+/* ==========================================================================
+   4. PRODUCTO
+   ========================================================================== */
+
+/* El precio rebajado en Dorado Tinta: pasa AA sobre marfil (4,58:1), a
+   diferencia del Champagne, que se queda en 2,34:1 y no puede llevar texto. */
+.woocommerce ul.products li.product .price ins,
+.woocommerce div.product p.price ins {
+  color: var(--vn-brass, #836838);
+  font-weight: 500;
+}
+
+/* Etiqueta de oferta: negro con filete dorado, no un bloque de color. */
+.woocommerce span.onsale {
+  background: var(--dm-negro);
+  color: var(--dm-marfil);
+  border: 1px solid var(--dm-oro);
+}
+
+/* Subrayado dorado al pasar sobre una tarjeta de producto. */
+.woocommerce ul.products li.product .woocommerce-loop-product__title {
+  position: relative;
+  display: inline-block;
+}
+.woocommerce ul.products li.product .woocommerce-loop-product__title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 1px;
+  background: var(--dm-oro);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--vn-dur-micro, 420ms) var(--vn-ease-lux, ease);
+}
+.woocommerce ul.products li.product:hover .woocommerce-loop-product__title::after {
+  transform: scaleX(1);
+}
+
+/* ==========================================================================
+   5. BANDAS OSCURAS
+   ========================================================================== */
+
+/* La banda deslizante gana un filete dorado arriba y abajo: deja de ser una
+   franja negra suelta y pasa a leerse como una pieza de la marca. */
+.vn-marquee {
+  border-top: 1px solid var(--dm-oro);
+  border-bottom: 1px solid var(--dm-oro);
+}
+.vn-marquee__item { color: var(--dm-arena); }
+
+/* El boletin: el bloque mas oscuro de la pagina, con el acento en oro. */
+.vn-newsletter { border-top: 1px solid var(--dm-oro); }
+.vn-newsletter__title { color: var(--dm-marfil); }
+.vn-newsletter__subtitle { color: var(--dm-arena); }
+
+/* Pie: los titulos de columna en oro, como en la etiqueta colgante. */
+.vn-footer__col-title { color: var(--dm-oro); }
+.vn-footer__link { color: var(--dm-arena); }
+.vn-footer__link:hover { color: var(--dm-marfil); }
+.vn-footer__bottom { border-top: 1px solid rgba(185, 154, 94, .28); }
+
+/* ==========================================================================
+   6. DETALLES QUE SE NOTAN SIN VERSE
+   ========================================================================== */
+
+/* Seleccion de texto en la marca, no en el azul del navegador. */
+::selection { background: var(--dm-oro); color: var(--dm-negro); }
+
+/* Barra de desplazamiento en la familia de la marca. */
+@supports (scrollbar-color: auto) {
+  html { scrollbar-color: var(--dm-arena) var(--dm-marfil); scrollbar-width: thin; }
+}
+
+/* El foco de teclado en oro sobre oscuro y en negro sobre claro. */
+a:focus-visible,
+button:focus-visible { outline-color: var(--vn-brass, #836838); }
+
+/* ==========================================================================
+   7. MOVIL
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  /* Los filetes decorativos se acortan para no partir titulares estrechos. */
+  .vn-section__title::after { width: 40px; margin-top: 14px; }
+  .vn-section__header .vn-section__eyebrow::after { width: 26px; margin-top: 8px; }
+  /* El marco dorado de categoria estorba con el dedo encima: fuera. */
+  .vn-card-cat::after { display: none; }
+}
