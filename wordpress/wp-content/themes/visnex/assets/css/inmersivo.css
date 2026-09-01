@@ -1,0 +1,326 @@
+/* ==========================================================================
+   D'MIKA — Capa inmersiva
+   --------------------------------------------------------------------------
+   La tienda se veia "como una web normal de toda la vida": cabecera, hero,
+   rejilla, rejilla, pie. Ni el color ni la tipografia arreglan eso, porque el
+   problema no es el aspecto sino el COMPORTAMIENTO — la pagina no responde a
+   lo que hace la persona.
+
+   Lo que se anade aqui, y por que cada cosa:
+
+     grano          textura de papel, para que no parezca una pantalla
+     cursor         un punto que reacciona: da sensacion de tacto
+     revelado       los titulares suben por lineas al entrar en pantalla
+     paralaje       las fotos se mueven mas despacio que el texto: profundidad
+     inclinacion    las tarjetas siguen al cursor en 3D
+     carril         los productos se recorren en horizontal, como en una app
+     marca de agua  el monograma gigante detras del contenido
+
+   Todo con `animation-timeline` nativo donde se puede: el navegador lo mueve
+   en el hilo del compositor, asi que va fluido de verdad y no depende de JS.
+
+   Y todo se apaga entero con `prefers-reduced-motion`. Lo inmersivo no puede
+   marear a quien pidio que no le mareen.
+   ========================================================================== */
+
+@property --vn-tilt-x { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@property --vn-tilt-y { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@property --vn-brillo { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+
+/* ==========================================================================
+   1. GRANO — la textura que quita el aspecto de pantalla
+   --------------------------------------------------------------------------
+   Un SVG de ruido en data-URI, sin peticion de red, en `mix-blend-mode` sobre
+   toda la pagina. Es lo que usan las revistas de moda para que el blanco no
+   parezca un rectangulo de luz.
+   ========================================================================== */
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: .055;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
+/* ==========================================================================
+   2. CURSOR — un punto que reacciona
+   ========================================================================== */
+
+.vn-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--dm-negro);
+  pointer-events: none;
+  translate: -50% -50%;
+  transition: width .32s var(--vn-ease-lux, ease), height .32s var(--vn-ease-lux, ease),
+              background .32s ease, opacity .3s ease, border-color .32s ease;
+  will-change: transform;
+  opacity: 0;
+}
+.vn-cursor.is-vivo { opacity: 1; }
+
+/* Sobre algo pulsable crece y se vacia: pasa de punto a anillo. */
+.vn-cursor.is-activo {
+  width: 46px;
+  height: 46px;
+  background: transparent;
+  border: 1px solid var(--dm-oro);
+}
+/* Sobre una foto se vuelve dorado y translucido. */
+.vn-cursor.is-media {
+  width: 68px;
+  height: 68px;
+  background: rgba(185, 154, 94, .22);
+  border: 1px solid var(--dm-oro);
+  backdrop-filter: invert(4%);
+}
+
+/* Solo con raton de verdad. En tactil no existe el cursor. */
+@media (hover: none), (pointer: coarse) { .vn-cursor { display: none; } }
+
+/* ==========================================================================
+   3. REVELADO POR LINEAS
+   --------------------------------------------------------------------------
+   Cada linea del titular sube desde detras de una mascara, con un desfase.
+   No es una animacion de opacidad: es la linea SALIENDO, que es lo que da
+   sensacion de peso.
+   ========================================================================== */
+
+.vn-reveal { display: block; overflow: hidden; }
+.vn-reveal__l {
+  display: block;
+  translate: 0 105%;
+  rotate: 2deg;
+  transform-origin: left bottom;
+}
+
+@supports (animation-timeline: view()) {
+  .vn-reveal__l {
+    animation: vn-linea-sube linear both;
+    animation-timeline: view();
+    animation-range: entry 6% cover 26%;
+  }
+}
+/* Sin soporte, un observador de JS pone .is-dentro */
+.vn-reveal.is-dentro .vn-reveal__l {
+  animation: vn-linea-sube .95s var(--vn-ease-lux, cubic-bezier(.22,1,.36,1)) both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+@keyframes vn-linea-sube {
+  from { translate: 0 105%; rotate: 2.5deg; }
+  to   { translate: 0 0;    rotate: 0deg; }
+}
+
+/* ==========================================================================
+   4. PARALAJE — las fotos van mas despacio que el texto
+   ========================================================================== */
+
+@supports (animation-timeline: view()) {
+  .vn-para img,
+  .vn-para__media {
+    animation: vn-paralaje linear both;
+    animation-timeline: view();
+    animation-range: cover;
+    will-change: transform;
+  }
+  @keyframes vn-paralaje {
+    from { scale: 1.18; translate: 0 -3.5%; }
+    to   { scale: 1.02; translate: 0 3.5%; }
+  }
+
+  /* El hero se aleja y se oscurece al salir: da profundidad al scroll. */
+  .vn-split__panel {
+    animation: vn-hero-sale linear both;
+    animation-timeline: view();
+    animation-range: exit -10% exit 100%;
+  }
+  @keyframes vn-hero-sale {
+    from { scale: 1; filter: brightness(1); }
+    to   { scale: .93; filter: brightness(.62); }
+  }
+
+  /* La tarjeta del hero se queda un momento y luego sube. */
+  .vn-split__statement {
+    animation: vn-carta linear both;
+    animation-timeline: view();
+    animation-range: exit 0% exit 90%;
+  }
+  @keyframes vn-carta {
+    from { translate: -50% -50%; opacity: 1; }
+    to   { translate: -50% -140%; opacity: 0; }
+  }
+}
+
+/* ==========================================================================
+   5. TARJETAS QUE SIGUEN AL CURSOR
+   --------------------------------------------------------------------------
+   Inclinacion 3D muy contenida (maximo 6 grados). Pasado ese punto parece un
+   truco; por debajo, parece que la tarjeta tiene peso.
+   ========================================================================== */
+
+.vn-tilt {
+  transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(var(--vn-tilt-x)) rotateY(var(--vn-tilt-y));
+  transition: transform .5s var(--vn-ease-lux, ease);
+  will-change: transform;
+}
+.vn-tilt:hover { transition-duration: .12s; }
+
+/* Un brillo que sigue al cursor por encima de la foto. */
+.vn-tilt__brillo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .4s ease;
+  background: radial-gradient(
+    380px circle at var(--vn-mx, 50%) var(--vn-my, 50%),
+    rgba(244, 239, 231, .16),
+    transparent 62%
+  );
+}
+.vn-tilt:hover .vn-tilt__brillo { opacity: 1; }
+
+/* ==========================================================================
+   6. CARRIL HORIZONTAL
+   --------------------------------------------------------------------------
+   Los productos dejan de ser una rejilla que baja y pasan a un carril que se
+   recorre de lado, con anclaje. Es el gesto que la gente ya conoce del movil,
+   y en escritorio se siente de aplicacion, no de catalogo.
+   ========================================================================== */
+
+.vn-carril {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(240px, 27vw);
+  gap: var(--vn-space-5);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--vn-space-6);
+  padding: var(--vn-space-4) var(--vn-space-6) var(--vn-space-7);
+  scrollbar-width: none;
+}
+.vn-carril::-webkit-scrollbar { display: none; }
+.vn-carril > * { scroll-snap-align: start; }
+
+/* Degradados en los bordes: dice "hay mas" sin escribirlo. */
+.vn-carril-marco { position: relative; }
+.vn-carril-marco::before,
+.vn-carril-marco::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 90px;
+  pointer-events: none;
+  z-index: 2;
+}
+.vn-carril-marco::before { left: 0;  background: linear-gradient(90deg, var(--dm-marfil), transparent); }
+.vn-carril-marco::after  { right: 0; background: linear-gradient(270deg, var(--dm-marfil), transparent); }
+
+/* ==========================================================================
+   7. MARCA DE AGUA
+   --------------------------------------------------------------------------
+   El monograma gigante detras del contenido, casi imperceptible. Se mueve un
+   poco mas despacio que la pagina, asi que da fondo sin distraer.
+   ========================================================================== */
+
+.vn-marca-agua {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.vn-marca-agua svg {
+  position: absolute;
+  right: -6%;
+  top: 50%;
+  width: min(52vw, 720px);
+  translate: 0 -50%;
+  opacity: .045;
+}
+@supports (animation-timeline: view()) {
+  .vn-marca-agua svg {
+    animation: vn-agua linear both;
+    animation-timeline: view();
+    animation-range: cover;
+  }
+  @keyframes vn-agua {
+    from { translate: 0 -30%; rotate: -3deg; }
+    to   { translate: 0 -70%; rotate: 3deg; }
+  }
+}
+
+/* ==========================================================================
+   8. TRANSICION ENTRE PAGINAS
+   ========================================================================== */
+
+@view-transition { navigation: auto; }
+
+::view-transition-old(root) { animation: vn-vt-sale .34s var(--vn-ease-veil, ease) both; }
+::view-transition-new(root) { animation: vn-vt-entra .46s var(--vn-ease-lux, ease) both; }
+
+@keyframes vn-vt-sale  { to   { opacity: 0; scale: .992; } }
+@keyframes vn-vt-entra { from { opacity: 0; scale: 1.008; } }
+
+/* La foto del producto viaja de la rejilla a la ficha. */
+.woocommerce ul.products li.product img { view-transition-name: var(--vn-vt, none); }
+
+/* ==========================================================================
+   9. QUIEN PIDE MENOS MOVIMIENTO, NO RECIBE NINGUNO
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  body::after { opacity: .03; }
+  .vn-cursor { display: none; }
+  .vn-reveal__l { translate: 0; rotate: 0; animation: none; }
+  .vn-para img, .vn-para__media,
+  .vn-split__panel, .vn-split__statement,
+  .vn-marca-agua svg { animation: none; scale: 1; translate: 0; filter: none; }
+  .vn-tilt { transform: none; transition: none; }
+  .vn-carril { scroll-snap-type: none; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
+
+/* --------------------------------------------------------------------------
+   Dentro del carril, la rejilla de WooCommerce deja de ser rejilla.
+   El shortcode sigue devolviendo su <ul class="products">, asi que se le
+   cambia el display en lugar de reescribir la plantilla.
+   -------------------------------------------------------------------------- */
+
+.vn-carril .woocommerce > ul.products,
+.vn-carril ul.products {
+  display: contents;
+  padding: 0;
+  margin: 0;
+  max-width: none;
+}
+.vn-carril ul.products li.product {
+  width: 100% !important;   /* Storefront fija anchos en % con float */
+  margin: 0 !important;
+  float: none !important;
+  scroll-snap-align: start;
+}
+.vn-carril > .woocommerce { display: contents; }
+
+/* Pista visual de que se puede arrastrar. */
+.vn-carril { cursor: grab; }
+.vn-carril:active { cursor: grabbing; }
+
+@media (max-width: 860px) {
+  .vn-carril { grid-auto-columns: minmax(200px, 68vw); padding-inline: var(--vn-space-4); }
+  .vn-carril-marco::before, .vn-carril-marco::after { width: 40px; }
+}

@@ -127,6 +127,22 @@ add_action('wp_enqueue_scripts', function () {
         ? (string) filemtime($path . 'marca-visible.css')
         : VISNEX_VERSION;
     wp_enqueue_style('visnex-marca', $dir . 'marca-visible.css', ['visnex-motion'], $verMarca);
+
+    // La capa inmersiva va la ULTIMA de todas: paralaje, revelados, grano,
+    // cursor y carril. Es la que hace que la tienda responda al scroll y al
+    // raton en vez de quedarse quieta.
+    $verInm = file_exists($path . 'inmersivo.css')
+        ? (string) filemtime($path . 'inmersivo.css')
+        : VISNEX_VERSION;
+    wp_enqueue_style('visnex-inmersivo', $dir . 'inmersivo.css', ['visnex-marca'], $verInm);
+
+    wp_enqueue_script(
+        'visnex-inmersivo',
+        get_stylesheet_directory_uri() . '/assets/js/inmersivo.js',
+        [],
+        $verInm,
+        true
+    );
 }, 99);
 
 /**

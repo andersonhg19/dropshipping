@@ -344,7 +344,16 @@ add_filter('the_content', function ($content) {
             <h2 class="vn-section__title"><?php echo esc_html(visnex_text('mas_titulo')); ?></h2>
             <p class="vn-section__subtitle"><?php echo esc_html(visnex_text('mas_texto')); ?></p>
         </div>
-        <?php echo do_shortcode('[products limit="4" columns="4" orderby="popularity"]'); ?>
+        <?php
+        // Carril horizontal en vez de rejilla: se recorre de lado con anclaje,
+        // como en una aplicacion. Ademas caben 10 productos en el sitio en el
+        // que antes solo cabian 4, sin alargar la pagina.
+        ?>
+        <div class="vn-carril-marco">
+            <div class="vn-carril">
+                <?php echo do_shortcode('[products limit="10" columns="10" orderby="popularity"]'); ?>
+            </div>
+        </div>
     </section>
 
     <!-- ================= NEWSLETTER ================= -->
