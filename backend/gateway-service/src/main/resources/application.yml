@@ -22,7 +22,7 @@ spring:
             # Esa combinacion permite que CUALQUIER sitio web haga peticiones
             # autenticadas contra la API con las credenciales del usuario.
             # Ahora la lista es explicita y se configura por entorno.
-            allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:3001,http://localhost:8850}
+            allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:3001,http://localhost:8850,http://192.168.40.32:3001,http://192.168.40.32:8850}
             allowedHeaders:
               - Authorization
               - Content-Type
