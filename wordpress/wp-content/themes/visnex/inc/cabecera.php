@@ -120,7 +120,17 @@ add_action('storefront_header', function () {
              necesita (44 px) y separarlo con aire. El monograma ES la marca. -->
         <a class="dm-cab__marca" href="<?php echo $inicio; ?>" rel="home" aria-label="D&#8217;MIKA, inicio">
             <?php echo dm_monograma(44, 'claro'); ?>
-            <span class="dm-cab__palabra">D&#8217;MIKA</span>
+            <?php
+            // La palabra va en SVG calcado del logo, no en tipografia web.
+            // Bodoni Moda se PARECE a la Didone del logotipo, pero no es: los
+            // remates, el contraste y el apostrofo son distintos, y puestos uno
+            // al lado del otro se nota. Si el logo es un vector, la palabra
+            // tambien tiene que serlo.
+            //
+            // Se conserva el <span> envolvente: de el cuelga el filete dorado
+            // que separa el monograma de la palabra (.dm-cab__palabra::before).
+            ?>
+            <span class="dm-cab__palabra"><?php echo dm_palabra(21); ?></span>
         </a>
 
         <!-- Derecha: acciones -->

@@ -82,14 +82,13 @@
 .dm-cab__izq { display: flex; align-items: center; gap: 6px; justify-self: start; }
 .dm-cab__der { display: flex; align-items: center; gap: 2px; justify-self: end; }
 
-/* El logotipo: solo la palabra. El monograma a este tamaño pierde la M. */
+/* El logotipo: monograma + palabra, los dos calcados del logo aprobado.
+   La palabra es ahora un SVG, asi que las reglas de tipografia que habia aqui
+   ya no pintan nada: se dejan las de caja, que son las que siguen mandando. */
 .dm-cab__marca { justify-self: center; text-decoration: none; }
 .dm-cab__palabra {
-  font-family: var(--vn-font-serif);
-  font-size: 26px;
-  font-weight: 400;
-  letter-spacing: .17em;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
   color: var(--dm-negro);
   white-space: nowrap;
   /* La letra alta compensa el tracking: sin esto el logotipo se ve descentrado. */

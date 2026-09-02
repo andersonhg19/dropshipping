@@ -68,3 +68,9 @@ brand/dmika/__pycache__/
 
 # Respaldos de la base antes de una migracion: utiles en local, no en el repo.
 seguimiento/respaldo-*.sql.gz
+
+# Punto de retoma: la base y las fotos se guardan en disco, no en git.
+# 88 MB de fotos en el historial es algo que despues no se puede deshacer.
+seguimiento/punto-de-retoma/*.gz
+__pycache__/
+*.pyc

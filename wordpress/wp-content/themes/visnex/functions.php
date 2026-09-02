@@ -144,24 +144,17 @@ add_action('wp_enqueue_scripts', function () {
         true
     );
 
-    // Tejido: el hero en WebGL. Solo en la portada, que es donde vive
-    // `.vn-split` — cargarlo en el resto seria descargar un shader para
-    // ejecutar tres lineas y salir.
-    if (is_front_page() || is_home()) {
-        $verTej = file_exists($path . 'tejido.css')
-            ? (string) filemtime($path . 'tejido.css')
-            : VISNEX_VERSION;
-        wp_enqueue_style('visnex-tejido', $dir . 'tejido.css', ['visnex-inmersivo'], $verTej);
-
-        $jsPath = get_stylesheet_directory() . '/assets/js/tejido.js';
-        wp_enqueue_script(
-            'visnex-tejido',
-            get_stylesheet_directory_uri() . '/assets/js/tejido.js',
-            [],
-            file_exists($jsPath) ? (string) filemtime($jsPath) : VISNEX_VERSION,
-            true
-        );
-    }
+    // EL HERO EN WEBGL, RETIRADO.
+    //
+    // Habia aqui una capa que convertia las dos fotos del hero en una
+    // superficie deformable: el raton pintaba un campo de velocidad en una
+    // textura y cada pixel se desplazaba siguiendolo. Tecnicamente funcionaba
+    // -medido: 13% de los pixeles desplazados- pero al cliente no le gustaba,
+    // y en un logo o en un hero eso es el unico dato que decide.
+    //
+    // El codigo no se borra (assets/js/tejido.js y assets/css/tejido.css
+    // siguen en el repo) por si alguna pieza se recupera mas adelante, pero no
+    // se carga. Un archivo que no se encola no cuesta nada.
 }, 99);
 
 /**
