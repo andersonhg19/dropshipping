@@ -1,0 +1,143 @@
+/* ==========================================================================
+   D'MIKA — Capa editorial: que la portada se lea como una revista
+   --------------------------------------------------------------------------
+   Debajo del hero, la portada seguia siendo correcta y anodina: titulo
+   centrado, rejilla, titulo centrado, rejilla. Correcto no es memorable.
+
+   Esta capa NO toca las rejillas de producto. Cambiar una rejilla de comercio
+   que funciona por un collage es como se rompe una tienda que vende. Lo que
+   cambia es el ARMAZON alrededor: como se anuncia cada seccion, como se pasa
+   de una a otra y que textura tiene el papel.
+
+   Tres gestos, y ninguno cuesta una peticion mas:
+     1. Cada seccion se numera, como los capitulos de una revista.
+     2. La banda deslizante va en diagonal y se sale por los lados.
+     3. Grano sobre todo el papel.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CAPITULOS
+   --------------------------------------------------------------------------
+   El numero enorme detras del titulo es el recurso de portada de revista por
+   excelencia: dice "esto es una publicacion" sin escribir una palabra.
+   Va en `::before` sobre el contenedor, no en el marcado, porque es adorno y
+   un lector de pantalla no tiene por que leer "cero uno".
+   -------------------------------------------------------------------------- */
+
+.vn-section__header {
+  position: relative;
+  isolation: isolate;
+}
+
+.vn-section__header::before {
+  counter-increment: dm-capitulo;
+  content: counter(dm-capitulo, decimal-leading-zero);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  translate: -50% -54%;
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: clamp(7rem, 15vw, 15rem);
+  line-height: .7;
+  font-weight: 400;
+  letter-spacing: -.06em;
+  /* Muy tenue a proposito: tiene que leerse como marca de agua, no competir
+     con el titulo que lleva encima. */
+  color: var(--dm-arena, #D8C7B0);
+  opacity: .38;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* El contador arranca en el <body> para que siga corriendo de una seccion a
+   otra aunque esten en contenedores distintos. */
+body.home { counter-reset: dm-capitulo; }
+
+/* El titulo sube por encima del numero y gana aire. */
+.vn-section__title {
+  position: relative;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   2. LA BANDA, EN DIAGONAL
+   --------------------------------------------------------------------------
+   Recta y a lo ancho era una franja negra mas. Girada 1,5 grados y mas ancha
+   que la pantalla, corta la pagina y obliga al ojo a seguirla. Es el gesto de
+   portada mas barato que existe.
+   -------------------------------------------------------------------------- */
+
+.vn-marquee {
+  position: relative;
+  /* Mas ancha que el viewport y corrida a la izquierda: al girar, las esquinas
+     tienen que quedar FUERA de la pantalla. Si no, se ven los picos y parece
+     un error de maquetacion. */
+  width: 112vw;
+  margin-left: -6vw;
+  rotate: -1.5deg;
+  z-index: 2;
+  /* El giro deja triangulos de fondo arriba y abajo; un margen negativo hace
+     que las secciones vecinas se metan por debajo y los tapen. */
+  margin-top: -14px;
+  margin-bottom: -14px;
+  box-shadow: 0 18px 40px -18px rgba(23, 23, 23, .45);
+}
+
+.vn-marquee__item {
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-style: italic;
+  font-size: clamp(1.05rem, 1.7vw, 1.5rem);
+  letter-spacing: .01em;
+  text-transform: none;
+}
+
+/* --------------------------------------------------------------------------
+   3. EL PAPEL TIENE GRANO
+   --------------------------------------------------------------------------
+   Un fondo plano se lee como pantalla; con grano se lee como papel. Ademas
+   rompe las bandas que salen en los degradados grandes.
+
+   Va en un pseudoelemento fijo sobre todo el documento y con
+   `pointer-events: none`, asi que no toca ni el marcado ni los clics.
+   -------------------------------------------------------------------------- */
+
+body.home::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: .04;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='3'/></filter><rect width='150' height='150' filter='url(%23g)'/></svg>");
+}
+
+/* --------------------------------------------------------------------------
+   4. LOS ANTETITULOS, CON FILETE
+   -------------------------------------------------------------------------- */
+
+.vn-section__eyebrow {
+  position: relative;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   5. MOVIL
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 860px) {
+  /* El numero de capitulo se come el titulo en pantalla estrecha. */
+  .vn-section__header::before { font-size: 6rem; opacity: .3; }
+
+  /* La diagonal a 390 px deja triangulos demasiado grandes: casi recta. */
+  .vn-marquee {
+    rotate: -0.8deg;
+    width: 108vw;
+    margin-left: -4vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* El grano no se mueve, asi que se queda. La banda ya la para motion.css. */
+}

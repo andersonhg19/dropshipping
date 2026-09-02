@@ -1,0 +1,156 @@
+/* ==========================================================================
+   D'MIKA — La ficha, en clave de vitrina
+   --------------------------------------------------------------------------
+   Dos ideas, y las dos son de venta, no de decoracion:
+
+   1. LA DECISION NO SE VA DE LA PANTALLA. El panel de compra -precio, talla,
+      boton, promesa de contraentrega- se queda fijo mientras se baja por las
+      fotos. En la version anterior, quien bajaba a ver la segunda foto perdia
+      de vista el boton, y volver a subir es una friccion que se paga.
+
+   2. SE VE EL TEJIDO. La duda de quien compra ropa por internet no es el corte
+      -eso se ve- sino como es la tela. La lupa lo ensena sin pedir un clic.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. EL PANEL QUE NO SE VA
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 993px) {
+  .single-product div.product .summary.entry-summary {
+    position: sticky;
+    /* 88px = la barra de cabecera (72) mas aire. Sin este margen el titulo del
+       producto se mete debajo de la cabecera al quedarse pegado. */
+    top: 88px;
+    /* Un producto con muchas variaciones puede hacer el panel mas alto que la
+       pantalla; entonces se desplaza dentro de si mismo en vez de cortarse. */
+    max-height: calc(100svh - 108px);
+    overflow-y: auto;
+    /* La barra de desplazamiento propia solo aparece si hace falta y va en los
+       tonos de la marca, no en el gris del sistema. */
+    scrollbar-width: thin;
+    scrollbar-color: var(--dm-arena, #D8C7B0) transparent;
+    padding-right: 6px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. LA GALERIA
+   --------------------------------------------------------------------------
+   Fondo de vitrina en vez de blanco plano: un degradado muy suave que separa
+   la prenda del papel de la pagina y le da algo de aire alrededor.
+   -------------------------------------------------------------------------- */
+
+.single-product div.product .woocommerce-product-gallery {
+  background: radial-gradient(78% 62% at 50% 34%,
+              #FFFDFA 0%, var(--dm-marfil, #F4EFE7) 46%, #EAE0D0 100%);
+}
+
+.single-product div.product .woocommerce-product-gallery__wrapper {
+  position: relative;
+  /* La lupa se recorta contra la foto: sin esto asoma por los bordes. */
+  overflow: hidden;
+}
+
+.single-product div.product .woocommerce-product-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* --------------------------------------------------------------------------
+   3. LA LUPA
+   -------------------------------------------------------------------------- */
+
+.dm-lupa {
+  position: absolute;
+  z-index: 6;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 1px solid var(--dm-oro, #B99A5E);
+  box-shadow: 0 22px 48px -14px rgba(23, 23, 23, .45);
+  background-repeat: no-repeat;
+  background-color: #fff;
+  pointer-events: none;          /* no se puede tapar a si misma */
+  /* Se centra en el cursor con `translate` y NO con `transform`: el bucle de
+     lupa.js escribe `left`/`top` en cada cuadro, y si el centrado viviera en
+     `transform` cualquier otra regla que lo tocara lo borraria. */
+  translate: -50% -50%;
+  opacity: 0;
+  scale: .82;
+  transition: opacity .22s ease, scale .28s var(--vn-ease-lux, cubic-bezier(.16, 1, .3, 1));
+}
+
+.dm-tiene-lupa.is-lupa .dm-lupa { opacity: 1; scale: 1; }
+
+/* Mientras la lupa esta puesta, el cursor del sistema estorba: se ven dos
+   punteros y el circulo parece un adorno pegado. */
+.dm-tiene-lupa.is-lupa { cursor: none; }
+
+.dm-lupa__eti {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  text-align: center;
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 8.5px;
+  font-weight: 500;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .85);
+}
+
+/* --------------------------------------------------------------------------
+   4. EL PRECIO Y EL TITULO, CON MAS PRESENCIA
+   -------------------------------------------------------------------------- */
+
+.single-product div.product .product_title {
+  font-size: clamp(2rem, 3.4vw, 3.1rem);
+  line-height: 1.02;
+  letter-spacing: -.02em;
+}
+
+.single-product div.product .summary > p.price {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 14px 0 0;
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: 1.9rem;
+}
+
+.single-product div.product .summary > p.price del {
+  font-size: .62em;
+  color: var(--dm-moka, #6F5A4A);
+}
+
+.single-product div.product .summary > p.price ins {
+  text-decoration: none;
+  color: var(--vn-brass, #836838);
+}
+
+/* --------------------------------------------------------------------------
+   5. MOVIL
+   --------------------------------------------------------------------------
+   Nada de panel fijo ni de lupa: en vertical el panel fijo se come la pantalla
+   y en tactil no existe "pasar por encima". Storefront ya trae su propia barra
+   inferior de compra, que en movil es la solucion correcta.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 992px) {
+  .single-product div.product .summary.entry-summary {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+  .dm-lupa { display: none; }
+  .dm-tiene-lupa.is-lupa { cursor: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dm-lupa { display: none; }
+  .dm-tiene-lupa.is-lupa { cursor: auto; }
+}

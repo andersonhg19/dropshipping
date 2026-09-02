@@ -55,9 +55,12 @@ add_action('wp_enqueue_scripts', function () {
     // la portada y de otro en la tienda.
     wp_enqueue_style('visnex-home', $dir . 'home.css', ['visnex-components'], $ver('home.css'));
 
-    // El hero de cine: solo donde existe.
+    // El hero de cine y la capa editorial: solo en la portada.
     if (is_front_page() || is_home()) {
         wp_enqueue_style('visnex-hero-cine', $dir . 'hero-cine.css', ['visnex-components'], $ver('hero-cine.css'));
+        // Depende de home.css porque le gana a la banda y a las cabeceras de
+        // seccion, que viven ahi.
+        wp_enqueue_style('visnex-editorial-revista', $dir . 'editorial-revista.css', ['visnex-home'], $ver('editorial-revista.css'));
     }
 
     // Las secciones editoriales y los dos arreglos de cabecera. Va en TODAS las
@@ -69,6 +72,18 @@ add_action('wp_enqueue_scripts', function () {
     // Tienda, ficha de producto y resenas.
     if (function_exists('is_woocommerce') && (is_woocommerce() || is_shop() || is_product_category() || is_product() || is_search())) {
         wp_enqueue_style('visnex-shop', $dir . 'shop.css', ['visnex-components'], $ver('shop.css'));
+    }
+
+    // La ficha en clave de vitrina: panel fijo y lupa de tejido.
+    if (function_exists('is_product') && is_product()) {
+        wp_enqueue_style('visnex-ficha-vitrina', $dir . 'ficha-vitrina.css', ['visnex-shop'], $ver('ficha-vitrina.css'));
+        wp_enqueue_script(
+            'visnex-lupa',
+            get_stylesheet_directory_uri() . '/assets/js/lupa.js',
+            [],
+            $verjs('lupa.js'),
+            true
+        );
     }
 
     // El embudo: carrito, checkout, mi cuenta.
