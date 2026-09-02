@@ -118,19 +118,21 @@ add_action('storefront_header', function () {
              Antes iba solo la palabra porque el monograma a 30 px pierde la M.
              La respuesta correcta no era esconderlo: es darle el tamano que
              necesita (44 px) y separarlo con aire. El monograma ES la marca. -->
+        <?php
+        /* El armado APILADO, que es el del logo aprobado: monograma arriba y
+           la palabra debajo.
+
+           Antes iba en fila -monograma, rayita dorada, palabra- y eso no
+           estaba en ninguna parte del manual: me lo invente yo para llenar
+           una barra ancha. Las letras eran las correctas, pero un logo es la
+           forma Y la disposicion; cambiar la segunda es cambiar el logo.
+
+           Apilado cabe de sobra: 30 px de monograma + 3 de aire + 11 de
+           palabra son 44, y la barra mide 72. */
+        ?>
         <a class="dm-cab__marca" href="<?php echo $inicio; ?>" rel="home" aria-label="D&#8217;MIKA, inicio">
-            <?php echo dm_monograma(44, 'claro'); ?>
-            <?php
-            // La palabra va en SVG calcado del logo, no en tipografia web.
-            // Bodoni Moda se PARECE a la Didone del logotipo, pero no es: los
-            // remates, el contraste y el apostrofo son distintos, y puestos uno
-            // al lado del otro se nota. Si el logo es un vector, la palabra
-            // tambien tiene que serlo.
-            //
-            // Se conserva el <span> envolvente: de el cuelga el filete dorado
-            // que separa el monograma de la palabra (.dm-cab__palabra::before).
-            ?>
-            <span class="dm-cab__palabra"><?php echo dm_palabra(21); ?></span>
+            <?php echo dm_monograma(30, 'claro'); ?>
+            <?php echo dm_palabra(11); ?>
         </a>
 
         <!-- Derecha: acciones -->

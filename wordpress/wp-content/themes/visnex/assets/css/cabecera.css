@@ -85,15 +85,18 @@
 /* El logotipo: monograma + palabra, los dos calcados del logo aprobado.
    La palabra es ahora un SVG, asi que las reglas de tipografia que habia aqui
    ya no pintan nada: se dejan las de caja, que son las que siguen mandando. */
-.dm-cab__marca { justify-self: center; text-decoration: none; }
-.dm-cab__palabra {
-  display: inline-flex;
+.dm-cab__marca {
+  justify-self: center;
+  text-decoration: none;
+  /* Apilado, como el logo aprobado. */
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 3px;
   color: var(--dm-negro);
-  white-space: nowrap;
-  /* La letra alta compensa el tracking: sin esto el logotipo se ve descentrado. */
-  padding-left: .17em;
 }
+.dm-cab__marca .dm-mono,
+.dm-cab__marca .dm-palabra { display: block; }
 
 /* --- Navegación ---------------------------------------------------------- */
 
@@ -399,28 +402,8 @@ body.dm-sin-scroll { overflow: hidden; }
   gap: 14px;
 }
 
-.dm-cab__marca .dm-mono { flex-shrink: 0; }
-
-/* Filete de separacion en oro: el acento de marca, donde se ve. */
-.dm-cab__marca::after { content: none; }
-.dm-cab__marca .dm-cab__palabra {
-  position: relative;
-  padding-left: 14px;
-}
-.dm-cab__marca .dm-cab__palabra::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1px;
-  height: 26px;
-  background: var(--dm-oro);
-}
+/* (armado en fila retirado: el logo va apilado) */
 
 @media (max-width: 860px) {
-  .dm-cab__marca { gap: 9px; }
-  .dm-cab__marca .dm-cab__palabra { padding-left: 9px; }
-  .dm-cab__marca .dm-cab__palabra::before { height: 19px; }
-  .dm-cab__marca .dm-mono { width: 32px; height: 37px; }
+  .dm-cab__marca { gap: 2px; }
 }
