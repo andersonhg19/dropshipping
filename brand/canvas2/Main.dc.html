@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500;600&display=swap">
+  <style>
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; }
+    :root {
+      --negro:  #171717;
+      --marfil: #F4EFE7;
+      --arena:  #D8C7B0;
+      --oro:    #B99A5E;
+      --moka:   #6F5A4A;
+      --tinta:  #836838;
+      --didone: "Bodoni Moda", "Didot", "Times New Roman", serif;
+      --palo:   "Jost", "Futura", system-ui, sans-serif;
+    }
+    a { color: var(--oro); text-decoration: none; }
+    a:hover { color: var(--tinta); }
+    .eti {
+      font-family: var(--palo); font-size: 10px; font-weight: 500;
+      letter-spacing: .28em; text-transform: uppercase;
+    }
+
+    .lienzo {
+      width: 1440px; height: 1150px; position: relative; overflow: hidden;
+      background: #0B0B0B; color: var(--marfil); font-family: var(--palo);
+    }
+    /* La foto ocupa TODO. No es un banner dentro de una pagina: es el fondo
+       sobre el que ocurre todo lo demas. */
+    .foto {
+      position: absolute; inset: 0;
+      background: url("hero-ella.jpg") center 22% / cover no-repeat;
+      animation: respirar 26s ease-in-out infinite alternate;
+    }
+    @keyframes respirar {
+      from { transform: scale(1.06) translateX(-1%); }
+      to   { transform: scale(1.16) translateX(1%); }
+    }
+    .velo {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(11,11,11,.82) 0%, rgba(11,11,11,.15) 34%, rgba(11,11,11,.55) 72%, #0B0B0B 100%),
+        linear-gradient(90deg, rgba(11,11,11,.7) 0%, transparent 46%);
+    }
+    /* El titular se recorta contra la foto con blend: donde la foto es clara
+       el texto se ve oscuro y al reves. Es lo que hace que el tipo y la imagen
+       sean UNA cosa y no texto encima de una foto. */
+    .titular {
+      position: absolute; left: 64px; top: 300px; z-index: 3;
+      font-family: var(--didone); font-weight: 400;
+      font-size: 176px; line-height: .84; letter-spacing: -.035em;
+      margin: 0; color: var(--marfil); mix-blend-mode: difference;
+      max-width: 900px;
+    }
+    .titular em { font-style: italic; color: var(--oro); display: block; margin-left: 130px; }
+    .titular span {
+      display: inline-block; opacity: 0;
+      animation: subir 1.15s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    @keyframes subir {
+      from { opacity: 0; transform: translateY(78px) rotate(3deg); }
+      to   { opacity: 1; transform: none; }
+    }
+    /* Texto vertical en el canto: es la firma de las casas de moda en web y
+       ocupa un espacio que si no queda muerto. */
+    .canto {
+      position: absolute; right: 30px; top: 190px; z-index: 4;
+      writing-mode: vertical-rl; color: var(--oro);
+      letter-spacing: .42em; font-size: 10px; text-transform: uppercase;
+    }
+    .cab {
+      position: absolute; top: 0; left: 0; right: 0; height: 84px; z-index: 6;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px;
+    }
+    .nav { display: flex; gap: 30px; }
+    .nav span { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; opacity: .85; }
+    /* La pasarela: una tira de looks que corre sola por abajo. Se arrastra y
+       se para al pasar por encima. */
+    .pasarela {
+      position: absolute; left: 0; right: 0; bottom: 0; height: 300px; z-index: 5;
+      display: flex; align-items: flex-end; gap: 18px; padding: 0 40px 34px;
+      overflow: hidden;
+    }
+    .look {
+      position: relative; flex: 0 0 216px; height: 262px; overflow: hidden;
+      filter: grayscale(1) contrast(1.06); transition: filter .5s, transform .5s;
+      animation: desfilar 34s linear infinite;
+    }
+    .look:hover { filter: none; transform: translateY(-14px); }
+    .look img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .look b {
+      position: absolute; left: 12px; bottom: 10px; font-family: var(--didone);
+      font-size: 17px; font-weight: 400; color: #fff; text-shadow: 0 2px 14px rgba(0,0,0,.7);
+    }
+    @keyframes desfilar { from { transform: translateX(0); } to { transform: translateX(-40px); } }
+    .nlook {
+      position: absolute; left: 12px; top: 10px; font-size: 9px;
+      letter-spacing: .22em; color: var(--oro);
+    }
+    .cta {
+      position: absolute; left: 64px; top: 690px; z-index: 4;
+      display: flex; align-items: center; gap: 22px;
+    }
+    .boton {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 17px 34px; border: 1px solid var(--oro); color: var(--oro);
+      font-size: 11px; letter-spacing: .24em; text-transform: uppercase;
+      position: relative; overflow: hidden;
+    }
+    .boton::after {
+      content: ''; position: absolute; inset: 0; background: var(--oro);
+      transform: translateY(101%); transition: transform .45s cubic-bezier(.16,1,.3,1);
+    }
+    .boton:hover { color: var(--negro); }
+    .boton:hover::after { transform: none; }
+    .boton em { position: relative; z-index: 2; font-style: normal; }
+    .sub { max-width: 300px; font-size: 12px; line-height: 1.75; color: rgba(244,239,231,.62); }
+    .grano {
+      position: absolute; inset: 0; z-index: 7; pointer-events: none; opacity: .06;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence baseFrequency='.85' numOctaves='3'/></filter><rect width='120' height='120' filter='url(%23n)'/></svg>");
+    }
+
+  </style>
+</helmet>
+
+<div class="lienzo">
+  <div class="foto"></div>
+  <div class="velo"></div>
+
+  <div class="cab">
+    <div class="nav"><span>Mujer</span><span>Hombre</span><span>Nuevo</span></div>
+    <svg viewBox="0 0 1149 200" width="109" height="19" aria-label="D'MIKA" role="img"><path fill="var(--marfil)" fill-rule="evenodd" d="M759.58,1.46C759.58,1.48 763.7,3.11 764.24,3.56C766.97,5.87 768.98,9.61 769.09,13.25C770,42.17 769.09,71.28 769.09,100.22C769.09,129.1 769.99,158.02 769.09,186.75C768.99,190.13 767.26,194.26 764.68,196.44C764.13,196.9 760.02,198.71 760.02,198.98C762.2,199.85 765.39,199.12 767.77,199.12C773.8,199.12 779.84,199.12 785.87,199.12C787.59,199.12 792.94,200.1 793.93,198.79C792.79,197.27 789.16,197.08 787.53,193.82C783.81,186.39 785.62,176.61 785.87,168.65C786.08,161.85 785.43,155.17 785.43,148.34C785.43,115.25 785.43,82.52 785.43,49.45C785.43,39.25 785.87,28.99 785.87,18.98C785.87,14.79 785.35,10.06 787.78,6.18C789.56,3.33 792.31,3.52 794.37,1.46C793.38,0.8 786.58,1.32 784.99,1.32C776.75,1.32 768.51,1.32 760.26,1.32C759.75,1.36 759.98,1.3 759.58,1.46Z M635.07,1.46C635.07,1.55 639.23,3.91 639.74,4.42C642.12,6.8 643.6,10.77 643.71,14.13C644.52,40.15 643.71,66.15 643.71,92.27C643.71,103.15 642.33,116.11 643.98,126.71C644.78,131.8 643.53,140.12 643.71,145.7C644.03,155.97 643.71,166.23 643.71,176.6C643.71,181.68 644.56,187.8 642.22,192.49C640.43,196.08 637.98,197.14 634.63,198.81C634.63,199.04 634.58,199.02 634.91,199.09C637.21,199.55 640.03,199.12 642.38,199.12C648.2,199.12 663.18,200.34 667.94,198.98C668.17,198.71 665.01,197.35 664.46,196.88C662.24,195.01 660.96,192.23 660.51,189.4C658.98,179.61 660.04,168.89 660.04,158.94C660.04,122 660.04,85.06 660.04,48.12C660.04,39.15 660.04,30.17 660.04,21.19C660.04,16.67 659.53,11.15 661.7,7.06C663.71,3.27 666.24,3.77 668.54,1.46C666.91,0.37 661.61,1.32 659.6,1.32C651.57,1.32 643.36,0.82 635.35,1.35C635.26,1.39 635.16,1.43 635.07,1.46Z M331.76,1.46C331.76,2.02 333.79,1.73 334.22,1.79C335.82,2.04 337.62,2.7 339.07,3.42C342.56,5.16 344.23,10.13 344.78,13.69C345.39,17.55 343.61,21.78 343.49,25.61C343.17,35.91 342.45,46.37 340.87,56.51C340.35,59.84 340.89,63.34 340.37,66.67C337.77,83.29 338.17,100.37 335.57,117C335.09,120.04 335.55,123.22 335.07,126.27C333.86,134 334.07,141.94 332.86,149.67C331.82,156.37 332.14,163.28 331.1,169.98C330.44,174.19 329.94,178.5 329.8,182.78C329.66,187.45 327.01,192.61 324.03,196.03C323.29,196.88 318.65,199.03 318.79,199.09C321.84,199.5 336.98,199.86 339.46,198.98C339.72,198.68 336.53,197.16 335.98,196.77C334.28,195.57 333.24,193.08 332.59,191.17C331.01,186.59 332.55,171.17 333.36,166C334.34,159.73 334.15,153.29 335.13,147.02C338.93,122.67 338.33,97.64 342.14,73.29C343.18,66.59 342.85,59.68 343.9,52.98C344.2,51.1 343.66,49.12 343.96,47.24C345.28,38.78 345.23,30.1 346.55,21.63C346.86,19.67 346.22,12.94 347.46,12.11C349.28,12.11 352.4,20.69 353.31,22.52C358.77,33.43 363.83,44.62 368.98,55.63C385.23,90.28 401.08,125.16 417.33,159.82C421.87,169.52 426,179.36 430.79,188.96C431.52,190.41 434.58,198.37 435.35,198.79C436.79,198.17 440.08,188.71 440.76,186.75C444.5,175.85 449.51,165.33 453.56,154.53C461.46,133.45 470.82,112.91 478.73,91.83C482.01,83.06 486.28,74.63 489.32,65.78C491.04,60.8 493.82,56.15 495.67,51.21C499.21,41.78 502.69,32.05 506.95,22.96C507.94,20.86 509.63,14.08 511.26,13C513.1,13 513.91,21.23 513.91,22.96C513.91,29.22 515.57,35.78 516.53,41.94C517.24,46.46 517.2,51.11 517.91,55.63C523.79,93.29 526.54,131.43 532.42,169.09C533.27,174.49 535.35,186.19 533.64,191.17C532.81,193.56 531.28,195.7 529.36,197.32C528.71,197.87 525.47,198.56 526.3,199.39C528.35,200.08 531.54,199.12 533.77,199.12C539.96,199.12 546.14,199.12 552.32,199.12C554.69,199.12 558.65,200.15 560.65,199.01C560.7,198.95 556.94,197.22 556.29,196.77C553.89,195.12 552.42,192.57 551.57,189.85C550.55,186.57 550.6,183.45 550.08,180.13C548.8,171.91 547.89,163.63 546.61,155.41C545.63,149.14 545.76,142.69 544.78,136.42C541.32,114.28 539.47,91.9 536.01,69.76C535.05,63.63 535.15,57.33 534.19,51.21C532.58,40.92 530.57,30.31 530.24,19.87C530.1,15.2 528.9,10.01 531.71,5.74C533.93,2.36 537.99,3.09 539.62,1.46C538.35,0.61 534.45,1.32 532.89,1.32C528.29,1.32 516.86,0.22 513.05,1.49C511.14,3.4 509.09,10.87 508.03,13.69C504.36,23.46 499.93,32.98 496.55,42.83C493.29,52.3 488.43,61.25 484.91,70.64C477.05,91.59 467.6,111.94 459.74,132.89C455.9,143.15 451.22,153.1 447.38,163.36C446.47,165.78 444.38,172.95 442.38,174.2C441.2,174.2 437.75,166.23 436.98,164.68C431.91,154.55 427.91,143.91 422.85,133.77C418.79,125.66 415.43,117.25 411.59,109.05C400.55,85.51 389.73,61.94 378.7,38.41C374.7,29.88 370.77,21.33 366.78,12.8C365.33,9.72 363.95,3.54 361.15,1.49C358.36,0.62 354.36,1.32 351.43,1.32C345.01,1.32 338.44,0.92 332.04,1.35C331.94,1.39 331.85,1.43 331.76,1.46Z M0.19,1.46C0.19,1.83 1.83,1.92 2.21,2.1C3.55,2.73 4.68,3.36 5.74,4.42C8.72,7.39 9.5,10.98 10.13,15.01C10.7,18.65 10.15,22.8 10.15,26.49C10.15,35.32 10.15,44.15 10.15,52.98C10.15,79.47 10.15,105.96 10.15,132.45C10.15,149.82 10.15,167.18 10.15,184.55C10.15,188.35 8.9,192.87 6.18,195.58C5.13,196.64 4.09,197.6 2.65,198.1C2.4,198.18 -0.17,198.66 0.91,199.09C4.94,199.63 9.47,199.12 13.69,199.12C22.81,199.12 31.94,199.12 41.06,199.12C75.18,199.12 106.89,200.3 136.42,179.99C191.06,142.43 192.11,56.36 137.31,18.68C113.5,2.31 83.87,1.32 56.07,1.32C37.67,1.32 19.28,1.32 0.88,1.32C0.37,1.36 0.6,1.3 0.19,1.46Z M26.93,3.26C29.48,2.46 33.44,3.53 36.2,3.53C43.02,3.53 49.69,3.09 56.51,3.09C79.87,3.09 105.61,3.96 124.5,19.9C134.97,28.72 143.48,39.16 149.34,51.66C166.08,87.37 161.16,142.6 132.45,171.3C107.73,196.02 85.87,197.35 52.98,197.35C46.36,197.35 39.74,197.35 33.11,197.35C31.02,197.35 27.63,197.95 26.21,196.03C24.94,191.96 26.05,183.75 26.05,179.25C26.05,166.74 26.05,154.23 26.05,141.72C26.05,109.79 26.05,77.85 26.05,45.92C26.05,36.35 26.05,26.78 26.05,17.22C26.05,13.28 25.04,7.72 26.21,3.97C26.62,3.42 26.38,3.66 26.93,3.26Z M877.43,1.05C877.29,1.39 880.62,3.34 881.24,3.97C882.95,5.74 882.77,8.49 881.79,10.6C878.43,17.76 869.96,23.2 864.46,28.7C850.03,43.13 834.73,56.66 820.31,71.08C815.59,75.8 807.8,84.62 802.65,88.16C801.13,89.21 796.24,92.96 796.61,94.92C798.08,98.09 802.55,100.61 804.83,103.31C811.27,110.94 818.7,117.75 825.14,125.39C839.64,142.57 856.11,158.09 870.61,175.28C876.33,182.05 882.12,188.77 888.3,195.14C889.53,196.41 890.34,197.92 891.83,198.95C896.23,200.32 908.28,199.12 913.47,199.12C915.75,199.12 918.91,200.15 920.92,199.01C921.2,198.68 917.99,197.74 917.44,197.46C914.88,196.18 912.17,195.23 909.93,193.35C903.6,188 898.54,181.54 892.72,175.72C887.01,170.01 881.55,163.78 876.35,157.62C870.44,150.61 863.72,144.31 857.81,137.31C849.29,127.21 839.4,118.26 830.88,108.17C826.11,102.52 820.67,97.05 815.45,91.83C813.92,90.3 809.85,86.93 809.71,84.77C809.87,82.28 814.23,79.81 815.89,78.15C822.17,71.87 828.55,65.29 835.32,59.58C851.59,45.84 865.41,29.21 881.68,15.48C886.49,11.42 892.52,6.78 898.45,4.55C900.15,3.92 907.46,2.28 908.28,1.46C906.79,0.47 902.05,1.32 900.22,1.32C892.74,1.32 885.12,0.91 877.73,0.91C877.63,0.96 877.53,1 877.43,1.05Z M252.1,24.45C253.52,25.49 252.98,27.99 252.98,29.58C252.98,34.88 250.34,41.44 247.54,45.92C246.87,46.99 243.53,51.14 244.32,52.24C246.34,51.87 251.15,42.74 252.21,40.62C256.91,31.21 266.59,6.31 251.21,1.02C239.6,-2.97 232.66,11.33 238.55,20.31C243.18,27.37 247.7,23.07 252.1,24.45Z M1059.3,0.17C1056.69,3.35 1054.36,11.4 1052.84,15.45C1048.81,26.2 1043.61,36.54 1039.6,47.24C1036.91,54.42 1033.29,61.26 1030.6,68.43C1019.54,97.93 1005.62,126.36 994.56,155.85C990.48,166.75 985.67,180.75 979.11,190.29C977.23,193.02 974.69,195.46 971.74,197.02C971.05,197.39 967.08,198.45 967.08,198.98C968.75,199.65 983.19,199.49 985.43,199.14C986.71,198.94 990.01,200.5 990.84,199.12C989.64,196.91 985.01,197.75 984.13,190.73C983.39,184.77 987.93,176.57 990.4,171.3C993.11,165.52 994.83,159.04 998.37,153.64C1004.55,144.23 1013.96,137.72 1023.84,132.78C1025.72,131.84 1028.08,131.66 1030.02,130.99C1046.17,125.44 1066.02,127.82 1081.24,135.43C1104.26,146.94 1111.18,162.93 1119.07,185.87C1119.98,188.54 1120.24,192.84 1118.29,195.14C1117.46,196.13 1112.86,199.2 1113.05,199.39C1115.1,200.08 1118.3,199.12 1120.53,199.12C1127.01,199.12 1133.48,199.12 1139.96,199.12C1141.4,199.12 1147.28,200.34 1148.01,199.12C1147.29,197.79 1144.27,197.47 1143.05,196.44C1140.68,194.44 1138.85,191.71 1137.47,188.96C1132.52,179.06 1129.73,167.96 1124.78,158.06C1119.79,148.08 1115.92,137.16 1112,126.71C1106.89,113.09 1100.16,100.13 1095.06,86.53C1090.5,74.39 1085.75,62.08 1080.24,50.33C1077.03,43.47 1075.18,35.9 1071.8,29.14C1069.38,24.29 1066.96,18.87 1065.34,13.69C1064.23,10.11 1062.71,6.44 1061.04,3.09C1060.66,2.33 1060.4,0.38 1059.6,0.06C1059.5,0.09 1059.4,0.13 1059.3,0.17Z M1052.1,24.34C1053.98,24.81 1054.31,28.05 1055.08,29.58C1057.96,35.35 1060.12,41.64 1062.39,47.68C1066.75,59.32 1072.32,70.48 1076.68,82.12C1080.55,92.42 1084.46,103.18 1089.07,113.02C1092,119.27 1094.6,125.96 1096.83,132.45C1097.34,133.94 1100.03,137.39 1098.45,138.44C1096.71,138.44 1094.05,135.33 1092.72,134.24C1088.9,131.15 1084.3,129.1 1079.91,127.04C1068.48,121.68 1054.92,121.76 1042.83,123.65C1032.22,125.31 1020.24,131.01 1011.92,137.78C1010.4,139.01 1001.92,146.75 1001.35,146.52C1000.42,145.22 1003.28,141.01 1003.84,139.51C1006.73,131.81 1009.86,124.01 1013.36,116.56C1019.16,104.18 1024.46,90.1 1029.28,77.26C1035.88,59.66 1044.33,42.77 1050.94,25.17C1051.29,24.68 1051.51,24.48 1052.1,24.34Z"/></svg>
+    <div class="nav"><span>Buscar</span><span>Bolsa (0)</span></div>
+  </div>
+
+  <div class="canto">Temporada 01 &nbsp;—&nbsp; Bogotá / Madrid</div>
+
+  <h1 class="titular"><span style="animation-delay:0.00s">L</span><span style="animation-delay:0.06s">A</span><span style="animation-delay:0.12s">&nbsp;</span><span style="animation-delay:0.18s">R</span><span style="animation-delay:0.24s">O</span><span style="animation-delay:0.30s">P</span><span style="animation-delay:0.36s">A</span><em><span style="animation-delay:0.50s">s</span><span style="animation-delay:0.56s">e</span><span style="animation-delay:0.62s">&nbsp;</span><span style="animation-delay:0.68s">m</span><span style="animation-delay:0.74s">u</span><span style="animation-delay:0.80s">e</span><span style="animation-delay:0.86s">v</span><span style="animation-delay:0.92s">e</span></em></h1>
+
+  <div class="cta">
+    <span class="boton"><em>Ver la coleccion</em></span>
+    <p class="sub">Doce piezas. Se fotografian en movimiento porque asi es como se van a usar.</p>
+  </div>
+
+  <div class="pasarela">
+    <div class="look" style="animation-delay:-0s"><img src="lookbook-ella.jpg" alt=""><span class="nlook">01</span><b>Abrigo largo</b></div>
+    <div class="look" style="animation-delay:-3s"><img src="blazer-negro.jpg" alt=""><span class="nlook">02</span><b>Blazer negro</b></div>
+    <div class="look" style="animation-delay:-6s"><img src="lookbook-el.jpg" alt=""><span class="nlook">03</span><b>Punto grueso</b></div>
+    <div class="look" style="animation-delay:-9s"><img src="blazer-mujer.jpg" alt=""><span class="nlook">04</span><b>Sastre crudo</b></div>
+    <div class="look" style="animation-delay:-12s"><img src="camisa-burdeos.jpg" alt=""><span class="nlook">05</span><b>Camisa seda</b></div>
+    <div class="look" style="animation-delay:-15s"><img src="hero-el.jpg" alt=""><span class="nlook">06</span><b>Cuello alto</b></div>
+  </div>
+
+  <div class="grano"></div>
+</div>
+</x-dc>
+</body>
+</html>

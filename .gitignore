@@ -74,3 +74,10 @@ seguimiento/respaldo-*.sql.gz
 seguimiento/punto-de-retoma/*.gz
 __pycache__/
 *.pyc
+
+# El lienzo montado son 3 MB con las fotos dentro: se regenera desde
+# brand/canvas2/generar.py + canvas.json cuando haga falta.
+brand/canvas2/dmika-*.html
+brand/canvas2/_ver-*.html
+brand/canvas2/_shot-*.png
+brand/canvas2/_s-*.png

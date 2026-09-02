@@ -1,0 +1,53 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html",      "x": 0,    "y": 0,    "w": 1440, "h": 1150, "title": "A · Pasarela" },
+    { "file": "Atelier.dc.html",   "x": 1600, "y": 0,    "w": 1440, "h": 1150, "title": "B · Atelier" },
+    { "file": "Editorial.dc.html", "x": 0,    "y": 1460, "w": 1440, "h": 1150, "title": "C · Editorial" },
+    { "file": "Vitrina.dc.html",   "x": 1600, "y": 1460, "w": 1440, "h": 1150, "title": "D · Vitrina", "is_interactive": true }
+  ],
+  "annotations": [
+    {
+      "id": "como-elegir",
+      "x": 0,
+      "y": -420,
+      "w": 640,
+      "text": "CUATRO DIRECCIONES — ELIGE UNA\n\nSon cuatro apuestas distintas, no cuatro tonos de la misma. Cada una lleva su motivo y su pega de verdad: si solo defendiera mi favorita no sería una elección.\n\nLo que ves es la portada de cada dirección a tamaño real, con su movimiento puesto. El logo es el tuyo, ya vectorizado.\n\nDime la letra y la construyo entera: portada, tienda, ficha y pago con ese lenguaje."
+    },
+    {
+      "id": "nota-a",
+      "x": 0,
+      "y": -230,
+      "w": 640,
+      "text": "A · PASARELA — la tienda es una película\n\nNegro, foto a sangre y un titular enorme que se funde con la imagen (no va encima: se recorta contra ella). Abajo desfila una tira de looks que no para. Es el lenguaje de Saint Laurent o Celine.\n\nA FAVOR: es la más impactante de las cuatro. Entras y sabes que esto no es una tienda cualquiera.\n\nEN CONTRA: el negro y la foto grande piden fotografía buena de verdad. Con fotos de proveedor se cae. Y en móvil hay que rehacer el titular."
+    },
+    {
+      "id": "nota-b",
+      "x": 1600,
+      "y": -230,
+      "w": 640,
+      "text": "B · ATELIER — la tienda es un espacio\n\nLas prendas están colgadas a distintas profundidades sobre un suelo en fuga. Al mover el ratón las cercanas se desplazan más que las lejanas, como la vista de verdad. Es lo más cercano a lo que pedías con «realidad virtual» sin pedirle gafas a nadie.\n\nA FAVOR: nadie en tu competencia tiene esto. Es memorable y se comparte.\n\nEN CONTRA: es la más cara de construir y la más frágil en móvil, donde el 3D pesa. Y enseña pocas prendas a la vez: no es una máquina de vender por sí sola."
+    },
+    {
+      "id": "nota-c",
+      "x": 0,
+      "y": 1230,
+      "w": 640,
+      "text": "C · EDITORIAL — la tienda es una revista\n\nCollage: fotos giradas y superpuestas, el titular pisando las imágenes, un número de portada gigante saliéndose por el borde, banda deslizante en diagonal y grano. Rompe la retícula a propósito.\n\nA FAVOR: es la que más «marca de moda» dice con menos medios. Aguanta bien fotos irregulares, porque el desorden es el estilo.\n\nEN CONTRA: es la más difícil de mantener — cada pieza nueva hay que colocarla a mano. Y el collage puede tapar producto si se va de la mano."
+    },
+    {
+      "id": "nota-d",
+      "x": 1600,
+      "y": 1230,
+      "w": 640,
+      "text": "D · VITRINA — la tienda vende\n\nLa prenda ocupa media pantalla y toda la decisión de compra cabe sin bajar: color, talla, precio, promesa de contraentrega. La lupa muestra el tejido de cerca, que es la duda real de quien compra ropa por internet.\n\nESTA FUNCIONA DE VERDAD: pulsa los colores y las tallas y responde.\n\nA FAVOR: es la que más vende de las cuatro, sin discusión.\n\nEN CONTRA: es la menos espectacular. Es excelente oficio, no es un golpe en la mesa."
+    },
+    {
+      "id": "nota-mezcla",
+      "x": 3200,
+      "y": 0,
+      "w": 560,
+      "text": "SE PUEDEN MEZCLAR\n\nNo tienen que ser excluyentes, y probablemente la buena respuesta sea combinar:\n\n· A o C para la PORTADA, que es donde hay que impresionar.\n· D para la FICHA DE PRODUCTO, que es donde hay que vender.\n· B como una sección aparte — un «atelier» al que se entra desde el menú.\n\nSi te gusta esa idea, dímelo y armo esa combinación."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}
