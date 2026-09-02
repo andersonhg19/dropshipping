@@ -1,0 +1,143 @@
+/* ==========================================================================
+   D'MIKA — Capa de experiencia
+   --------------------------------------------------------------------------
+   El soporte visual de assets/js/experiencia.js, mas lo que se puede hacer
+   solo con CSS: la rejilla que revela la segunda foto, el revelado por scroll
+   y las transiciones entre paginas.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. LA ENTRADA
+   ========================================================================== */
+
+.dm-entrada {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  background: var(--dm-marfil, #F4EFE7);
+  /* La cortina sube; no se desvanece. Un fundido a blanco es lo que hace
+     cualquiera; una cortina que se levanta se lee como telon. */
+  transition: transform 1s cubic-bezier(.76, 0, .24, 1),
+              opacity .5s ease .5s;
+}
+
+.dm-entrada.is-fuera {
+  transform: translateY(-101%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dm-entrada__marca { width: clamp(96px, 13vw, 176px); height: auto; display: block; }
+
+/* El contorno se dibuja: JS pone dasharray y lleva el desfase a cero. */
+.dm-entrada__trazo {
+  fill: none;
+  stroke: var(--dm-negro, #171717);
+  stroke-width: 5;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.dm-entrada__trazo--oro { stroke: var(--dm-oro, #B99A5E); }
+
+/* El relleno entra cuando el contorno ya esta hecho. */
+.dm-entrada__relleno {
+  opacity: 0;
+  transition: opacity .55s ease;
+}
+.dm-entrada.is-lleno .dm-entrada__relleno { opacity: 1; }
+.dm-entrada.is-lleno .dm-entrada__trazo { opacity: 0; transition: opacity .55s ease; }
+
+.dm-entrada__pie {
+  position: absolute;
+  bottom: 42px;
+  left: 0; right: 0;
+  text-align: center;
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 9px;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  color: var(--vn-brass, #836838);
+  opacity: 0;
+  animation: dm-ent-pie .8s ease .9s forwards;
+}
+@keyframes dm-ent-pie { to { opacity: 1; } }
+
+/* Mientras la cortina esta puesta, la pagina no se desplaza: si se pudiera,
+   se llegaria a mitad de la tienda con el telon todavia bajado. */
+html.dm-entrando { overflow: hidden; }
+
+/* Sin la clase de JS la cortina no existe: si el script no carga, nadie se
+   queda mirando un marfil vacio. */
+@media (prefers-reduced-motion: reduce) {
+  .dm-entrada { display: none; }
+}
+
+/* ==========================================================================
+   2. LA REJILLA Y LAS TRANSICIONES — YA ESTABAN
+   --------------------------------------------------------------------------
+   La segunda foto al pasar el raton vive en editorial.css y en motion.css, y
+   las transiciones entre paginas con `vn-foto-{id}` tambien. Lo que habia
+   escrito aqui era un duplicado que se habria peleado con ellas.
+   ========================================================================== */
+
+/* ==========================================================================
+   3. TEMPERATURA
+   --------------------------------------------------------------------------
+   El fondo del documento sigue a la seccion que se esta mirando. La
+   transicion es larguisima a proposito: no se ve cambiar, se nota que la
+   pagina va hacia algun sitio.
+   ========================================================================== */
+
+:root { --dm-tono: var(--dm-marfil, #F4EFE7); }
+
+/* `html body.home` y no `body.home` a secas.
+   WordPress, con el Fondo Personalizado activo, inyecta en el <head> un
+   <style> con `body.custom-background { background-color: ... }`. Un estilo en
+   linea en la cabecera va DESPUES de todas las hojas encoladas, y como su
+   especificidad es la misma que la de `body.home` (un elemento y una clase),
+   ganaba por orden. Se comprobo con el sondeo: la variable --dm-tono cambiaba
+   bien a #0B0B0B, pero el fondo se quedaba en marfil.
+   Anadir `html` delante sube la especificidad lo justo, sin un !important. */
+html body.home {
+  background-color: var(--dm-tono);
+  transition: background-color 1.4s ease;
+}
+
+/* ==========================================================================
+   5. IMANES
+   ========================================================================== */
+
+.dm-puerta,
+.vn-btn,
+.single_add_to_cart_button,
+.dm-cab__marca {
+  /* `translate` y no `transform`: experiencia.js escribe `translate` en cada
+     cuadro, y varios de estos elementos ya usan `transform` para otras cosas.
+     Son propiedades distintas y se componen, asi que no se pisan. */
+  transition: translate .32s cubic-bezier(.16, 1, .3, 1);
+}
+
+/* Al pulsar, el iman suelta y el boton vuelve a su sitio de golpe: da la
+   sensacion de que el clic "engancha". */
+.dm-puerta:active,
+.vn-btn:active,
+.single_add_to_cart_button:active { transition-duration: .06s; }
+
+/* ==========================================================================
+   6. DESCIFRADO
+   --------------------------------------------------------------------------
+   Mientras las letras rotan, la caja no puede cambiar de ancho o el bloque
+   entero da saltos. Tabular + un ancho minimo lo evitan.
+   ========================================================================== */
+
+.vn-duo__eyebrow,
+.vn-strip__eyebrow,
+.vn-editorial__eyebrow,
+.vn-section__eyebrow,
+.dm-hero__canto,
+.dm-puerta__c {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

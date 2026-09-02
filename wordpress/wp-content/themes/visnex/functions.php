@@ -164,6 +164,24 @@ add_action('wp_enqueue_scripts', function () {
         true
     );
 
+    // La capa de experiencia cierra la cascada: entrada, rejilla viva,
+    // transiciones entre paginas e imanes. Va en TODAS las paginas porque las
+    // transiciones necesitan estar en las dos puntas del salto — si la ficha
+    // no la lleva, la foto sale de la rejilla y no aterriza en ningun sitio.
+    $verExp = file_exists($path . 'experiencia.css')
+        ? (string) filemtime($path . 'experiencia.css')
+        : VISNEX_VERSION;
+    wp_enqueue_style('visnex-experiencia', $dir . 'experiencia.css', ['visnex-inmersivo'], $verExp);
+
+    $jsExp = get_stylesheet_directory() . '/assets/js/experiencia.js';
+    wp_enqueue_script(
+        'visnex-experiencia',
+        get_stylesheet_directory_uri() . '/assets/js/experiencia.js',
+        [],
+        file_exists($jsExp) ? (string) filemtime($jsExp) : VISNEX_VERSION,
+        true
+    );
+
     // EL HERO EN WEBGL, RETIRADO.
     //
     // Habia aqui una capa que convertia las dos fotos del hero en una
@@ -421,6 +439,7 @@ require_once get_stylesheet_directory() . '/inc/marca.php';
 require_once get_stylesheet_directory() . '/inc/cabecera.php';
 require_once get_stylesheet_directory() . '/inc/ficha-producto.php';
 require_once get_stylesheet_directory() . '/inc/hero-cine.php';
+require_once get_stylesheet_directory() . '/inc/experiencia.php';
 require_once get_stylesheet_directory() . '/inc/home-sections.php';
 require_once get_stylesheet_directory() . '/inc/shop-filters.php';
 require_once get_stylesheet_directory() . '/inc/densidad.php';
