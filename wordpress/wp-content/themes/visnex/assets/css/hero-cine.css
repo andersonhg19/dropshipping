@@ -1,0 +1,386 @@
+/* ==========================================================================
+   D'MIKA — El hero, en clave de cine
+   --------------------------------------------------------------------------
+   La idea de fondo: la pantalla completa ES la foto. No hay una foto DENTRO de
+   una pagina; hay una pagina que ocurre encima de una imagen.
+
+   Y el titular no va sobre la imagen: se recorta contra ella. Ese es el gesto
+   que separa esto de "una web con una foto grande".
+   ========================================================================== */
+
+.dm-hero {
+  position: relative;
+  min-height: 100svh;              /* svh y no vh: en movil, vh cuenta la barra
+                                      del navegador y el hero sale cortado */
+  overflow: hidden;
+  background: #0B0B0B;
+  color: var(--dm-marfil, #F4EFE7);
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;              /* el blend del titular se queda dentro */
+}
+
+/* --------------------------------------------------------------------------
+   1. EL FONDO
+   -------------------------------------------------------------------------- */
+
+.dm-hero__fondo { position: absolute; inset: 0; z-index: 0; }
+
+.dm-hero__capa {
+  position: absolute;
+  inset: 0;
+  /* Cada capa respira a su ritmo. No es un zoom que se note: son 1,7 px por
+     segundo. Lo que se percibe no es el movimiento, es que la imagen esta
+     viva en vez de clavada. */
+  animation: dm-respirar 30s ease-in-out infinite alternate;
+}
+
+.dm-hero__capa--b {
+  /* La segunda va encima y se turna con la primera. Como la de abajo nunca se
+     oculta, en ningun momento hay pantalla sin imagen. */
+  animation: dm-respirar 30s ease-in-out infinite alternate,
+             dm-turno 16s ease-in-out infinite;
+}
+
+@keyframes dm-turno {
+  0%, 42%   { opacity: 1; }
+  50%, 92%  { opacity: 0; }
+  100%      { opacity: 1; }
+}
+
+@keyframes dm-respirar {
+  from { transform: scale(1.06) translate3d(-0.8%, 0, 0); }
+  to   { transform: scale(1.15) translate3d(0.8%, 0, 0); }
+}
+
+.dm-hero__capa .vn-pic,
+.dm-hero__capa picture { display: block; width: 100%; height: 100%; }
+
+.dm-hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* El sujeto tiene que caer en el tercio DERECHO, que es el hueco que deja el
+     titular. Y para eso el valor va BAJO, no alto: `object-position` dice que
+     punto de la FOTO se alinea con ese punto de la CAJA, asi que al 100% se
+     ensena el lado derecho de la foto y el sujeto se desplaza hacia la
+     izquierda. Justo lo contrario de lo que hace falta.
+     Puesto a 68% la cara acababa detras de las letras. A 26% la foto se corre
+     a la derecha y el titular se queda con el fondo limpio. */
+  object-position: 26% 24%;
+  display: block;
+}
+
+/* El velo hace tres cosas a la vez: da contraste a la cabecera, hunde el pie
+   para que la tira se lea, y oscurece la izquierda, que es donde cae el
+   titular. */
+.dm-hero__velo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(11,11,11,.78) 0%, rgba(11,11,11,.10) 30%,
+                            rgba(11,11,11,.50) 70%, #0B0B0B 100%),
+    /* La sombra lateral llegaba al 52% y el titular termina cerca del 55%: la
+       ultima palabra caia ya sobre cielo claro. Con `difference`, el oro sobre
+       claro da un azul sucio en vez de un dorado. Se alarga hasta el 74% para
+       que TODO el titular tenga fondo oscuro y el blend devuelva luz. */
+    linear-gradient(90deg,  rgba(11,11,11,.80) 0%, rgba(11,11,11,.55) 38%,
+                            rgba(11,11,11,.22) 60%, transparent 82%),
+    /* Y una sombra suave centrada donde cae el bloque de texto. */
+    radial-gradient(58% 46% at 26% 45%, rgba(11,11,11,.42) 0%, transparent 100%);
+}
+
+/* --------------------------------------------------------------------------
+   2. EL TITULAR
+   -------------------------------------------------------------------------- */
+
+.dm-hero__centro {
+  position: relative;
+  z-index: 3;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px clamp(20px, 5vw, 72px) 0;
+  max-width: 1180px;
+}
+
+.dm-hero__titular {
+  margin: 0;
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-weight: 400;
+  /* clamp con vw: el titular ocupa la misma PROPORCION de pantalla en un movil
+     que en un monitor. Un tamano fijo se ve enorme en uno y ridiculo en otro. */
+  font-size: clamp(3.1rem, 11.2vw, 11rem);
+  line-height: .82;
+  letter-spacing: -.035em;
+  color: var(--dm-marfil, #F4EFE7);
+  /* EL GESTO. `difference` invierte el color de la foto que hay debajo: sobre
+     la parte clara el tipo sale oscuro, sobre la oscura sale claro. Nunca se
+     pierde, y no necesita ni caja ni sombra para leerse. */
+  mix-blend-mode: difference;
+  text-wrap: balance;
+}
+
+.dm-hero__linea { display: block; }
+
+.dm-hero__linea--it {
+  font-style: italic;
+  color: var(--dm-oro, #B99A5E);
+  /* La segunda linea entra por la derecha: la diagonal que forman las dos es
+     lo que impide que el bloque se lea como un parrafo centrado. */
+  margin-left: clamp(0px, 9vw, 150px);
+}
+
+.dm-hero__pal {
+  display: inline-block;
+  opacity: 0;
+  animation: dm-subir 1.15s cubic-bezier(.16, 1, .3, 1) var(--d, 0s) forwards;
+}
+
+@keyframes dm-subir {
+  from { opacity: 0; transform: translateY(.42em) rotate(2.4deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+.dm-hero__bajada {
+  max-width: 34ch;
+  margin: clamp(20px, 3vw, 34px) 0 0;
+  font-size: clamp(.82rem, 1.1vw, .95rem);
+  line-height: 1.8;
+  color: rgba(244, 239, 231, .66);
+}
+
+/* --------------------------------------------------------------------------
+   3. LAS PUERTAS
+   --------------------------------------------------------------------------
+   Ella / El / Todo. Con la cuenta de prendas debajo, que es la senal de que
+   detras hay catalogo y no dos fotos.
+   -------------------------------------------------------------------------- */
+
+.dm-hero__puertas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: clamp(26px, 4vw, 44px);
+}
+
+.dm-puerta {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 168px;
+  padding: 17px 26px;
+  border: 1px solid rgba(185, 154, 94, .55);
+  text-decoration: none;
+  overflow: hidden;
+  transition: color .4s var(--vn-ease-lux, cubic-bezier(.16, 1, .3, 1)),
+              border-color .4s ease;
+}
+
+/* El relleno sube desde abajo al pasar por encima. Una transicion de color de
+   fondo no da direccion; esta si, y de paso indica "hacia dentro". */
+.dm-puerta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--dm-oro, #B99A5E);
+  transform: translateY(101%);
+  transition: transform .5s var(--vn-ease-lux, cubic-bezier(.16, 1, .3, 1));
+}
+
+.dm-puerta:hover::after,
+.dm-puerta:focus-visible::after { transform: none; }
+
+.dm-puerta:hover,
+.dm-puerta:focus-visible { color: #0B0B0B; border-color: var(--dm-oro, #B99A5E); }
+
+.dm-puerta__n,
+.dm-puerta__c { position: relative; z-index: 1; }
+
+.dm-puerta__n {
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: 1.65rem;
+  font-style: italic;
+  line-height: 1;
+  color: inherit;
+}
+.dm-puerta:not(:hover) .dm-puerta__n { color: var(--dm-marfil, #F4EFE7); }
+
+.dm-puerta__c {
+  font-size: 9.5px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: inherit;
+}
+.dm-puerta:not(:hover) .dm-puerta__c { color: var(--dm-oro, #B99A5E); }
+
+/* --------------------------------------------------------------------------
+   4. EL CANTO
+   -------------------------------------------------------------------------- */
+
+.dm-hero__canto {
+  position: absolute;
+  right: 26px;
+  top: 132px;
+  z-index: 4;
+  writing-mode: vertical-rl;
+  font-size: 9.5px;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--dm-oro, #B99A5E);
+}
+
+/* --------------------------------------------------------------------------
+   5. LA PASARELA
+   -------------------------------------------------------------------------- */
+
+.dm-hero__pasarela {
+  position: relative;
+  z-index: 3;
+  /* Alto FIJO, y las fotos se ajustan a el.
+     Antes cada foto media 3/4 de su ancho (208 -> 277 px de alto) y la tira
+     desbordaba el hero por abajo: los nombres de las prendas quedaban
+     cortados contra el borde de la pantalla. Mandando el alto, el ancho sale
+     solo y la tira siempre cabe. */
+  height: clamp(150px, 21vh, 214px);
+  flex: 0 0 auto;
+  padding: 0 0 22px;
+  overflow: hidden;
+  /* Se difumina por los dos lados: la tira parece seguir mas alla de la
+     pantalla en vez de cortarse en seco contra el borde. */
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+
+.dm-tira {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  gap: 16px;
+  width: max-content;
+  padding-left: 16px;
+  animation: dm-desfilar 62s linear infinite;
+}
+
+/* Se para al pasar por encima: si la tira sigue moviendose no se puede hacer
+   clic en nada. */
+.dm-hero__pasarela:hover .dm-tira,
+.dm-hero__pasarela:focus-within .dm-tira { animation-play-state: paused; }
+
+@keyframes dm-desfilar {
+  from { transform: translate3d(0, 0, 0); }
+  /* -50% justo: la lista va duplicada, asi que al llegar a la mitad el cuadro
+      es identico al inicial y el salto no se ve. */
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+.dm-look {
+  position: relative;
+  /* El alto lo pone la tira; el ancho sale de la proporcion 3:4, que es la
+     misma que usa la rejilla de la tienda. */
+  height: 100%;
+  aspect-ratio: 3 / 4;
+  flex: 0 0 auto;
+  overflow: hidden;
+  text-decoration: none;
+  /* En gris por defecto y en color al pasar: la tira aporta ritmo sin pelearse
+     con la foto del fondo, y el color premia el gesto de mirar. */
+  filter: grayscale(1) contrast(1.05);
+  transition: filter .55s ease, transform .55s var(--vn-ease-lux, cubic-bezier(.16, 1, .3, 1));
+}
+
+.dm-look:hover,
+.dm-look:focus-visible { filter: none; transform: translateY(-12px); }
+
+.dm-look img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.dm-look__n {
+  position: absolute;
+  left: 10px; top: 8px;
+  font-size: 9px;
+  letter-spacing: .2em;
+  color: var(--dm-oro, #B99A5E);
+}
+
+.dm-look__t {
+  position: absolute;
+  left: 10px; right: 10px; bottom: 9px;
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: .92rem;
+  color: #fff;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .75);
+  /* Un nombre largo no puede empujar la caja ni partirse en tres lineas. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   6. GRANO
+   --------------------------------------------------------------------------
+   Rompe las bandas que salen en los degradados grandes sobre negro y da
+   textura de pelicula. Va inline como data-URI: una peticion menos.
+   -------------------------------------------------------------------------- */
+
+.dm-hero__grano {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: .055;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
+}
+
+/* --------------------------------------------------------------------------
+   7. MOVIL
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 860px) {
+  .dm-hero__centro { padding-top: 96px; }
+  .dm-hero__canto { display: none; }        /* no hay canto libre a 390 px */
+  .dm-hero__linea--it { margin-left: 0; }   /* la diagonal no cabe */
+  .dm-puerta { min-width: 0; flex: 1 1 44%; padding: 14px 16px; }
+  .dm-puerta--todo { flex-basis: 100%; }
+  .dm-puerta__n { font-size: 1.35rem; }
+  /* En vertical la foto se ve muy ampliada y el sujeto queda alto. Bajando el
+     encuadre, la cara se va por debajo de la banda del titular. */
+  .dm-hero__img { object-position: 50% 34%; }
+
+  .dm-hero__velo {
+    /* En vertical el degradado lateral no sirve: el titular ocupa todo el
+       ancho, asi que el contraste tiene que venir de arriba abajo.
+       Y hace falta MAS que en escritorio: a 390 px el titular cae encima del
+       sujeto, no a su lado, asi que la banda donde vive el texto -del 30% al
+       62% de alto- se oscurece de verdad. Medido antes: 132/255 de luminancia
+       bajo el titular, que para texto claro es poco. */
+    background: linear-gradient(180deg,
+                  rgba(11,11,11,.86)  0%,
+                  rgba(11,11,11,.46) 24%,
+                  rgba(11,11,11,.66) 38%,
+                  rgba(11,11,11,.68) 62%,
+                  rgba(11,11,11,.52) 76%,
+                  #0B0B0B 100%);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   8. SIN MOVIMIENTO
+   --------------------------------------------------------------------------
+   Se apaga TODO lo que se mueve solo. El hero se queda quieto y completo: el
+   titular visible, una foto fija y la tira parada pero navegable.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .dm-hero__capa,
+  .dm-hero__capa--b,
+  .dm-tira { animation: none; }
+  .dm-hero__capa--b { opacity: 0; }
+  .dm-hero__pal { opacity: 1; animation: none; }
+  .dm-hero__pasarela { overflow-x: auto; }
+  .dm-tira { width: auto; }
+  .dm-look { filter: none; }
+}

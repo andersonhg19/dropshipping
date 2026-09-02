@@ -245,6 +245,20 @@ function visnex_text_slots(): array
         // Portada
         'hero_eyebrow'  => ['label' => 'Antetítulo',         'default' => 'Clothing for every you', 'section' => 'visnex_hero'],
         'hero_titulo'   => ['label' => 'Título',             'default' => 'Ropa que se siente tuya', 'section' => 'visnex_hero'],
+        /*
+         * El titular del hero va en DOS campos y no en uno.
+         *
+         * No es capricho de maquetacion: las dos lineas se pintan distinto
+         * -la segunda en cursiva, en oro y desplazada a la derecha- y entran
+         * escalonadas. Con un solo campo habria que adivinar donde parte, y
+         * partir un titular por el sitio equivocado es lo que hace que una
+         * portada se vea amateur. Asi el corte lo decide quien escribe.
+         *
+         * hero_titulo (el de arriba) se conserva porque lo usan la ficha y las
+         * etiquetas de compartir, donde el titular va seguido.
+         */
+        'hero_titulo_1' => ['label' => 'Título · primera línea',  'default' => 'La ropa', 'section' => 'visnex_hero'],
+        'hero_titulo_2' => ['label' => 'Título · segunda línea (cursiva en oro)', 'default' => 'se siente tuya', 'section' => 'visnex_hero'],
         'hero_texto'    => ['label' => 'Descripción',        'default' => 'Prendas de algodón pensadas para el día a día. Buen corte, buen tejido y el mismo cuidado en cada pieza.', 'section' => 'visnex_hero'],
         'hero_ella_label' => ['label' => 'Etiqueta del panel Ella', 'default' => 'Ella', 'section' => 'visnex_hero'],
         'hero_el_label' => ['label' => 'Etiqueta del panel Él', 'default' => 'Él', 'section' => 'visnex_hero'],

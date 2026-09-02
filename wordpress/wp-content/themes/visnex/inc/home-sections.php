@@ -130,44 +130,21 @@ add_filter('the_content', function ($content) {
     ob_start();
     ?>
 
-    <!-- ================= PORTADA: DOS PANELES ================= -->
+    <!-- ================= PORTADA: HERO DE CINE ================= -->
     <?php
     /*
-     * Un hero partido en vez de una foto con el texto centrado encima.
+     * El hero vive en inc/hero-cine.php.
      *
-     * La razón es de negocio, no estética: el catálogo tiene 94 prendas de
-     * mujer y 60 de hombre, y la portada anterior sólo enseñaba mujer. Quien
-     * entraba buscando ropa de hombre no tenía ninguna señal de que la hubiera
-     * hasta llegar al menú. Con dos paneles, la primera pantalla ya contesta
-     * "¿esto es para mí?" y da el camino de entrada en un solo clic.
+     * Aqui habia dos paneles con una tarjeta blanca centrada encima de la
+     * costura. Vendia, pero se veia como cualquier tienda, y el cliente lo
+     * dijo cuatro veces con la misma palabra. Lo que se conserva del disenno
+     * anterior es lo que era NEGOCIO y no estetica: la portada tiene que
+     * contestar "esto es para mi" en la primera pantalla y dar la entrada en
+     * un clic, porque hay 94 prendas de mujer y 60 de hombre y quien busca
+     * hombre necesita la senal antes del menu. Eso son ahora las tres puertas.
      */
+    dm_hero_cine();
     ?>
-    <section class="vn-split" aria-label="Colecciones destacadas">
-        <a class="vn-split__panel vn-split__panel--ella" href="<?php echo esc_url(visnex_cat_url('mujer')); ?>">
-            <?php visnex_picture('hero_ella', 'vn-split__img', true, '(max-width: 900px) 100vw, 50vw'); ?>
-            <span class="vn-split__scrim" aria-hidden="true"></span>
-            <span class="vn-split__label">
-                <span class="vn-split__name"><?php echo esc_html(visnex_text('hero_ella_label')); ?></span>
-                <span class="vn-split__cta">Entrar<span aria-hidden="true"> &rarr;</span></span>
-            </span>
-        </a>
-
-        <a class="vn-split__panel vn-split__panel--el" href="<?php echo esc_url(visnex_cat_url('hombre')); ?>">
-            <?php visnex_picture('hero_el', 'vn-split__img', true, '(max-width: 900px) 100vw, 50vw'); ?>
-            <span class="vn-split__scrim" aria-hidden="true"></span>
-            <span class="vn-split__label">
-                <span class="vn-split__name"><?php echo esc_html(visnex_text('hero_el_label')); ?></span>
-                <span class="vn-split__cta">Entrar<span aria-hidden="true"> &rarr;</span></span>
-            </span>
-        </a>
-
-        <div class="vn-split__statement">
-            <span class="vn-split__eyebrow"><?php echo esc_html(visnex_text('hero_eyebrow')); ?></span>
-            <h1 class="vn-split__title"><?php echo esc_html(visnex_text('hero_titulo')); ?></h1>
-            <p class="vn-split__text"><?php echo esc_html(visnex_text('hero_texto')); ?></p>
-            <a href="<?php echo esc_url(wc_get_page_permalink('shop')); ?>" class="vn-btn vn-btn--solid vn-btn--lg">Explorar la tienda</a>
-        </div>
-    </section>
 
     <!-- ================= BANDA DESLIZANTE ================= -->
     <?php

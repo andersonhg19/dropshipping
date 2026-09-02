@@ -55,6 +55,11 @@ add_action('wp_enqueue_scripts', function () {
     // la portada y de otro en la tienda.
     wp_enqueue_style('visnex-home', $dir . 'home.css', ['visnex-components'], $ver('home.css'));
 
+    // El hero de cine: solo donde existe.
+    if (is_front_page() || is_home()) {
+        wp_enqueue_style('visnex-hero-cine', $dir . 'hero-cine.css', ['visnex-components'], $ver('hero-cine.css'));
+    }
+
     // Las secciones editoriales y los dos arreglos de cabecera. Va en TODAS las
     // paginas porque ahi viven las correcciones de .col-full y del menu, que
     // antes cortaban el logotipo y la primera opcion en cada pantalla del sitio.
@@ -400,6 +405,7 @@ require_once get_stylesheet_directory() . '/inc/paleta-storefront.php';
 require_once get_stylesheet_directory() . '/inc/marca.php';
 require_once get_stylesheet_directory() . '/inc/cabecera.php';
 require_once get_stylesheet_directory() . '/inc/ficha-producto.php';
+require_once get_stylesheet_directory() . '/inc/hero-cine.php';
 require_once get_stylesheet_directory() . '/inc/home-sections.php';
 require_once get_stylesheet_directory() . '/inc/shop-filters.php';
 require_once get_stylesheet_directory() . '/inc/densidad.php';
