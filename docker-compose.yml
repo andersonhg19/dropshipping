@@ -21,7 +21,11 @@ volumes:
   postgres-data:
   mysql-data:
   wp-languages:
-  wp-content:
+  # Se llamaba `wp-content` y docker-compose.wp.yml usaba `wpcontent`: dos
+  # volumenes con dos copias distintas de la tienda. Unificados en el que
+  # estaba vivo. El viejo sigue existiendo por si hiciera falta algo de el;
+  # borrarlo es una decision que no toma este archivo.
+  wpcontent:
 
 services:
 
@@ -138,7 +142,7 @@ services:
       # Las subidas dejan de verse desde el Explorador de Windows. Para
       # sacarlas:  docker cp dropshipping-wordpress-1:/var/www/html/wp-content/uploads ./copia
       # ------------------------------------------------------------------
-      - wp-content:/var/www/html/wp-content
+      - wpcontent:/var/www/html/wp-content
       - ./wordpress/wp-content/themes/visnex:/var/www/html/wp-content/themes/visnex
       - ./wordpress/wp-content/plugins/visnex-colombia:/var/www/html/wp-content/plugins/visnex-colombia
       - ./wordpress/config/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
@@ -203,7 +207,7 @@ services:
     environment:
       SECRET: ${SECRET:?falta SECRET en backend/.env}
       EXP_TIME: ${EXP_TIME:-86400000}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3001,http://localhost:8850}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3001,http://localhost:8850,http://${VN_IP:-192.168.40.32}:3001,http://${VN_IP:-192.168.40.32}:8850}
     networks:
       - visnex-network
 
@@ -340,7 +344,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8841}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://${VN_IP:-192.168.40.32}:8841}
         NEXT_PUBLIC_ID_COMPANY: ${NEXT_PUBLIC_ID_COMPANY:-1}
         NEXT_PUBLIC_TZ: ${NEXT_PUBLIC_TZ:-America/Bogota}
         NEXT_PUBLIC_CACHE_SECRET: ${NEXT_PUBLIC_CACHE_SECRET:?falta NEXT_PUBLIC_CACHE_SECRET en backend/.env}

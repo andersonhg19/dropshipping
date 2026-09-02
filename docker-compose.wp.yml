@@ -9,14 +9,37 @@ networks:
 
 volumes:
   mysql-data:
+  # OJO: este volumen se llama `wpcontent` (sin guion) y docker-compose.yml
+  # usaba `wp-content` (con guion). Eran DOS volumenes distintos con dos copias
+  # casi gemelas de WooCommerce y de las subidas: 11.568 ficheros contra
+  # 11.577. Segun con que archivo se levantara la tienda, salia una u otra.
+  # Se comprobo cual estaba vivo comparando las miniaturas: aqui estan las de
+  # 324x432 (las que genera la densidad actual) y alli las de 324x454, viejas.
+  # Los dos archivos apuntan ahora a este.
   wpcontent:
 
 services:
   mysql:
     image: mysql:8.0
-    # `unless-stopped` y no `always`: si el usuario lo para a mano, se queda
-    # parado. Pero si Docker Desktop se reinicia, vuelve solo.
-    restart: unless-stopped
+    # `always` y NO `unless-stopped`. Esta linea decia lo contrario y el
+    # razonamiento era erroneo; lo demuestra lo que paso el 1 de septiembre:
+    #
+    #   17:39:55  mysql: "Received SHUTDOWN from user <via user signal>"
+    #   17:39:55  apache: "caught SIGWINCH, shutting down gracefully"
+    #   ...       los tres contenedores parados, RestartCount = 0
+    #   23:40     Docker vuelve, los 25 contenedores de BOPOS arrancan solos
+    #   00:40     los tres de esta tienda seguian abajo, 7 horas despues
+    #
+    # No fue una caida: a los dos procesos les llego una orden de parada
+    # limpia y la atendieron. La diferencia esta en la POLITICA. Docker marca
+    # un contenedor parado a proposito, y `unless-stopped` significa
+    # literalmente "no lo levantes si alguien lo paro". O sea que la tienda
+    # quedaba abajo hasta que alguien se acordara de mirarla.
+    #
+    # `always` lo levanta igual cuando el demonio vuelve. Para una tienda de
+    # pruebas que tiene que estar disponible en la red de casa, ese es el
+    # comportamiento que se quiere: parar a mano es momentaneo, no permanente.
+    restart: always
     # MySQL tarda mas de 10 s en cerrar sus tablas. Con el margen por defecto,
     # un `compose down` lo remata con SIGKILL y sale con codigo 137 — que es
     # exactamente lo que parecia "se esta cayendo por memoria" y no lo era.
@@ -29,7 +52,16 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
-      - "3307:3306"
+      # Atado a 127.0.0.1 A PROPOSITO, y esto NO es una inconsistencia con el
+      # resto: la tienda sale a la red de casa, la base de datos no.
+      #
+      # "3307:3306" a secas escucha en TODAS las interfaces, o sea que
+      # cualquier aparato de la red -y cualquiera que se cuelgue del wifi-
+      # podia abrir MySQL. Con la contrasena por defecto de este mismo
+      # archivo, que ademas vive en un repositorio publico.
+      #
+      # Para entrar a la base se usa phpMyAdmin (8851) o un tunel SSH.
+      - "127.0.0.1:3307:3306"
     networks:
       - visnex-network
     command: '--default-authentication-plugin=mysql_native_password'
@@ -41,7 +73,15 @@ services:
 
   wordpress:
     image: wordpress:latest
-    restart: unless-stopped
+    restart: always
+    # La imagen de WordPress hereda STOPSIGNAL SIGWINCH de php:apache, que en
+    # Apache significa "parada elegante": espera a que terminen las conexiones
+    # abiertas. Con keep-alive eso puede agotar el margen y acabar en SIGKILL
+    # — que es de donde salia el codigo 137 del contenedor web.
+    # SIGTERM le dice a Apache que pare ya. En una tienda de pruebas no hay
+    # nada que drenar, y asi sale con codigo 0 en vez de morir a la fuerza.
+    stop_signal: SIGTERM
+    stop_grace_period: 30s
     depends_on:
       mysql:
         condition: service_healthy
@@ -65,11 +105,48 @@ services:
       #   - wp-cron se dispara en cada visita
       # -----------------------------------------------------------------
       WORDPRESS_CONFIG_EXTRA: |
+        /* -----------------------------------------------------------------
+           LA TIENDA RESPONDE AL NOMBRE POR EL QUE LA LLAMEN
+           -----------------------------------------------------------------
+           WordPress guarda su direccion en la base de datos y la usa para
+           construir CADA enlace, CADA imagen y CADA redireccion. Si ahi pone
+           `localhost`, la tienda solo sirve en la maquina donde corre Docker:
+           desde el movil se ve la portada y al primer clic se salta a
+           `localhost`, que para ese aparato es el mismo telefono. Sintoma
+           tipico: "carga pero los enlaces no van". Y si se fija a la IP, deja
+           de funcionar comoda desde el propio equipo.
+
+           Se resuelve tomando el host de la peticion, comprobado contra una
+           lista cerrada. El mismo contenedor sirve en localhost:8850 y en
+           192.168.40.32:8850, y el dia que haya dominio se anade a la lista.
+
+           La comprobacion NO es adorno: la cabecera Host la elige quien hace
+           la peticion. Sin filtro se puede envenenar el enlace de
+           "restablecer contrasena" para que apunte al sitio de un tercero.
+
+           Es la misma solucion que ya usa docker-compose.yml. Estaba en un
+           solo archivo de los dos, que es como se acaba con dos tiendas que
+           se comportan distinto segun con que comando se levanten.
+           ----------------------------------------------------------------- */
+        $$vn_permitidos = array(
+            'localhost:8850',
+            '127.0.0.1:8850',
+            '${VN_IP:-192.168.40.32}:8850',
+        );
+        $$vn_host = isset($$_SERVER['HTTP_HOST']) ? $$_SERVER['HTTP_HOST'] : '${VN_IP:-192.168.40.32}:8850';
+        if (!in_array($$vn_host, $$vn_permitidos, true)) {
+            $$vn_host = '${VN_IP:-192.168.40.32}:8850';
+        }
+        define('WP_HOME',    'http://' . $$vn_host);
+        define('WP_SITEURL', 'http://' . $$vn_host);
+
         /* Nada de peticiones salientes salvo las que se autoricen abajo. */
         define('WP_HTTP_BLOCK_EXTERNAL', true);
-        /* Cuando toque cobrar de verdad, se anaden aqui los hosts de la
-           pasarela. Mientras sea tienda de pruebas, ninguno hace falta. */
-        define('WP_ACCESSIBLE_HOSTS', 'localhost');
+        /* La propia tienda entra en la lista: WordPress se llama a si mismo
+           para el REST y para comprobar su estado, y con el bloqueo puesto
+           esas llamadas a la IP se quedaban fuera. Cuando toque cobrar de
+           verdad, aqui se anaden los hosts de la pasarela. */
+        define('WP_ACCESSIBLE_HOSTS', 'localhost,127.0.0.1,${VN_IP:-192.168.40.32}');
         /* wp-cron deja de correr en cada visita del cliente. */
         define('DISABLE_WP_CRON', true);
         /* Sin comprobacion automatica de actualizaciones en un entorno local. */
@@ -95,14 +172,28 @@ services:
       - ./wordpress/wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
       - ./wordpress/config/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
       - ./wordpress/config/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+      # WP-CLI montado, no instalado dentro del contenedor: instalado se pierde
+      # al recrearlo, porque vive en la capa de imagen. Montado sobrevive a
+      # cualquier `up --build`. Ya estaba en docker-compose.yml; faltaba aqui,
+      # que es el archivo con el que se levanta la tienda a diario.
+      #   docker exec -w /var/www/html dropshipping-wordpress-1 wp <lo que sea> --allow-root
+      - ./wordpress/config/wp-cli.phar:/usr/local/bin/wp:ro
     ports:
       - "8850:80"
     networks:
       - visnex-network
     healthcheck:
-      # Si WordPress deja de responder, que se note y se reinicie solo en vez
-      # de quedarse muerto hasta que alguien lo mire.
-      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost/ || exit 1"]
+      # Marca el contenedor como enfermo si WordPress deja de responder.
+      # OJO con lo que esto hace y lo que NO hace: Docker (fuera de Swarm) no
+      # reinicia un contenedor por estar `unhealthy`. Solo lo etiqueta, para
+      # que se vea en `docker ps` y para que `depends_on: service_healthy`
+      # espere. El comentario anterior decia que "se reinicia solo" y es falso.
+      #
+      # `-L` sigue la redireccion: con la direccion de la tienda apuntando a
+      # la IP de la red, una peticion a localhost responde 301 hacia esa IP.
+      # Sin `-L` se estaria dando por bueno el redirect sin comprobar que al
+      # otro lado hay una tienda.
+      test: ["CMD-SHELL", "curl -fsSL -o /dev/null http://localhost/ || exit 1"]
       interval: 45s
       timeout: 15s
       retries: 3
@@ -110,7 +201,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin:latest
-    restart: unless-stopped
+    restart: always
     depends_on:
       - mysql
     environment:

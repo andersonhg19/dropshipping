@@ -65,3 +65,6 @@ wordpress/config/wp-cli.phar
 # Artefactos de trabajo de marca
 brand/dmika/*.png
 brand/dmika/__pycache__/
+
+# Respaldos de la base antes de una migracion: utiles en local, no en el repo.
+seguimiento/respaldo-*.sql.gz
