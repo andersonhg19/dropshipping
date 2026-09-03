@@ -84,6 +84,16 @@ add_action('wp_enqueue_scripts', function () {
             $verjs('lupa.js'),
             true
         );
+
+        // El Probador: solo en la ficha, que es donde nace la duda de talla.
+        wp_enqueue_style('visnex-probador', $dir . 'probador.css', ['visnex-shop'], $ver('probador.css'));
+        wp_enqueue_script(
+            'visnex-probador',
+            get_stylesheet_directory_uri() . '/assets/js/probador.js',
+            [],
+            $verjs('probador.js'),
+            true
+        );
     }
 
     // El Asesor. Va en toda la tienda: la duda "¿y esto con que lo pongo?"
@@ -452,6 +462,7 @@ require_once get_stylesheet_directory() . '/inc/ficha-producto.php';
 require_once get_stylesheet_directory() . '/inc/hero-cine.php';
 require_once get_stylesheet_directory() . '/inc/experiencia.php';
 require_once get_stylesheet_directory() . '/inc/asesor.php';
+require_once get_stylesheet_directory() . '/inc/probador.php';
 require_once get_stylesheet_directory() . '/inc/home-sections.php';
 require_once get_stylesheet_directory() . '/inc/shop-filters.php';
 require_once get_stylesheet_directory() . '/inc/densidad.php';

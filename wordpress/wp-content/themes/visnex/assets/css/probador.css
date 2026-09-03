@@ -1,0 +1,139 @@
+/* ==========================================================================
+   D'MIKA — El Probador
+   --------------------------------------------------------------------------
+   Va justo encima del selector de talla, que es donde nace la duda. Cerrado es
+   una linea; abierto son dos preguntas y una respuesta.
+   ========================================================================== */
+
+.dm-probador {
+  margin: 0 0 14px;
+  border: 1px solid var(--dm-arena, #D8C7B0);
+  background: color-mix(in srgb, var(--dm-marfil, #F4EFE7) 60%, #fff);
+}
+
+.dm-probador__abrir {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 16px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 12px;
+  letter-spacing: .06em;
+  color: var(--dm-negro, #171717);
+}
+
+.dm-probador__abrir svg { flex: 0 0 16px; color: var(--vn-brass, #836838); }
+
+/* Cuando la tienda ya sabe tu talla, el boton cambia de tono: deja de ser una
+   pregunta y pasa a ser un dato que te devuelve. */
+.dm-probador.is-conocido .dm-probador__abrir { color: var(--vn-brass, #836838); font-weight: 500; }
+
+.dm-probador__abrir::after {
+  content: '';
+  width: 7px; height: 7px;
+  margin-left: auto;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  rotate: 45deg;
+  transition: rotate .3s var(--vn-ease-lux, cubic-bezier(.16, 1, .3, 1));
+}
+.dm-probador.is-abierto .dm-probador__abrir::after { rotate: -135deg; }
+
+.dm-probador__panel { padding: 4px 16px 16px; }
+.dm-probador__panel[hidden] { display: none; }
+
+.dm-probador__pregunta + .dm-probador__pregunta { margin-top: 14px; }
+
+.dm-probador__q {
+  display: block;
+  font-size: 11px;
+  letter-spacing: .04em;
+  color: var(--dm-moka, #6F5A4A);
+  margin-bottom: 7px;
+}
+
+.dm-probador__ops { display: flex; flex-wrap: wrap; gap: 7px; }
+
+.dm-probador__op {
+  /* 44 px de alto minimo: por debajo, en un movil se falla el toque y la
+     persona acaba eligiendo una talla que no queria. */
+  min-height: 44px;
+  min-width: 46px;
+  padding: 0 13px;
+  border: 1px solid var(--dm-arena, #D8C7B0);
+  background: #fff;
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 12px;
+  color: var(--dm-negro, #171717);
+  cursor: pointer;
+  transition: background .25s ease, border-color .25s ease, color .25s ease;
+}
+
+.dm-probador__op:hover { border-color: var(--dm-moka, #6F5A4A); }
+
+.dm-probador__op.is-elegida {
+  background: var(--dm-negro, #171717);
+  border-color: var(--dm-negro, #171717);
+  color: var(--dm-marfil, #F4EFE7);
+}
+
+/* --------------------------------------------------------------------------
+   La respuesta
+   -------------------------------------------------------------------------- */
+
+.dm-probador__respuesta {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--dm-arena, #D8C7B0);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  animation: dm-prob-entra .45s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@keyframes dm-prob-entra { from { opacity: 0; translate: 0 8px; } }
+
+.dm-probador__titulo {
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: 1.32rem;
+  font-weight: 400;
+  color: var(--dm-negro, #171717);
+}
+
+.dm-probador__linea {
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--dm-moka, #6F5A4A);
+}
+
+/* El aviso de honestidad -"todavia no tenemos medido como talla"- va en cursiva
+   y mas apagado: se lee, pero no compite con la recomendacion. */
+.dm-probador__linea--nota {
+  font-style: italic;
+  font-size: 11px;
+  color: color-mix(in srgb, var(--dm-moka, #6F5A4A) 78%, transparent);
+}
+
+.dm-probador__latido {
+  display: block;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--dm-oro, #B99A5E);
+  animation: dm-prob-latir 1.15s ease-in-out infinite;
+}
+
+@keyframes dm-prob-latir {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(.65); opacity: .55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dm-probador__respuesta { animation: none; }
+  .dm-probador__latido { animation: none; }
+  .dm-probador__abrir::after { transition: none; }
+}
