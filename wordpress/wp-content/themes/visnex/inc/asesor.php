@@ -261,7 +261,24 @@ function dm_asesor_responder(): void
         // rutas de varios cientos de caracteres y tres recortes: armarlo en el
         // navegador seria repetir en JavaScript logica que aqui ya existe, y
         // tener dos versiones de la misma silueta es tener dos siluetas.
-        'figura' => dm_figura($genero, $vestir, 'asesor'),
+        /*
+         * LA FIGURA VESTIDA, APAGADA.
+         *
+         * La tecnica -recortar la foto de producto dentro de la silueta con
+         * clipPath- solo funciona si la foto es un modelo de cuerpo entero. En
+         * este catalogo NINGUNA lo es: son bodegones y planos de detalle, asi
+         * que el torso salia con una mesa dentro o con un trozo de escena.
+         *
+         * Yo lo sabia y lo envie igual, confiando en que el zoom lo disimulara.
+         * No lo disimula: se ve mal y hace que el asesor entero parezca poco
+         * serio. Un consejo que se presenta con una imagen rota no es un
+         * consejo.
+         *
+         * No se borra el codigo (inc/figura.php sigue ahi) porque la tecnica es
+         * correcta y el dia que haya fotos de modelo se enciende cambiando esta
+         * linea. Lo que falta no es programa: son fotos.
+         */
+        'figura' => '',
         'total'  => wc_price($total),
         'nota'  => $es_vestido
             ? 'Con un vestido no hace falta nada más abajo: va la pieza y su remate.'

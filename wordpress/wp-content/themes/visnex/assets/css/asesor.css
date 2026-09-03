@@ -275,13 +275,16 @@
    -------------------------------------------------------------------------- */
 
 /* La escena: la figura vestida a la izquierda y las prendas al frente. */
+/* Con la figura apagada, el hueco no se deja vacio: las prendas se reparten el
+   ancho entero. Una columna vacia a la izquierda se lee como que algo fallo. */
 .dm-escena {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 1fr;
   gap: 26px;
   align-items: start;
   margin-top: 24px;
 }
+.dm-escena__figura:empty { display: none; }
 
 .dm-escena__figura {
   position: relative;
