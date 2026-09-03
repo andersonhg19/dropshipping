@@ -86,6 +86,17 @@ add_action('wp_enqueue_scripts', function () {
         );
     }
 
+    // El Asesor. Va en toda la tienda: la duda "¿y esto con que lo pongo?"
+    // aparece sobre todo en la ficha, no en la portada.
+    wp_enqueue_style('visnex-asesor', $dir . 'asesor.css', ['visnex-components'], $ver('asesor.css'));
+    wp_enqueue_script(
+        'visnex-asesor',
+        get_stylesheet_directory_uri() . '/assets/js/asesor.js',
+        [],
+        $verjs('asesor.js'),
+        true
+    );
+
     // El embudo: carrito, checkout, mi cuenta.
     if (function_exists('is_cart') && (is_cart() || is_checkout() || is_account_page() || is_wc_endpoint_url())) {
         wp_enqueue_style('visnex-funnel', $dir . 'funnel.css', ['visnex-components'], $ver('funnel.css'));
@@ -440,6 +451,7 @@ require_once get_stylesheet_directory() . '/inc/cabecera.php';
 require_once get_stylesheet_directory() . '/inc/ficha-producto.php';
 require_once get_stylesheet_directory() . '/inc/hero-cine.php';
 require_once get_stylesheet_directory() . '/inc/experiencia.php';
+require_once get_stylesheet_directory() . '/inc/asesor.php';
 require_once get_stylesheet_directory() . '/inc/home-sections.php';
 require_once get_stylesheet_directory() . '/inc/shop-filters.php';
 require_once get_stylesheet_directory() . '/inc/densidad.php';

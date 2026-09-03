@@ -1,0 +1,410 @@
+/* ==========================================================================
+   D'MIKA — El Asesor
+   --------------------------------------------------------------------------
+   Un panel a pantalla completa, una pregunta cada vez. La regla que gobierna
+   todo lo de aqui: en una tienda de verdad, quien te atiende no te ensena un
+   formulario. Te hace UNA pregunta, espera, y hace la siguiente.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. EL TIRADOR
+   -------------------------------------------------------------------------- */
+
+.dm-asesor-tirador {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 9990;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 20px 13px 16px;
+  border: 1px solid var(--dm-oro, #B99A5E);
+  background: var(--dm-negro, #171717);
+  color: var(--dm-marfil, #F4EFE7);
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 16px 38px -14px rgba(23, 23, 23, .55);
+  /* Entra tarde: si aparece a la vez que la pagina, se lee como anuncio.
+     Apareciendo despues se lee como "alguien se acerco a preguntar". */
+  opacity: 0;
+  translate: 0 14px;
+  animation: dm-tirador-entra .6s cubic-bezier(.16, 1, .3, 1) 2.6s forwards;
+}
+
+@keyframes dm-tirador-entra { to { opacity: 1; translate: 0 0; } }
+
+.dm-asesor-tirador:hover { background: var(--vn-brass, #836838); border-color: var(--vn-brass, #836838); }
+.dm-asesor-tirador__i { display: grid; place-items: center; color: var(--dm-oro, #B99A5E); }
+.dm-asesor-tirador:hover .dm-asesor-tirador__i { color: var(--dm-marfil, #F4EFE7); }
+
+@media (max-width: 720px) {
+  .dm-asesor-tirador { right: 12px; bottom: 12px; padding: 12px 15px; }
+  /* En movil solo el icono: el texto se come media pantalla. */
+  .dm-asesor-tirador__t { display: none; }
+}
+
+/* --------------------------------------------------------------------------
+   2. EL PANEL
+   -------------------------------------------------------------------------- */
+
+.dm-asesor {
+  position: fixed;
+  inset: 0;
+  z-index: 9995;
+  display: grid;
+  place-items: center;
+}
+
+.dm-asesor[hidden] { display: none; }
+
+.dm-asesor__velo {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 11, 11, .72);
+  /* El desenfoque del fondo es lo que convierte esto en "una sala aparte" en
+     vez de "una caja encima de la pagina". */
+  backdrop-filter: blur(14px) saturate(.7);
+  -webkit-backdrop-filter: blur(14px) saturate(.7);
+  opacity: 0;
+  transition: opacity .45s ease;
+}
+
+.dm-asesor.is-abierto .dm-asesor__velo { opacity: 1; }
+
+.dm-asesor__caja {
+  position: relative;
+  width: min(94vw, 720px);
+  max-height: 92svh;
+  overflow-y: auto;
+  padding: clamp(34px, 5vw, 64px);
+  background: var(--dm-marfil, #F4EFE7);
+  box-shadow: 0 50px 110px -30px rgba(11, 11, 11, .7);
+  opacity: 0;
+  translate: 0 26px;
+  scale: .97;
+  transition: opacity .5s cubic-bezier(.16, 1, .3, 1),
+              translate .5s cubic-bezier(.16, 1, .3, 1),
+              scale .5s cubic-bezier(.16, 1, .3, 1);
+}
+
+.dm-asesor.is-abierto .dm-asesor__caja { opacity: 1; translate: 0 0; scale: 1; }
+
+.dm-asesor__x {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: none;
+  color: var(--dm-moka, #6F5A4A);
+  cursor: pointer;
+}
+.dm-asesor__x:hover { color: var(--dm-negro, #171717); }
+
+/* --------------------------------------------------------------------------
+   3. LA BARRA DE AVANCE
+   --------------------------------------------------------------------------
+   Cuatro preguntas sin barra se sienten infinitas. Con barra, se sabe que
+   quedan dos y nadie abandona.
+   -------------------------------------------------------------------------- */
+
+.dm-asesor__barra {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--dm-arena, #D8C7B0);
+}
+
+.dm-asesor__avance {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--dm-oro, #B99A5E);
+  transition: width .5s cubic-bezier(.16, 1, .3, 1);
+}
+
+/* --------------------------------------------------------------------------
+   4. LOS PASOS
+   -------------------------------------------------------------------------- */
+
+.dm-asesor__paso[hidden] { display: none; }
+
+.dm-asesor__paso {
+  animation: dm-paso-entra .5s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@keyframes dm-paso-entra {
+  from { opacity: 0; translate: 0 18px; }
+}
+
+.dm-asesor__n {
+  display: block;
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 10px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--vn-brass, #836838);
+}
+
+.dm-asesor__titulo {
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: clamp(1.9rem, 4vw, 2.9rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -.02em;
+  margin: 12px 0 0;
+  color: var(--dm-negro, #171717);
+}
+
+.dm-asesor__pie {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--dm-moka, #6F5A4A);
+}
+
+/* --------------------------------------------------------------------------
+   5. LAS OPCIONES
+   -------------------------------------------------------------------------- */
+
+.dm-asesor__ops {
+  display: grid;
+  gap: 10px;
+  margin-top: clamp(22px, 3vw, 34px);
+}
+
+.dm-op {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 17px 20px;
+  border: 1px solid var(--dm-arena, #D8C7B0);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .3s ease, color .35s ease;
+}
+
+/* El relleno sube desde abajo, igual que en las puertas del hero: el mismo
+   gesto en toda la tienda es lo que hace que se sienta una sola cosa. */
+.dm-op::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--dm-negro, #171717);
+  transform: translateY(101%);
+  transition: transform .42s cubic-bezier(.16, 1, .3, 1);
+}
+
+.dm-op:hover::after,
+.dm-op:focus-visible::after,
+.dm-op.is-elegida::after { transform: none; }
+
+.dm-op:hover,
+.dm-op:focus-visible,
+.dm-op.is-elegida { color: var(--dm-marfil, #F4EFE7); border-color: var(--dm-negro, #171717); }
+
+.dm-op__e,
+.dm-op__d { position: relative; z-index: 1; }
+
+.dm-op__e {
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: 1.4rem;
+  line-height: 1.1;
+}
+
+.dm-op__d {
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 11.5px;
+  color: var(--dm-moka, #6F5A4A);
+}
+.dm-op:hover .dm-op__d,
+.dm-op:focus-visible .dm-op__d,
+.dm-op.is-elegida .dm-op__d { color: var(--dm-arena, #D8C7B0); }
+
+.dm-asesor__atras {
+  margin-top: 20px;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--dm-moka, #6F5A4A);
+  cursor: pointer;
+}
+.dm-asesor__atras:hover { color: var(--dm-negro, #171717); }
+
+/* --------------------------------------------------------------------------
+   6. MIENTRAS BUSCA
+   --------------------------------------------------------------------------
+   Un latido, no una rueda de carga. Una rueda dice "el sistema esta ocupado";
+   un latido dice "hay alguien mirando".
+   -------------------------------------------------------------------------- */
+
+.dm-asesor__buscando { text-align: center; padding: 50px 0; }
+
+.dm-asesor__latido {
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  background: var(--dm-oro, #B99A5E);
+  animation: dm-latir 1.25s ease-in-out infinite;
+}
+
+@keyframes dm-latir {
+  0%, 100% { transform: scale(1);   opacity: 1; box-shadow: 0 0 0 0 rgba(185,154,94,.55); }
+  50%      { transform: scale(.72); opacity: .6; box-shadow: 0 0 0 16px rgba(185,154,94,0); }
+}
+
+/* --------------------------------------------------------------------------
+   7. EL LOOK
+   -------------------------------------------------------------------------- */
+
+.dm-look3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.dm-pieza {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  opacity: 0;
+  translate: 0 20px;
+  animation: dm-pieza-entra .6s cubic-bezier(.16, 1, .3, 1) var(--d, 0s) forwards;
+}
+
+@keyframes dm-pieza-entra { to { opacity: 1; translate: 0 0; } }
+
+.dm-pieza__foto {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--dm-arena, #D8C7B0);
+}
+
+.dm-pieza__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .7s cubic-bezier(.16, 1, .3, 1);
+}
+.dm-pieza:hover .dm-pieza__foto img { transform: scale(1.05); }
+
+.dm-pieza__hueco {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 3px 8px;
+  background: var(--dm-marfil, #F4EFE7);
+  font-size: 8.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--vn-brass, #836838);
+}
+
+.dm-pieza__n {
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: 1.02rem;
+  line-height: 1.2;
+  margin: 10px 0 0;
+}
+
+.dm-pieza__p {
+  font-size: 12px;
+  color: var(--dm-negro, #171717);
+  margin-top: 3px;
+}
+
+.dm-pieza__m {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--dm-moka, #6F5A4A);
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid var(--dm-arena, #D8C7B0);
+}
+
+/* --------------------------------------------------------------------------
+   8. EL CIERRE
+   -------------------------------------------------------------------------- */
+
+.dm-asesor__cierre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid var(--dm-arena, #D8C7B0);
+}
+
+.dm-asesor__total { margin: 0; font-size: 12px; color: var(--dm-moka, #6F5A4A); }
+.dm-asesor__total strong {
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--dm-negro, #171717);
+  margin-left: 6px;
+}
+
+.dm-asesor__acciones { display: flex; gap: 10px; }
+
+.dm-asesor__otra,
+.dm-asesor__ir {
+  padding: 13px 22px;
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid var(--dm-negro, #171717);
+  transition: background .3s ease, color .3s ease;
+}
+
+.dm-asesor__otra { background: transparent; color: var(--dm-negro, #171717); }
+.dm-asesor__otra:hover { background: var(--dm-arena, #D8C7B0); }
+
+.dm-asesor__ir { background: var(--dm-negro, #171717); color: var(--dm-marfil, #F4EFE7); }
+.dm-asesor__ir:hover { background: var(--vn-brass, #836838); border-color: var(--vn-brass, #836838); }
+
+/* --------------------------------------------------------------------------
+   9. MOVIL
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  .dm-asesor__caja { width: 100vw; max-height: 100svh; height: 100svh; padding: 60px 20px 28px; }
+  .dm-look3 { grid-template-columns: 1fr; gap: 18px; }
+  .dm-pieza { flex-direction: row; gap: 14px; align-items: flex-start; }
+  .dm-pieza__foto { flex: 0 0 96px; }
+  .dm-asesor__cierre { flex-direction: column; align-items: stretch; }
+  .dm-asesor__acciones { display: grid; grid-template-columns: 1fr 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dm-asesor-tirador { opacity: 1; translate: 0; animation: none; }
+  .dm-asesor__caja,
+  .dm-asesor__paso,
+  .dm-pieza { animation: none; opacity: 1; translate: 0; scale: 1; transition: none; }
+  .dm-asesor__latido { animation: none; }
+}
