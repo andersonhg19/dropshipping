@@ -196,6 +196,7 @@ function dm_asesor_responder(): void
     $motivos = dm_asesor_motivos();
 
     $look = [];
+    $vestir = [];
     $elegidos = [];
     $total = 0.0;
     $es_vestido = false;
@@ -231,6 +232,10 @@ function dm_asesor_responder(): void
         $elegidos[] = $p->get_id();
         $total += (float) $p->get_price();
 
+        // La foto para VESTIR a la figura se elige aparte: la del listado esta
+        // recortada a 3:4 y sirve para la tarjeta, no para caer sobre un cuerpo.
+        $vestir[$hueco] = dm_figura_mejor_foto($p);
+
         $look[] = [
             'id'      => $p->get_id(),
             'nombre'  => $p->get_name(),
@@ -251,8 +256,13 @@ function dm_asesor_responder(): void
     }
 
     wp_send_json_success([
-        'look'  => $look,
-        'total' => wc_price($total),
+        'look'   => $look,
+        // La figura se pinta EN EL SERVIDOR y viaja ya montada. Es un SVG con
+        // rutas de varios cientos de caracteres y tres recortes: armarlo en el
+        // navegador seria repetir en JavaScript logica que aqui ya existe, y
+        // tener dos versiones de la misma silueta es tener dos siluetas.
+        'figura' => dm_figura($genero, $vestir, 'asesor'),
+        'total'  => wc_price($total),
         'nota'  => $es_vestido
             ? 'Con un vestido no hace falta nada más abajo: va la pieza y su remate.'
             : (count($look) < 3
@@ -362,7 +372,13 @@ add_action('wp_footer', function () {
                 <h2 class="dm-asesor__titulo">Esto te armé</h2>
                 <p class="dm-asesor__pie" data-dm-nota></p>
 
-                <div class="dm-look3" data-dm-look></div>
+                <div class="dm-escena">
+                    <?php /* La figura con el look puesto: contesta "¿y esto
+                             junto, como se ve?" de un vistazo. */ ?>
+                    <div class="dm-escena__figura" data-dm-figura></div>
+                    <?php /* Y al frente, las prendas de verdad. */ ?>
+                    <div class="dm-escena__prendas" data-dm-look></div>
+                </div>
 
                 <div class="dm-asesor__cierre">
                     <p class="dm-asesor__total">Total <strong data-dm-total></strong></p>

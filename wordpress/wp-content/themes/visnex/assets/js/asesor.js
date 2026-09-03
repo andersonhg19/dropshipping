@@ -35,6 +35,7 @@
   var avance    = panel.querySelector('.dm-asesor__avance');
   var pasos     = panel.querySelectorAll('[data-dm-paso]');
   var elLook    = panel.querySelector('[data-dm-look]');
+  var elFigura  = panel.querySelector('[data-dm-figura]');
   var elTotal   = panel.querySelector('[data-dm-total]');
   var elNota    = panel.querySelector('[data-dm-nota]');
   var TOTAL_PREGUNTAS = 3;
@@ -135,13 +136,20 @@
   function pintarLook(datos) {
     elLook.innerHTML = '';
 
+    // La figura llega ya montada del servidor: es un SVG generado por
+    // dm_figura(), no texto de nadie. Es el unico sitio donde se inyecta
+    // marcado, y su origen es el propio tema.
+    if (elFigura) {
+      elFigura.innerHTML = datos.figura || '';
+    }
+
     datos.look.forEach(function (p, i) {
       var a = document.createElement('a');
       a.className = 'dm-pieza';
       a.href = p.url;
       // Escalonado: las tres piezas no aparecen a la vez, se van poniendo
       // encima del mostrador una detras de otra.
-      a.style.setProperty('--d', (i * 0.12) + 's');
+      a.style.setProperty('--d', (0.25 + i * 0.12) + 's');   // despues de la figura
 
       var foto = document.createElement('span');
       foto.className = 'dm-pieza__foto';

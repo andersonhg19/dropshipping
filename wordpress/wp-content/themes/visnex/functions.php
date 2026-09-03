@@ -461,6 +461,7 @@ require_once get_stylesheet_directory() . '/inc/cabecera.php';
 require_once get_stylesheet_directory() . '/inc/ficha-producto.php';
 require_once get_stylesheet_directory() . '/inc/hero-cine.php';
 require_once get_stylesheet_directory() . '/inc/experiencia.php';
+require_once get_stylesheet_directory() . '/inc/figura.php';
 require_once get_stylesheet_directory() . '/inc/asesor.php';
 require_once get_stylesheet_directory() . '/inc/probador.php';
 require_once get_stylesheet_directory() . '/inc/home-sections.php';
