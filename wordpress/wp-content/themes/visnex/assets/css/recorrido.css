@@ -1,0 +1,482 @@
+/* ==========================================================================
+   D'MIKA — El Recorrido
+   --------------------------------------------------------------------------
+   La tienda como espacio: se avanza hacia dentro, no se baja por bloques.
+
+   COMO FUNCIONA, EN UNA FRASE
+   El contenedor mide varias pantallas de alto. Dentro hay un marco pegado
+   (`sticky`) que no se mueve, y dentro del marco una escena en 3D que se
+   desplaza en Z segun el scroll. Lo que ve el ojo no es una pagina que sube:
+   es una camara que entra.
+
+   Y todo el movimiento vive en `transform`, que el navegador compone en la GPU
+   sin recalcular la maqueta. Es lo que permite que esto vaya fluido tambien en
+   un movil, que es donde estas cosas se suelen caer.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. LO QUE HACIA QUE NADA DE ESTO FUNCIONARA
+   --------------------------------------------------------------------------
+   Storefront pone `overflow-x: hidden` en el body y en .hfeed para evitar el
+   desplazamiento lateral. Parece inofensivo y no lo es: `overflow-x: hidden`
+   convierte al elemento en CONTENEDOR DE SCROLL, y un `position: sticky` se
+   ancla a su contenedor de scroll mas cercano. El marco del recorrido se
+   anclaba a un contenedor de 11.599 px que no se desplaza, asi que no se
+   quedaba pegado: se iba hacia arriba con la pagina y el recorrido entero
+   quedaba en negro.
+
+   Medido: a 1.800 px de scroll, el marco estaba en -789 en vez de en 0.
+
+   `clip` recorta exactamente igual pero NO crea contenedor de scroll. Es la
+   respuesta moderna a este problema, y hay que declarar tambien overflow-y
+   visible: mezclar `clip` con `auto` vuelve a crear el contenedor.
+   -------------------------------------------------------------------------- */
+
+body.home,
+body.home .hfeed {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.dm-recorrido {
+  position: relative;
+  /* La altura la pone PHP: una pantalla por sala mas una. Es la distancia que
+     hay que recorrer. */
+  background: #0E0D0C;
+  color: var(--dm-marfil, #F4EFE7);
+}
+
+/* --------------------------------------------------------------------------
+   1. EL MARCO
+   -------------------------------------------------------------------------- */
+
+.dm-recorrido__marco {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  /* La perspectiva. 1100 px es un objetivo de unos 50 mm: la distorsion se
+     nota lo justo. Por debajo de 700 el gran angular deforma las prendas de
+     los lados y parece un ojo de pez; por encima de 1600 se aplana y deja de
+     leerse como espacio. */
+  perspective: 1100px;
+  perspective-origin: 50% 46%;
+  isolation: isolate;
+}
+
+/* --------------------------------------------------------------------------
+   2. SUELO Y TECHO
+   --------------------------------------------------------------------------
+   Dos rejillas giradas en X. Es lo que convierte una pantalla plana en una
+   habitacion: el ojo lee las lineas que convergen y asume la profundidad sin
+   que nadie se lo diga.
+   -------------------------------------------------------------------------- */
+
+.dm-recorrido__suelo,
+.dm-recorrido__techo {
+  position: absolute;
+  left: -60%;
+  right: -60%;
+  height: 130%;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(90deg, rgba(185, 154, 94, .17) 1px, transparent 1px),
+    linear-gradient( 0deg, rgba(185, 154, 94, .12) 1px, transparent 1px);
+  background-size: 130px 130px;
+  /* La rejilla se desliza hacia el espectador: es el suelo pasando por debajo.
+     Sin esto la habitacion esta ahi pero nadie se mueve dentro. */
+  animation: dm-suelo 9s linear infinite;
+}
+
+.dm-recorrido__suelo {
+  bottom: -22%;
+  transform: rotateX(76deg);
+  transform-origin: 50% 100%;
+  mask-image: linear-gradient(to top, #000 8%, transparent 72%);
+  -webkit-mask-image: linear-gradient(to top, #000 8%, transparent 72%);
+}
+
+.dm-recorrido__techo {
+  top: -22%;
+  transform: rotateX(-76deg);
+  transform-origin: 50% 0;
+  opacity: .5;
+  mask-image: linear-gradient(to bottom, #000 8%, transparent 66%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 8%, transparent 66%);
+}
+
+@keyframes dm-suelo {
+  from { background-position: 0 0; }
+  to   { background-position: 0 130px; }
+}
+
+/* --------------------------------------------------------------------------
+   3. LA ESCENA
+   --------------------------------------------------------------------------
+   Aqui vive el movimiento. `--avance` va de 0 a 1 y lo escribe el scroll: con
+   `animation-timeline: scroll()` donde el navegador lo soporta, y con
+   recorrido.js donde no.
+   -------------------------------------------------------------------------- */
+
+.dm-recorrido__escena {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  transform-style: preserve-3d;
+  /* El desplazamiento total: cuantas salas hay, por lo que separa a cada una.
+     Se calcula desde --salas, que pone PHP, para que anadir una sala no
+     obligue a tocar este numero. */
+  --paso: 1500px;
+  --avance: 0;
+  /* El recorrido es (salas - 1) pasos, no (salas).
+     Con `var(--salas)` la camara viajaba UN paso de mas y terminaba por detras
+     de la ultima sala: el final del scroll era una pantalla negra. Las salas
+     estan en 0, -paso, -2paso...; para dejar la ultima delante hay que avanzar
+     exactamente hasta donde esta la ultima. */
+  transform: translate3d(
+      calc(var(--raton-x, 0) * -22px),
+      calc(var(--raton-y, 0) * -14px),
+      calc(var(--avance) * (var(--salas) - 1) * var(--paso))
+  );
+}
+
+/* La animacion que consume `animation-timeline: scroll()`.
+   Va de 0 a 1 en `--avance`, que es la unica variable de la que cuelga todo el
+   movimiento. Para poder ANIMAR una variable hay que registrarla con
+   @property: sin esto el navegador la trata como texto y salta de 0 a 1 de
+   golpe en vez de interpolar. */
+@property --avance {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@keyframes dm-avanzar {
+  from { --avance: 0; }
+  to   { --avance: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   4. LAS SALAS
+   -------------------------------------------------------------------------- */
+
+.dm-sala {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  /* Cada sala esta una --paso mas al fondo que la anterior. */
+  transform: translate3d(0, 0, calc(var(--i) * var(--paso) * -1));
+
+  /* Lo escribe recorrido.js: 1 cuando la camara esta en esta sala, 0 cuando
+     esta a mas de sala y media. Es lo que hace que se recorran salas en vez de
+     ver las tres apiladas. */
+  --cerca: 0;
+  opacity: var(--cerca);
+  /* Sin transicion: el valor ya viene interpolado por el scroll cuadro a
+     cuadro, y anadir una encima produce un retardo que se percibe como que la
+     sala llega tarde. */
+}
+
+/* La sala apagada no debe capturar clics: si no, se pulsa una prenda que no se
+   ve porque esta a dos salas de distancia. */
+.dm-sala { pointer-events: none; }
+.dm-sala .dm-colgada,
+.dm-sala .dm-sala__entrar { pointer-events: auto; }
+
+.dm-sala__rotulo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(74vw, 460px);
+  translate: -50% -50%;
+  text-align: center;
+  /* El rotulo va al fondo de su sala: se ve pequeno al entrar y crece al
+     acercarse, como un letrero de verdad. */
+  transform: translateZ(-420px);
+  z-index: 1;
+
+  /* El rotulo se apaga MUCHO antes que las prendas.
+     Con la misma curva que la sala, en mitad de la transicion se leian dos
+     titulos superpuestos -"El" encima de "Lo ultimo"- y eso ensucia mas que
+     cualquier otra cosa del recorrido: el ojo va al texto grande primero.
+     Elevar al cubo hace que solo este visible cuando la camara esta de verdad
+     dentro de su sala; las prendas, en cambio, pueden solaparse un poco, que
+     es lo que da sensacion de profundidad. */
+  opacity: calc(var(--cerca) * var(--cerca) * var(--cerca));
+}
+
+.dm-sala__ante {
+  display: block;
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 10px;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--dm-oro, #B99A5E);
+}
+
+.dm-sala__titulo {
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: clamp(3.2rem, 9vw, 7.5rem);
+  font-weight: 400;
+  font-style: italic;
+  line-height: .9;
+  letter-spacing: -.03em;
+  margin: 10px 0 0;
+  color: var(--dm-marfil, #F4EFE7);
+}
+
+.dm-sala__texto {
+  max-width: 34ch;
+  margin: 16px auto 0;
+  font-size: 13px;
+  line-height: 1.75;
+  color: rgba(244, 239, 231, .6);
+}
+
+.dm-sala__entrar {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 26px;
+  border: 1px solid var(--dm-oro, #B99A5E);
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 10px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--dm-oro, #B99A5E);
+  text-decoration: none;
+  transition: background .35s ease, color .35s ease;
+}
+
+.dm-sala__entrar:hover {
+  background: var(--dm-oro, #B99A5E);
+  color: #0E0D0C;
+}
+
+/* --------------------------------------------------------------------------
+   5. LAS PRENDAS COLGADAS
+   -------------------------------------------------------------------------- */
+
+.dm-colgada {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(120px, 15vw, 210px);
+  text-decoration: none;
+  color: inherit;
+  transform-style: preserve-3d;
+  /* La posicion la ponen las variables que escribe PHP. El `translate` de
+     -50% centra la prenda en su punto antes de moverla. */
+  translate: -50% -50%;
+  transform:
+    translate3d(calc(var(--x) * 1vw), calc(var(--y) * 1vh), var(--z))
+    rotateY(var(--r));
+  transition: filter .5s ease;
+}
+
+/* El cordon del que cuelga. Un detalle de tres lineas que cambia la lectura:
+   sin el, las prendas flotan; con el, estan colgadas de algo. */
+.dm-colgada::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: 1px;
+  height: 46vh;
+  background: linear-gradient(to bottom, transparent, rgba(185, 154, 94, .3));
+  pointer-events: none;
+}
+
+.dm-colgada__foto {
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #1A1917;
+  box-shadow: 0 30px 60px -22px rgba(0, 0, 0, .8);
+}
+
+.dm-colgada__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .8s var(--vn-ease-lux, cubic-bezier(.16, 1, .3, 1)),
+              filter .5s ease;
+  filter: grayscale(.35) brightness(.92);
+}
+
+.dm-colgada:hover .dm-colgada__foto img,
+.dm-colgada:focus-visible .dm-colgada__foto img {
+  transform: scale(1.06);
+  filter: none;
+}
+
+.dm-colgada__pie {
+  display: block;
+  margin-top: 9px;
+  text-align: center;
+}
+
+.dm-colgada__n {
+  display: block;
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: .92rem;
+  line-height: 1.25;
+  color: var(--dm-marfil, #F4EFE7);
+}
+
+.dm-colgada__p {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--dm-oro, #B99A5E);
+}
+.dm-colgada__p del { display: none; }   /* en la sala no cabe el precio tachado */
+
+/* --------------------------------------------------------------------------
+   6. LA BRUMA
+   --------------------------------------------------------------------------
+   Lo lejano se pierde. Sin esto, las salas del fondo se ven igual de nitidas
+   que la de delante y la profundidad se cae: el ojo usa la perdida de contraste
+   con la distancia para calcular a que distancia esta lo que mira.
+   -------------------------------------------------------------------------- */
+
+.dm-recorrido__bruma {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(58% 52% at 50% 46%, transparent 0%, rgba(14, 13, 12, .55) 62%, #0E0D0C 100%),
+    linear-gradient(180deg, rgba(14, 13, 12, .85) 0%, transparent 22%, transparent 74%, rgba(14, 13, 12, .9) 100%);
+}
+
+/* --------------------------------------------------------------------------
+   7. DONDE ESTOY
+   -------------------------------------------------------------------------- */
+
+.dm-recorrido__mapa {
+  position: absolute;
+  right: clamp(14px, 3vw, 38px);
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.dm-recorrido__marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 9.5px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: rgba(244, 239, 231, .34);
+  transition: color .45s ease;
+}
+
+.dm-recorrido__marca em { font-style: normal; }
+
+.dm-recorrido__marca::after {
+  content: '';
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+  transition: width .45s var(--vn-ease-lux, cubic-bezier(.16, 1, .3, 1));
+}
+
+.dm-recorrido__marca.is-aqui {
+  color: var(--dm-oro, #B99A5E);
+}
+.dm-recorrido__marca.is-aqui::after { width: 44px; }
+
+.dm-recorrido__pista {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  translate: -50% 0;
+  z-index: 6;
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 9px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: rgba(244, 239, 231, .4);
+  animation: dm-pista 2.6s ease-in-out infinite;
+}
+
+/* La pista desaparece en cuanto se empieza a avanzar: si sigue ahi a mitad del
+   recorrido, se lee como que la pagina no se entero. */
+.dm-recorrido.is-andando .dm-recorrido__pista { opacity: 0; transition: opacity .4s ease; }
+
+@keyframes dm-pista {
+  0%, 100% { transform: translateY(0);   opacity: .4; }
+  50%      { transform: translateY(6px); opacity: .85; }
+}
+
+/* --------------------------------------------------------------------------
+   8. MOVIL
+   --------------------------------------------------------------------------
+   Menos profundidad y prendas mas grandes. En una pantalla de 390 px, una
+   prenda a 400 px de fondo mide catorce pixeles: no es una prenda, es una
+   mota.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 860px) {
+  .dm-recorrido__marco { perspective: 760px; }
+  .dm-recorrido__escena { --paso: 1050px; }
+  .dm-colgada { width: 40vw; }
+  .dm-colgada::before { display: none; }
+  .dm-sala__rotulo { transform: translateZ(-260px); width: 86vw; }
+  .dm-recorrido__mapa { right: 10px; gap: 12px; }
+  .dm-recorrido__marca { font-size: 8.5px; letter-spacing: .18em; }
+  .dm-recorrido__marca::after { width: 14px; }
+  .dm-recorrido__marca.is-aqui::after { width: 26px; }
+}
+
+/* --------------------------------------------------------------------------
+   9. SIN MOVIMIENTO — Y ESTO NO ES UN ADORNO
+   --------------------------------------------------------------------------
+   A quien pide menos movimiento, un tunel en 3D que avanza con el scroll le
+   puede provocar mareo de verdad. Aqui el recorrido se desmonta entero y queda
+   lo unico que importaba: las salas, una debajo de otra, con sus prendas.
+   Se ve todo y se puede comprar todo.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .dm-recorrido { height: auto !important; }
+  .dm-recorrido__marco { position: static; height: auto; perspective: none; overflow: visible; }
+  .dm-recorrido__suelo,
+  .dm-recorrido__techo,
+  .dm-recorrido__bruma,
+  .dm-recorrido__pista { display: none; }
+
+  .dm-recorrido__escena { position: static; transform: none; }
+
+  .dm-sala {
+    position: static;
+    transform: none;
+    padding: 64px clamp(16px, 4vw, 40px);
+    border-bottom: 1px solid rgba(185, 154, 94, .2);
+  }
+
+  .dm-sala__rotulo { position: static; translate: 0; transform: none; width: auto; margin-bottom: 30px; }
+
+  .dm-colgada {
+    position: static;
+    translate: 0;
+    transform: none;
+    width: auto;
+    display: inline-block;
+    vertical-align: top;
+    max-width: 200px;
+    margin: 0 12px 20px 0;
+  }
+  .dm-colgada::before { display: none; }
+  .dm-colgada__foto img { filter: none; }
+
+  .dm-recorrido__mapa { display: none; }
+}

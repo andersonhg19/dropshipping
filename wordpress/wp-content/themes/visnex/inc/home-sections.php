@@ -146,6 +146,17 @@ add_filter('the_content', function ($content) {
     dm_hero_cine();
     ?>
 
+    <!-- ================= EL RECORRIDO ================= -->
+    <?php
+    /*
+     * Va justo despues del hero, que es donde antes empezaba la parte
+     * convencional: titulo centrado, rejilla, titulo centrado, rejilla.
+     *
+     * Aqui no se baja por bloques: se AVANZA. Vive en inc/recorrido.php.
+     */
+    dm_recorrido();
+    ?>
+
     <!-- ================= BANDA DESLIZANTE ================= -->
     <?php
     /*

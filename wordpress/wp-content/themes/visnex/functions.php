@@ -61,6 +61,16 @@ add_action('wp_enqueue_scripts', function () {
         // Depende de home.css porque le gana a la banda y a las cabeceras de
         // seccion, que viven ahi.
         wp_enqueue_style('visnex-editorial-revista', $dir . 'editorial-revista.css', ['visnex-home'], $ver('editorial-revista.css'));
+
+        // El Recorrido: la tienda como espacio. Solo en la portada.
+        wp_enqueue_style('visnex-recorrido', $dir . 'recorrido.css', ['visnex-components'], $ver('recorrido.css'));
+        wp_enqueue_script(
+            'visnex-recorrido',
+            get_stylesheet_directory_uri() . '/assets/js/recorrido.js',
+            [],
+            $verjs('recorrido.js'),
+            true
+        );
     }
 
     // Las secciones editoriales y los dos arreglos de cabecera. Va en TODAS las
@@ -462,6 +472,7 @@ require_once get_stylesheet_directory() . '/inc/ficha-producto.php';
 require_once get_stylesheet_directory() . '/inc/hero-cine.php';
 require_once get_stylesheet_directory() . '/inc/experiencia.php';
 require_once get_stylesheet_directory() . '/inc/figura.php';
+require_once get_stylesheet_directory() . '/inc/recorrido.php';
 require_once get_stylesheet_directory() . '/inc/asesor.php';
 require_once get_stylesheet_directory() . '/inc/probador.php';
 require_once get_stylesheet_directory() . '/inc/home-sections.php';
