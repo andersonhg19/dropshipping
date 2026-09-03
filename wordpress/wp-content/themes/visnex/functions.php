@@ -106,6 +106,26 @@ add_action('wp_enqueue_scripts', function () {
         );
     }
 
+    // La memoria: apunta en la ficha, saluda en la portada.
+    wp_enqueue_script(
+        'visnex-memoria',
+        get_stylesheet_directory_uri() . '/assets/js/memoria.js',
+        [],
+        $verjs('memoria.js'),
+        true
+    );
+
+    // La Bolsa: el cajon lateral. En todas las paginas, porque el icono de la
+    // bolsa esta en todas.
+    wp_enqueue_style('visnex-bolsa', $dir . 'bolsa.css', ['visnex-components'], $ver('bolsa.css'));
+    wp_enqueue_script(
+        'visnex-bolsa',
+        get_stylesheet_directory_uri() . '/assets/js/bolsa.js',
+        [],
+        $verjs('bolsa.js'),
+        true
+    );
+
     // El Asesor. Va en toda la tienda: la duda "¿y esto con que lo pongo?"
     // aparece sobre todo en la ficha, no en la portada.
     wp_enqueue_style('visnex-asesor', $dir . 'asesor.css', ['visnex-components'], $ver('asesor.css'));
@@ -473,6 +493,8 @@ require_once get_stylesheet_directory() . '/inc/hero-cine.php';
 require_once get_stylesheet_directory() . '/inc/experiencia.php';
 require_once get_stylesheet_directory() . '/inc/figura.php';
 require_once get_stylesheet_directory() . '/inc/recorrido.php';
+require_once get_stylesheet_directory() . '/inc/bolsa.php';
+require_once get_stylesheet_directory() . '/inc/memoria.php';
 require_once get_stylesheet_directory() . '/inc/asesor.php';
 require_once get_stylesheet_directory() . '/inc/probador.php';
 require_once get_stylesheet_directory() . '/inc/home-sections.php';

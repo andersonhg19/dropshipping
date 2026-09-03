@@ -1,0 +1,316 @@
+/* ==========================================================================
+   D'MIKA — La Bolsa
+   --------------------------------------------------------------------------
+   Un cajon que entra por la derecha con lo que llevas dentro. Meter algo en la
+   bolsa no te echa de la tienda.
+   ========================================================================== */
+
+/* Por encima de la cabecera, que esta en 9999.
+   El primer valor fue 9996 y la cabecera pintaba encima: tapaba el titulo "Tu
+   bolsa" y el nombre de la primera prenda. Un cajon que se abre tiene que estar
+   por delante de TODO lo que ya habia en pantalla, o no se lee como un cajon
+   sino como una capa mal puesta. */
+.dm-bolsa {
+  position: fixed;
+  inset: 0;
+  z-index: 10010;
+}
+.dm-bolsa[hidden] { display: none; }
+
+.dm-bolsa__velo {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 11, 11, .55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+.dm-bolsa.is-abierta .dm-bolsa__velo { opacity: 1; }
+
+.dm-bolsa__caja {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(94vw, 420px);
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--dm-marfil, #F4EFE7);
+  box-shadow: -30px 0 80px -20px rgba(11, 11, 11, .55);
+  /* Entra deslizandose desde el borde, no apareciendo: un cajon se abre. */
+  translate: 100% 0;
+  transition: translate .45s cubic-bezier(.16, 1, .3, 1);
+}
+.dm-bolsa.is-abierta .dm-bolsa__caja { translate: 0 0; }
+
+/* --------------------------------------------------------------------------
+   Cabecera
+   -------------------------------------------------------------------------- */
+
+.dm-bolsa__cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 22px 16px;
+  border-bottom: 1px solid var(--dm-arena, #D8C7B0);
+}
+
+.dm-bolsa__titulo {
+  margin: 0;
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--dm-negro, #171717);
+}
+
+.dm-bolsa__x {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border: 0; background: none; cursor: pointer;
+  color: var(--dm-moka, #6F5A4A);
+}
+.dm-bolsa__x:hover { color: var(--dm-negro, #171717); }
+
+.dm-bolsa__cuerpo {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   La lista
+   -------------------------------------------------------------------------- */
+
+.dm-bolsa__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+
+.dm-bolsa__item {
+  display: grid;
+  grid-template-columns: 72px 1fr 30px;
+  gap: 13px;
+  align-items: start;
+  padding: 16px 22px;
+  border-bottom: 1px solid rgba(216, 199, 176, .5);
+  transition: opacity .3s ease, transform .3s ease;
+}
+
+/* Mientras se quita, la fila se va: sin esto el hueco se cierra de golpe y
+   parece que se borro otra cosa. */
+.dm-bolsa__item.is-yendose { opacity: .3; transform: translateX(14px); }
+
+.dm-bolsa__foto { display: block; }
+.dm-bolsa__foto img {
+  width: 72px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+}
+
+.dm-bolsa__datos { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+.dm-bolsa__n {
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: 1rem;
+  line-height: 1.22;
+  color: var(--dm-negro, #171717);
+}
+
+.dm-bolsa__meta,
+.dm-bolsa__meta p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--dm-moka, #6F5A4A);
+}
+
+.dm-bolsa__linea {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--dm-negro, #171717);
+}
+.dm-bolsa__cant { color: var(--dm-moka, #6F5A4A); }
+
+.dm-bolsa__quitar {
+  display: grid;
+  place-items: center;
+  width: 30px; height: 30px;
+  color: var(--dm-arena, #D8C7B0);
+  transition: color .25s ease;
+}
+.dm-bolsa__quitar:hover { color: var(--dm-negro, #171717); }
+
+/* --------------------------------------------------------------------------
+   El pie
+   -------------------------------------------------------------------------- */
+
+.dm-bolsa__pie {
+  padding: 18px 22px 22px;
+  border-top: 1px solid var(--dm-arena, #D8C7B0);
+  background: color-mix(in srgb, var(--dm-marfil, #F4EFE7) 60%, #fff);
+}
+
+/* El envio se dice AQUI. El coste que aparece de golpe al final del pago es la
+   primera causa de carritos abandonados. */
+.dm-bolsa__envio {
+  margin: 0 0 12px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--dm-moka, #6F5A4A);
+}
+.dm-bolsa__envio--ok { color: var(--vn-brass, #836838); font-weight: 500; }
+.dm-bolsa__envio strong { color: var(--dm-negro, #171717); }
+
+.dm-bolsa__barra {
+  display: block;
+  height: 2px;
+  margin-top: 7px;
+  background: var(--dm-arena, #D8C7B0);
+}
+.dm-bolsa__barra span {
+  display: block;
+  height: 100%;
+  background: var(--dm-oro, #B99A5E);
+  transition: width .5s cubic-bezier(.16, 1, .3, 1);
+}
+
+.dm-bolsa__total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0 0 14px;
+  font-size: 12px;
+  color: var(--dm-moka, #6F5A4A);
+}
+.dm-bolsa__total strong {
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--dm-negro, #171717);
+}
+
+.dm-bolsa__pagar {
+  display: block;
+  /* 56 px: es el boton que gana dinero. No puede fallarse con el dedo. */
+  min-height: 56px;
+  display: grid;
+  place-items: center;
+  background: var(--dm-negro, #171717);
+  color: var(--dm-marfil, #F4EFE7);
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 12px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background .3s ease;
+}
+.dm-bolsa__pagar:hover { background: var(--vn-brass, #836838); color: var(--dm-marfil, #F4EFE7); }
+
+.dm-bolsa__ver {
+  display: block;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: var(--dm-moka, #6F5A4A);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dm-bolsa__promesa {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--dm-moka, #6F5A4A);
+}
+
+/* --------------------------------------------------------------------------
+   La bolsa vacia — que no es un callejon
+   -------------------------------------------------------------------------- */
+
+.dm-bolsa__vacia {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 40px 26px;
+  text-align: center;
+}
+
+.dm-bolsa__vicono { color: var(--dm-arena, #D8C7B0); }
+
+.dm-bolsa__vtexto {
+  margin: 0;
+  font-family: var(--vn-font-serif, "Bodoni Moda", Didot, serif);
+  font-size: 1.25rem;
+  color: var(--dm-negro, #171717);
+}
+
+.dm-bolsa__vboton {
+  padding: 14px 24px;
+  border: 1px solid var(--dm-negro, #171717);
+  background: var(--dm-negro, #171717);
+  color: var(--dm-marfil, #F4EFE7);
+  font-family: var(--vn-font-sans, "Jost", system-ui, sans-serif);
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .3s ease;
+}
+.dm-bolsa__vboton:hover { background: var(--vn-brass, #836838); border-color: var(--vn-brass, #836838); }
+
+.dm-bolsa__vlink {
+  font-size: 11px;
+  color: var(--dm-moka, #6F5A4A);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   El vuelo
+   -------------------------------------------------------------------------- */
+
+.dm-vuelo {
+  position: fixed;
+  z-index: 99998;
+  object-fit: cover;
+  pointer-events: none;
+  border-radius: 2px;
+  box-shadow: 0 20px 44px -14px rgba(11, 11, 11, .55);
+  will-change: transform, opacity;
+}
+
+/* La bolsa acusa el golpe cuando la prenda llega. Sin esto, aterriza y no pasa
+   nada: el gesto se queda sin final. */
+.dm-cab__accion.is-golpe,
+[data-dm-bolsa-abrir].is-golpe {
+  animation: dm-golpe .46s cubic-bezier(.36, .07, .19, .97);
+}
+
+@keyframes dm-golpe {
+  0%, 100% { transform: scale(1); }
+  30%      { transform: scale(1.22) rotate(-6deg); }
+  60%      { transform: scale(.94) rotate(3deg); }
+}
+
+.single_add_to_cart_button.is-cargando { opacity: .6; pointer-events: none; }
+
+/* --------------------------------------------------------------------------
+   Sin movimiento
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .dm-bolsa__caja { transition: none; }
+  .dm-vuelo { display: none; }
+  .dm-cab__accion.is-golpe { animation: none; }
+  .dm-bolsa__item { transition: none; }
+}

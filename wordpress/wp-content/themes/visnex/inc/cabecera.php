@@ -147,9 +147,13 @@ add_action('storefront_header', function () {
             <a class="dm-cab__accion dm-cab__bolsa" href="<?php echo $carrito; ?>"
                aria-label="<?php echo esc_attr(sprintf('Carrito, %d artículos', $n)); ?>">
                 <?php echo dm_icono('bolsa'); ?>
-                <?php if ($n > 0) : ?>
-                    <span class="dm-cab__contador"><?php echo esc_html($n); ?></span>
-                <?php endif; ?>
+                <?php
+                /* El contador se pinta SIEMPRE, oculto si esta a cero.
+                   Antes solo existia con articulos dentro, asi que al anadir el
+                   primero no habia nada que actualizar sin recargar: el numero
+                   no aparecia hasta la siguiente carga. */
+                ?>
+                <span class="dm-cab__contador" data-dm-cuenta <?php echo $n > 0 ? '' : 'hidden'; ?>><?php echo esc_html($n); ?></span>
             </a>
         </div>
     </div>

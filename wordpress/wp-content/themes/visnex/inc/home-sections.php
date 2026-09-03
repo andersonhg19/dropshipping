@@ -157,6 +157,15 @@ add_filter('the_content', function ($content) {
     dm_recorrido();
     ?>
 
+    <!-- ================= LO QUE ESTABAS MIRANDO ================= -->
+    <?php
+    /*
+     * El hueco del saludo. Sale vacio y oculto; lo rellena memoria.js con lo
+     * que haya guardado ESE navegador. Si es la primera visita, no se ve.
+     */
+    dm_memoria_hueco();
+    ?>
+
     <!-- ================= BANDA DESLIZANTE ================= -->
     <?php
     /*
