@@ -31,6 +31,11 @@ add_action('wp_body_open', function () {
     if (!is_front_page() && !is_home()) {
         return;
     }
+    // Y solo en modo pleno: en una tienda, una cortina TAMBIEN es un peaje en
+    // la portada. Retrasa el escaparate 1,65 s la primera vez.
+    if (function_exists('dm_ceremonia_plena') && !dm_ceremonia_plena()) {
+        return;
+    }
     if (!function_exists('dm_monograma')) {
         return;
     }

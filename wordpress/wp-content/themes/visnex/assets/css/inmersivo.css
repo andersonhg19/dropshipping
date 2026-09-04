@@ -227,42 +227,18 @@ body::after {
 .vn-tilt:hover .vn-tilt__brillo { opacity: 1; }
 
 /* ==========================================================================
-   6. CARRIL HORIZONTAL
+   6. CARRIL HORIZONTAL — MOVIDO A home.css
    --------------------------------------------------------------------------
-   Los productos dejan de ser una rejilla que baja y pasan a un carril que se
-   recorre de lado, con anclaje. Es el gesto que la gente ya conoce del movil,
-   y en escritorio se siente de aplicacion, no de catalogo.
+   Estaba aqui y no debia: el carril no es adorno, es MAQUETA. Al dejar de
+   cargar esta hoja en modo justa, los productos del carril perdieron su
+   `display: flex` y su `overflow-x`, se apilaron en vertical, y esa sola
+   seccion paso a medir 4.000 px de alto. El documento entero crecio en vez de
+   encoger.
+
+   Regla que conviene recordar: si una seccion se COLOCA con esas reglas, no
+   pueden vivir en una capa opcional. Adorno y maqueta van en hojas distintas.
    ========================================================================== */
 
-.vn-carril {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(240px, 27vw);
-  gap: var(--vn-space-5);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--vn-space-6);
-  padding: var(--vn-space-4) var(--vn-space-6) var(--vn-space-7);
-  scrollbar-width: none;
-}
-.vn-carril::-webkit-scrollbar { display: none; }
-.vn-carril > * { scroll-snap-align: start; }
-
-/* Degradados en los bordes: dice "hay mas" sin escribirlo. */
-.vn-carril-marco { position: relative; }
-.vn-carril-marco::before,
-.vn-carril-marco::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 90px;
-  pointer-events: none;
-  z-index: 2;
-}
-.vn-carril-marco::before { left: 0;  background: linear-gradient(90deg, var(--dm-marfil), transparent); }
-.vn-carril-marco::after  { right: 0; background: linear-gradient(270deg, var(--dm-marfil), transparent); }
 
 /* ==========================================================================
    7. MARCA DE AGUA
@@ -329,26 +305,10 @@ body::after {
   ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
 }
 
-/* --------------------------------------------------------------------------
-   Dentro del carril, la rejilla de WooCommerce deja de ser rejilla.
-   El shortcode sigue devolviendo su <ul class="products">, asi que se le
-   cambia el display en lugar de reescribir la plantilla.
-   -------------------------------------------------------------------------- */
+/* (Las reglas que aplanan el envoltorio del shortcode dentro del carril se
+   movieron a home.css junto con el resto del carril: sin ellas los productos
+   se apilaban en una columna de 1.581 px.) */
 
-.vn-carril .woocommerce > ul.products,
-.vn-carril ul.products {
-  display: contents;
-  padding: 0;
-  margin: 0;
-  max-width: none;
-}
-.vn-carril ul.products li.product {
-  width: 100% !important;   /* Storefront fija anchos en % con float */
-  margin: 0 !important;
-  float: none !important;
-  scroll-snap-align: start;
-}
-.vn-carril > .woocommerce { display: contents; }
 
 /* Pista visual de que se puede arrastrar. */
 .vn-carril { cursor: grab; }

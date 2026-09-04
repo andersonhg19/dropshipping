@@ -158,6 +158,22 @@ function dm_recorrido_posiciones(): array
  */
 function dm_recorrido(): void
 {
+    /*
+     * En modo justa no se pinta NADA, y esto no es una optimizacion: es un
+     * arreglo.
+     *
+     * Al quitar solo la hoja de estilo, el marcado se quedaba y las tres salas
+     * -que en 3D estan superpuestas- pasaban a apilarse como bloques normales.
+     * Medido: el documento crecio de 11.599 a 14.791 px. O sea que quitar el
+     * recorrido lo hacia MAS largo.
+     *
+     * Leccion: una seccion que depende de su CSS para colocarse no se apaga
+     * quitandole el CSS. Se apaga no imprimiendola.
+     */
+    if (function_exists('dm_ceremonia_plena') && !dm_ceremonia_plena()) {
+        return;
+    }
+
     $salas = dm_recorrido_salas();
     $pos   = dm_recorrido_posiciones();
     $tienda = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/');

@@ -14,6 +14,50 @@ defined('ABSPATH') || exit;
 define('VISNEX_VERSION', '1.0.0');
 
 /* =============================================================================
+   CUANTA CEREMONIA LLEVA LA TIENDA
+   =============================================================================
+
+   Se llego a 21 hojas de estilo, 12 scripts y TREINTA animaciones corriendo a
+   la vez en la portada. Un mega de pagina y 75 peticiones. Eso no es una
+   tienda inmersiva: es ruido, y el ruido tiene un precio medido.
+
+   Lo que dice la evidencia, y que conviene tener escrito aqui para no volver
+   a olvidarlo:
+
+     - No hay dato publico que muestre que las animaciones y el scroll-jacking
+       mejoren la conversion. Amazon no los usa; si vieran un 0,001% de mejora,
+       lo harian.
+     - El scroll-jacking rompe lo que el usuario espera del scroll. Es la
+       interaccion mas basica de la web y secuestrarla se paga.
+     - El 38% de las personas con trastornos vestibulares tiene problemas con
+       el movimiento excesivo. No es un caso raro: es una de cada tres.
+     - Lo unico con consenso a favor es el VIDEO y las transiciones que guian
+       hacia una accion.
+
+   Los sitios inmersivos que ganan premios no son tiendas: son anuncios. El
+   showroom en 3D de una casa de lujo no vende, comunica — y tiene detras una
+   campana que si vende en otro sitio.
+
+   Asi que la ceremonia pasa a ser una DECISION EXPLICITA, no una acumulacion.
+
+     'justa'  — lo que se gana el sitio: el hero, el asesor, la bolsa, el
+                probador y la lupa. Todo lo demas, fuera.
+     'plena'  — todo lo que se llego a construir. Se conserva entero en el
+                repositorio; solo hay que cambiar esta linea para verlo.
+
+   Nada se ha borrado. Cambiar el valor de abajo devuelve el otro estado.
+   ============================================================================= */
+if (!defined('VISNEX_CEREMONIA')) {
+    define('VISNEX_CEREMONIA', 'justa');
+}
+
+/** ¿Va la tienda en modo con toda la ceremonia? */
+function dm_ceremonia_plena(): bool
+{
+    return VISNEX_CEREMONIA === 'plena';
+}
+
+/* =============================================================================
    1. ESTILOS Y SCRIPTS
    ============================================================================= */
 
@@ -60,9 +104,25 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_style('visnex-hero-cine', $dir . 'hero-cine.css', ['visnex-components'], $ver('hero-cine.css'));
         // Depende de home.css porque le gana a la banda y a las cabeceras de
         // seccion, que viven ahi.
-        wp_enqueue_style('visnex-editorial-revista', $dir . 'editorial-revista.css', ['visnex-home'], $ver('editorial-revista.css'));
+        // Numeros de capitulo, banda en diagonal y grano: adorno de revista
+        // sobre una rejilla de comercio. Solo en modo pleno.
+        if (dm_ceremonia_plena()) {
+            wp_enqueue_style('visnex-editorial-revista', $dir . 'editorial-revista.css', ['visnex-home'], $ver('editorial-revista.css'));
+        }
 
-        // El Recorrido: la tienda como espacio. Solo en la portada.
+        /*
+         * EL RECORRIDO — solo en modo pleno.
+         *
+         * Es la pieza mas vistosa que se construyo y la que peor encaja en una
+         * tienda. Secuestra el scroll durante cuatro pantallas: quien quiere
+         * ver el catalogo tiene que atravesar un tunel primero, y anadia 4.600
+         * px al alto del documento.
+         *
+         * No se borra. El codigo esta completo y funciona; simplemente una
+         * tienda no es el sitio. Serviria como pagina aparte — un "atelier" al
+         * que se entra desde el menu, donde quien va, va a mirar.
+         */
+        if (dm_ceremonia_plena()) {
         wp_enqueue_style('visnex-recorrido', $dir . 'recorrido.css', ['visnex-components'], $ver('recorrido.css'));
         wp_enqueue_script(
             'visnex-recorrido',
@@ -71,6 +131,7 @@ add_action('wp_enqueue_scripts', function () {
             $verjs('recorrido.js'),
             true
         );
+        }
     }
 
     // Las secciones editoriales y los dos arreglos de cabecera. Va en TODAS las
@@ -205,15 +266,26 @@ add_action('wp_enqueue_scripts', function () {
     $verInm = file_exists($path . 'inmersivo.css')
         ? (string) filemtime($path . 'inmersivo.css')
         : VISNEX_VERSION;
-    wp_enqueue_style('visnex-inmersivo', $dir . 'inmersivo.css', ['visnex-marca'], $verInm);
-
-    wp_enqueue_script(
-        'visnex-inmersivo',
-        get_stylesheet_directory_uri() . '/assets/js/inmersivo.js',
-        [],
-        $verInm,
-        true
-    );
+    /*
+     * LA CAPA INMERSIVA — solo en modo pleno.
+     *
+     * Cursor propio, inclinacion 3D de las tarjetas, grano y carriles.
+     * Ninguna de las cuatro ayuda a comprar y las cuatro cuestan:
+     *   - El cursor propio esconde el del sistema. Quien lleva veinte anos
+     *     usando una flecha no quiere aprender un circulo.
+     *   - La inclinacion 3D mueve la foto justo cuando se intenta mirarla.
+     *   - El grano es una textura a pantalla completa componiendose siempre.
+     */
+    if (dm_ceremonia_plena()) {
+        wp_enqueue_style('visnex-inmersivo', $dir . 'inmersivo.css', ['visnex-marca'], $verInm);
+        wp_enqueue_script(
+            'visnex-inmersivo',
+            get_stylesheet_directory_uri() . '/assets/js/inmersivo.js',
+            [],
+            $verInm,
+            true
+        );
+    }
 
     // La capa de experiencia cierra la cascada: entrada, rejilla viva,
     // transiciones entre paginas e imanes. Va en TODAS las paginas porque las
@@ -222,7 +294,24 @@ add_action('wp_enqueue_scripts', function () {
     $verExp = file_exists($path . 'experiencia.css')
         ? (string) filemtime($path . 'experiencia.css')
         : VISNEX_VERSION;
-    wp_enqueue_style('visnex-experiencia', $dir . 'experiencia.css', ['visnex-inmersivo'], $verExp);
+    /*
+     * LA CAPA DE EXPERIENCIA — solo en modo pleno.
+     *
+     * La cortina de entrada, los imanes, el descifrado de los antetitulos y el
+     * fondo que cambia de tono.
+     *
+     * La cortina es la peor de las cuatro: retrasa la tienda 1,65 s la primera
+     * vez. Es exactamente el gesto de un anuncio -hacerte esperar antes de
+     * ensenarte algo- y en una tienda cada decima antes del escaparate es gente
+     * que se va.
+     *
+     * La dependencia pasa a 'visnex-marca': en modo justa, 'visnex-inmersivo'
+     * ya no existe, y una hoja que depende de otra que no se encolo NO SE
+     * IMPRIME. Es un fallo silencioso de los peores: no hay error, solo estilos
+     * que faltan.
+     */
+    if (dm_ceremonia_plena()) {
+    wp_enqueue_style('visnex-experiencia', $dir . 'experiencia.css', ['visnex-marca'], $verExp);
 
     $jsExp = get_stylesheet_directory() . '/assets/js/experiencia.js';
     wp_enqueue_script(
@@ -232,6 +321,7 @@ add_action('wp_enqueue_scripts', function () {
         file_exists($jsExp) ? (string) filemtime($jsExp) : VISNEX_VERSION,
         true
     );
+    }
 
     // EL HERO EN WEBGL, RETIRADO.
     //
