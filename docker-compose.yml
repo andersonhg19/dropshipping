@@ -228,6 +228,8 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SECRET: ${SECRET:?falta SECRET en backend/.env}
+      # Clave AES con la que auth descifra las contrasenas internas. Sin valor por defecto.
+      SECRET_CONNEXION: ${SECRET_CONNEXION}
       EXP_TIME: ${EXP_TIME:-86400000}
     networks:
       - visnex-network
@@ -268,6 +270,11 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SECRET: ${SECRET:?falta SECRET en backend/.env}
+      # Credenciales del login interno entre servicios (/internalLogin). Sin valor por defecto.
+      SECRET_CONNEXION: ${SECRET_CONNEXION}
+      SECRET_USER: ${SECRET_USER}
+      SECRET_KEY: ${SECRET_KEY}
+      TEMPORAL_PASSWORD: ${TEMPORAL_PASSWORD}
       EXP_TIME: ${EXP_TIME:-86400000}
     networks:
       - visnex-network
@@ -290,6 +297,10 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SECRET: ${SECRET:?falta SECRET en backend/.env}
+      # Credenciales del login interno entre servicios (/internalLogin). Sin valor por defecto.
+      SECRET_CONNEXION: ${SECRET_CONNEXION}
+      SECRET_USER: ${SECRET_USER}
+      SECRET_KEY: ${SECRET_KEY}
       EXP_TIME: ${EXP_TIME:-86400000}
     networks:
       - visnex-network
@@ -310,6 +321,10 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SECRET: ${SECRET:?falta SECRET en backend/.env}
+      # Credenciales del login interno entre servicios (/internalLogin). Sin valor por defecto.
+      SECRET_CONNEXION: ${SECRET_CONNEXION}
+      SECRET_USER: ${SECRET_USER}
+      SECRET_KEY: ${SECRET_KEY}
       EXP_TIME: ${EXP_TIME:-86400000}
       WC_URL: ${WC_URL:-http://wordpress:80}
       WC_CONSUMER_KEY: ${WC_CONSUMER_KEY:-}
@@ -333,6 +348,10 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SECRET: ${SECRET:?falta SECRET en backend/.env}
+      # Credenciales del login interno entre servicios (/internalLogin). Sin valor por defecto.
+      SECRET_CONNEXION: ${SECRET_CONNEXION}
+      SECRET_USER: ${SECRET_USER}
+      SECRET_KEY: ${SECRET_KEY}
       EXP_TIME: ${EXP_TIME:-86400000}
     networks:
       - visnex-network

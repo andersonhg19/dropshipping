@@ -27,7 +27,11 @@ public class AuditServiceApplication {
         
         String password = System.getenv("SPRING_DATASOURCE_PASSWORD");
         if (password == null || password.isEmpty()) {
-            password = System.getProperty("spring.datasource.password", "Visnex2026");
+            password = System.getProperty("spring.datasource.password");
+        }
+        if (password == null || password.isEmpty()) {
+            // Sin contrasena por defecto: si falta, el servicio no arranca (a proposito).
+            throw new IllegalStateException("Falta SPRING_DATASOURCE_PASSWORD");
         }
         
         // Intentar crear la base de datos si no existe

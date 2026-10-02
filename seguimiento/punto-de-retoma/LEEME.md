@@ -36,7 +36,7 @@ git switch -c rescate punto-de-retoma-2026-09-01
 ```bash
 git checkout punto-de-retoma-2026-09-01
 gunzip -c seguimiento/punto-de-retoma/base-de-datos.sql.gz \
-  | docker exec -i dropshipping-mysql-1 mysql -uroot -pvnroot2026 wordpress_vn
+  | docker exec -i dropshipping-mysql-1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" wordpress_vn' 
 ```
 
 **Todo, incluidas las fotos** (raro: las subidas casi nunca se corrompen):

@@ -11,7 +11,7 @@ public class AppConfig {
     @Value("${language:es}")
     private String language;
 
-    @Value("${secretKey:defaultKey}")
+    @Value("${secretKey}")
     private String secretKey;
 
     @Bean

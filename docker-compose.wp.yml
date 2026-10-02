@@ -45,10 +45,10 @@ services:
     # exactamente lo que parecia "se esta cayendo por memoria" y no lo era.
     stop_grace_period: 60s
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-vnroot2026}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?falta MYSQL_ROOT_PASSWORD en .env}
       MYSQL_DATABASE: wordpress_vn
-      MYSQL_USER: ${MYSQL_USER:-vn_user}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-vnpass2026}
+      MYSQL_USER: ${WORDPRESS_DB_USER:?falta WORDPRESS_DB_USER en .env}
+      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD:?falta WORDPRESS_DB_PASSWORD en .env}
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
@@ -87,8 +87,8 @@ services:
         condition: service_healthy
     environment:
       WORDPRESS_DB_HOST: mysql:3306
-      WORDPRESS_DB_USER: ${MYSQL_USER:-vn_user}
-      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD:-vnpass2026}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:?falta WORDPRESS_DB_USER en .env}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:?falta WORDPRESS_DB_PASSWORD en .env}
       WORDPRESS_DB_NAME: wordpress_vn
       WORDPRESS_TABLE_PREFIX: vn_
       # 0 a proposito: con 1, los avisos de PHP se imprimen DENTRO de la
@@ -207,7 +207,7 @@ services:
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-vnroot2026}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?falta MYSQL_ROOT_PASSWORD en .env}
     ports:
       - "8851:80"
     networks:

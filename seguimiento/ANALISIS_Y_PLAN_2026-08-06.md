@@ -204,7 +204,7 @@ volver usable el sistema entero de punta a punta.
 
 Los 5 críticos de la auditoría de julio **siguen todos vigentes [V]**:
 `backend/.env` y `frontend/.env` continúan trackeados en git con contraseñas reales, el secreto
-JWT sigue siendo `visnex@secret.key` compartido por 6 servicios, `audit-service` sigue sin filtro
+JWT sigue siendo `<redactado>` compartido por 6 servicios, `audit-service` sigue sin filtro
 JWT, y `docs/VISNEX-Documentacion-Completa.html` sigue publicando todas las credenciales en claro.
 
 **Y hay algo peor que la auditoría de julio no detectó [V]:**
@@ -222,7 +222,7 @@ Alcance real, medido (no alarmista):
 | Secreto expuesto | Gravedad real | Por qué |
 |---|---|---|
 | `SPRING_DATASOURCE_PASSWORD`, `POSTGRES_PASSWORD` | **Media** | Apuntan a `localhost`/Docker. No explotables desde fuera **mientras no despliegues**. Se vuelven críticos el día que publiques |
-| `SECRET` (JWT, `visnex@secret.key`) | **Alta** | Compartido por 6 servicios. Cualquiera que lea el repo puede forjar un token ADMIN el día que el sistema esté en línea |
+| `SECRET` (JWT, `<redactado>`) | **Alta** | Compartido por 6 servicios. Cualquiera que lea el repo puede forjar un token ADMIN el día que el sistema esté en línea |
 | `NEXT_PUBLIC_CACHE_SECRET` | Media | Cripto del frontend |
 | `SMTP_PASSWORD` | **Ninguna** | Verificado: es el placeholder `your-app-password`, no una credencial real |
 
