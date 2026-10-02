@@ -11,13 +11,20 @@ antes de empezar a rediseñar.
 | Pieza | Dónde | Tamaño |
 |---|---|---|
 | Código | etiqueta de git `punto-de-retoma-2026-09-01` | — |
-| Base de datos | `base-de-datos.sql.gz` | 222 KB |
-| Fotos y subidas | `subidas.tar.gz` | 88 MB |
+| Base de datos | `base-de-datos.sql.gz` (fuera del repo, ver abajo) | 222 KB |
+| Fotos y subidas | `subidas.tar.gz` (fuera del repo, ver abajo) | 88 MB |
 
-Los dos archivos comprimidos **no están en git**: 88 MB de fotos en el
-historial es algo que no se puede deshacer luego. Viven en esta carpeta, en el
-disco. Si esta máquina se pierde, se pierden — para lo que importa de verdad
-conviene copiarlos a otro sitio.
+Los dos archivos comprimidos **no están en git**. Desde el 2026-10-01 tampoco
+viven en esta carpeta: se sacaron del repo tras comprobar (sha256) que están en
+el respaldo protegido
+`C:\Users\ander\Documents\Anderson\Personales\respaldos-shark\wordpress-visnex-2026-10-01\`:
+
+- base: `db/punto-de-retoma-base-de-datos.sql.gz`
+- fotos: dentro de `repo/repo-seguimiento-docs.tar.gz`, en
+  `seguimiento/punto-de-retoma/subidas.tar.gz`
+
+En los comandos de abajo, `RESPALDO` es esa carpeta:
+`RESPALDO=/c/Users/ander/Documents/Anderson/Personales/respaldos-shark/wordpress-visnex-2026-10-01`
 
 El código sí está en git, y esa es la parte que no se puede perder.
 
@@ -35,15 +42,18 @@ git switch -c rescate punto-de-retoma-2026-09-01
 
 ```bash
 git checkout punto-de-retoma-2026-09-01
-gunzip -c seguimiento/punto-de-retoma/base-de-datos.sql.gz \
+gunzip -c "$RESPALDO/db/punto-de-retoma-base-de-datos.sql.gz" \
   | docker exec -i dropshipping-mysql-1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" wordpress_vn' 
 ```
 
 **Todo, incluidas las fotos** (raro: las subidas casi nunca se corrompen):
 
 ```bash
+mkdir -p /tmp/retoma
+tar xzf "$RESPALDO/repo/repo-seguimiento-docs.tar.gz" -C /tmp/retoma \
+  seguimiento/punto-de-retoma/subidas.tar.gz
 docker run --rm -v dropshipping_wpcontent:/d \
-  -v "$PWD/seguimiento/punto-de-retoma":/in \
+  -v /tmp/retoma/seguimiento/punto-de-retoma:/in \
   alpine sh -c "rm -rf /d/uploads && tar xzf /in/subidas.tar.gz -C /d"
 ```
 
