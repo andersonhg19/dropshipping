@@ -119,11 +119,14 @@ git config --local user.name "Anderson Herrera"
 # TODO unificado
 docker-compose --env-file ./backend/.env up --build -d
 
-# Solo infraestructura
-docker-compose -f docker-compose.infra.yml --env-file ./backend/.env up --build -d
+# Solo algunos servicios del compose unificado (ej: infraestructura)
+docker-compose --env-file ./backend/.env up -d postgres discovery-service gateway-service
 
-# Solo WordPress
+# Solo WordPress (lee el .env de la raiz)
 docker-compose -f docker-compose.wp.yml up --build -d
+
+# Antes de un `up --build` del backend: los Dockerfile copian target/*.jar
+cd backend && mvn clean package
 
 # Compilar servicio especifico
 cd backend && mvn clean package -pl {nombre-servicio}
