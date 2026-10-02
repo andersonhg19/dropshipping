@@ -463,14 +463,24 @@ Siempre con valores por defecto: `${VARIABLE:default_value}`
 
 | Documento | Ubicacion |
 |-----------|-----------|
-| Plan maestro | `seguimiento/PLAN_MAESTRO_DROPSHIPPING.md` |
-| Puntos criticos | `seguimiento/PUNTOS_CRITICOS_NO_OLVIDAR.md` |
-| Arquitectura 2 servicios | `seguimiento/PROPUESTA_ARQUITECTURA_2_SERVICIOS.md` |
-| Entidades simplificadas | `seguimiento/ENTIDADES_SIMPLIFICADAS_V2.md` |
-| Investigacion APIs | `seguimiento/investigacion-apis-fuentes-datos.md` |
-| Investigacion Shein | `seguimiento/investigacion-shein-moda.md` |
-| Investigacion herramientas | `seguimiento/investigacion-herramientas-dropshipping.md` |
-| Analisis revision plan | `seguimiento/ANALISIS_REVISION_PLAN_V2.md` |
+| Bitacora (seguimiento vivo) | `seguimiento/bitacora.md` |
+| Plan de trabajo vigente | `seguimiento/ANALISIS_Y_PLAN_2026-08-06.md` |
+| Punto de retoma del rediseno | `seguimiento/punto-de-retoma/LEEME.md` |
+
+Documentos superados (valor historico, no operativos) en `seguimiento/archivo/`:
+
+| Documento | Ubicacion |
+|-----------|-----------|
+| Plan maestro | `seguimiento/archivo/PLAN_MAESTRO_DROPSHIPPING.md` |
+| Puntos criticos | `seguimiento/archivo/PUNTOS_CRITICOS_NO_OLVIDAR.md` |
+| Arquitectura 2 servicios | `seguimiento/archivo/PROPUESTA_ARQUITECTURA_2_SERVICIOS.md` |
+| Entidades simplificadas | `seguimiento/archivo/ENTIDADES_SIMPLIFICADAS_V2.md` |
+| Analisis revision plan | `seguimiento/archivo/ANALISIS_REVISION_PLAN_V2.md` |
+| Analisis profundo (julio) | `seguimiento/archivo/ANALISIS_PROFUNDO_2026-07-10.md` |
+| Guia de diseno "tipo Apple" | `seguimiento/archivo/DESIGN_SPEC_PREMIUM.md` |
+| Investigacion APIs | `seguimiento/archivo/investigacion-apis-fuentes-datos.md` |
+| Investigacion Shein | `seguimiento/archivo/investigacion-shein-moda.md` |
+| Investigacion herramientas | `seguimiento/archivo/investigacion-herramientas-dropshipping.md` |
 
 ---
 
