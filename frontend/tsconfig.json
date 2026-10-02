@@ -21,7 +21,6 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    // "types": ["node", "jest", "@testing-library/jest-dom"],
     "plugins": [
       {
         "name": "next"
@@ -81,10 +80,7 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.mjs",
-    "jest.config.js",
-    ".next/types/**/*.ts",
-    "src/core/config/api/fetch-data.tsx",
-    "src/theme/page.ejemplo"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
