@@ -78,6 +78,8 @@ __pycache__/
 # El lienzo montado son 3 MB con las fotos dentro: se regenera desde
 # brand/canvas2/generar.py + canvas.json cuando haga falta.
 brand/canvas2/dmika-*.html
+# El lienzo montado de la v1 (brand/canvas) tampoco va en git.
+brand/canvas/dmika-*.html
 brand/canvas2/_ver-*.html
 brand/canvas2/_shot-*.png
 brand/canvas2/_s-*.png
