@@ -230,6 +230,9 @@ services:
       SECRET: ${SECRET:?falta SECRET en backend/.env}
       # Clave AES con la que auth descifra las contrasenas internas. Sin valor por defecto.
       SECRET_CONNEXION: ${SECRET_CONNEXION}
+      # SMTP de la recuperacion de contrasena. Sin valor por defecto.
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
       EXP_TIME: ${EXP_TIME:-86400000}
     networks:
       - visnex-network

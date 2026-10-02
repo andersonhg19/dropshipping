@@ -32,7 +32,7 @@ Lo que ya esta bien y hay que conservar:
 | S1 | `backend/.env` y `frontend/.env` COMMITEADOS con secretos reales (POSTGRES_PASSWORD=<redactado>, SECRET=<redactado>, WC ck_/cs_ reales) | git ls-files lo confirma; .gitignore solo cubre .env.local | `git rm --cached`, anadir `.env` a .gitignore, crear `.env.example`, ROTAR todo, purgar historial (BFG/filter-repo) antes de hacer publico el repo |
 | S2 | Secreto JWT debil y por defecto (`<redactado>`) compartido por 6 servicios — permite falsificar tokens ADMIN | docker-compose.yml L122,143,164,185,206,226 | Secreto aleatorio >=256 bits, sin default (fallar arranque si falta) |
 | S3 | Credenciales BD por defecto en compose (<redactado>, <redactado>, <redactado>) | docker-compose.yml L24,39,41 | Sin defaults, exigir env vars |
-| S4 | `docs/VISNEX-Documentacion-Completa.html` publica TODAS las credenciales en claro (admin Visnex123, BD, WC keys, JWT secret) | L548,557,563-564,573,582-583,593,615,666,1565 | Reemplazar por placeholders, rotar todo |
+| S4 | `docs/VISNEX-Documentacion-Completa.html` publica TODAS las credenciales en claro (admin <redactado>, BD, WC keys, JWT secret) | L548,557,563-564,573,582-583,593,615,666,1565 | Reemplazar por placeholders, rotar todo |
 | S5 | audit-service SIN filtro JWT: `/v2/audit-log/**` permitAll y sin JWTAuthorizationFilter — audit log publico y falsificable | audit-service SecurityConfig.java L19-20 | Anadir filtro, restringir a red interna |
 
 ### ALTOS

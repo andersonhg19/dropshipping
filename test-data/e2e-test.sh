@@ -52,9 +52,14 @@ SERVICES=$(curl -s $BASE_URL:8840/eureka/apps 2>/dev/null | grep -o '<name>[^<]*
 assert_eq "Eureka has 7+ services" "1" "$([ $SERVICES -ge 7 ] && echo 1 || echo 0)"
 
 # Test 3: Login
+# La clave AES (la misma que SECRET_CONNEXION, en hex) y la contrasena del
+# usuario de prueba llegan por entorno: nunca escritas en el repo.
+: "${VN_AES_KEY:?Falta VN_AES_KEY (hex de 64 caracteres)}"
+: "${VN_ADMIN_PASSWORD:?Falta VN_ADMIN_PASSWORD}"
+export VN_AES_KEY VN_ADMIN_PASSWORD
 echo ""
 echo "[3] Authentication"
-EP=$(node -e "const c=require('crypto'),k=Buffer.from('3a1f8a790c238b8df0d447b53d792134b5cc7f2c8f7f62f168e4d1c978e5f384','hex'),iv=c.randomBytes(16),ci=c.createCipheriv('aes-256-cbc',k,iv);let e=ci.update('Visnex123','utf8','hex');e+=ci.final('hex');console.log(e+'.'+iv.toString('hex'))")
+EP=$(node -e "const c=require('crypto'),k=Buffer.from(process.env.VN_AES_KEY,'hex'),iv=c.randomBytes(16),ci=c.createCipheriv('aes-256-cbc',k,iv);let e=ci.update(process.env.VN_ADMIN_PASSWORD,'utf8','hex');e+=ci.final('hex');console.log(e+'.'+iv.toString('hex'))")
 TK=$(curl -s -X POST $BASE_URL:$AUTH_PORT/vn-api/login -H "Content-Type: application/json" -d "{\"username\":\"visnex\",\"password\":\"$EP\"}" | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
 assert_not_empty "JWT token obtained" "$TK"
 

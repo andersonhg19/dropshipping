@@ -12,11 +12,7 @@ export const API_PASS_SERVICE = process.env.API_PASS_SERVICE
 
 export const API_USER_TOKEN_SERVICE = 'admin'
 
-export const SECRET_KEY = 'ADAERYUUCZ1PICANR'
-
 export const GRID_SIZE = 10
-
-export const DEFAULT_PASSWORD = 'Visnex123'
 
 export const INFINITY_SYMBOL = '∞'
 

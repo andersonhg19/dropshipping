@@ -12,8 +12,6 @@ import javax.crypto.spec.SecretKeySpec;
 public class utilities {
 
     private static Params params;
-    // private static String claveHex =
-    // "3a1f8a790c238b8df0d447b53d792134b5cc7f2c8f7f62f168e4d1c978e5f384";
 
     @Autowired
     public utilities(Params params) {

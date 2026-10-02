@@ -11,7 +11,7 @@ const START_TAG = '420'
 const END_TAG = '021'
 
 // Keys lógicas para localStorage (algunas con “fecha-prefijo”)
-const KEY_API_STORE = '3a1f8a790c238b8df0d447b53d792134'
+const KEY_API_STORE = '__vn_api_key__'
 const KEY_USER = '2a5f8a790c238u8sf0e447r53d344378'
 const PRIVS_KEY = '__user_privileges__' // <- privilegios sin fecha-prefijo
 
