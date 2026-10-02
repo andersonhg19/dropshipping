@@ -196,7 +196,6 @@ function dm_asesor_responder(): void
     $motivos = dm_asesor_motivos();
 
     $look = [];
-    $vestir = [];
     $elegidos = [];
     $total = 0.0;
     $es_vestido = false;
@@ -231,10 +230,6 @@ function dm_asesor_responder(): void
 
         $elegidos[] = $p->get_id();
         $total += (float) $p->get_price();
-
-        // La foto para VESTIR a la figura se elige aparte: la del listado esta
-        // recortada a 3:4 y sirve para la tarjeta, no para caer sobre un cuerpo.
-        $vestir[$hueco] = dm_figura_mejor_foto($p);
 
         $look[] = [
             'id'      => $p->get_id(),
@@ -274,9 +269,9 @@ function dm_asesor_responder(): void
          * serio. Un consejo que se presenta con una imagen rota no es un
          * consejo.
          *
-         * No se borra el codigo (inc/figura.php sigue ahi) porque la tecnica es
-         * correcta y el dia que haya fotos de modelo se enciende cambiando esta
-         * linea. Lo que falta no es programa: son fotos.
+         * inc/figura.php se retiro el 2026-10-01 (limpieza): la tecnica es
+         * correcta y el dia que haya fotos de modelo se recupera del historial
+         * de git (commit 5bd1d13). Lo que falta no es programa: son fotos.
          */
         'figura' => '',
         'total'  => wc_price($total),

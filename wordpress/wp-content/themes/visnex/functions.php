@@ -42,10 +42,12 @@ define('VISNEX_VERSION', '1.0.0');
 
      'justa'  — lo que se gana el sitio: el hero, el asesor, la bolsa, el
                 probador y la lupa. Todo lo demas, fuera.
-     'plena'  — todo lo que se llego a construir. Se conserva entero en el
-                repositorio; solo hay que cambiar esta linea para verlo.
+     'plena'  — suma el adorno editorial y el recorrido de la portada.
 
-   Nada se ha borrado. Cambiar el valor de abajo devuelve el otro estado.
+   Limpieza del 2026-10-01: las capas inmersiva y de experiencia (cursor,
+   grano, cortina de entrada, imanes) y el hero WebGL se retiraron del arbol.
+   Estaban apagadas y git las conserva: el estado 'plena' completo esta en el
+   commit 5bd1d13 (y en la etiqueta antes-de-desmontar).
    ============================================================================= */
 if (!defined('VISNEX_CEREMONIA')) {
     define('VISNEX_CEREMONIA', 'justa');
@@ -260,80 +262,10 @@ add_action('wp_enqueue_scripts', function () {
         : VISNEX_VERSION;
     wp_enqueue_style('visnex-marca', $dir . 'marca-visible.css', ['visnex-motion'], $verMarca);
 
-    // La capa inmersiva va la ULTIMA de todas: paralaje, revelados, grano,
-    // cursor y carril. Es la que hace que la tienda responda al scroll y al
-    // raton en vez de quedarse quieta.
-    $verInm = file_exists($path . 'inmersivo.css')
-        ? (string) filemtime($path . 'inmersivo.css')
-        : VISNEX_VERSION;
-    /*
-     * LA CAPA INMERSIVA — solo en modo pleno.
-     *
-     * Cursor propio, inclinacion 3D de las tarjetas, grano y carriles.
-     * Ninguna de las cuatro ayuda a comprar y las cuatro cuestan:
-     *   - El cursor propio esconde el del sistema. Quien lleva veinte anos
-     *     usando una flecha no quiere aprender un circulo.
-     *   - La inclinacion 3D mueve la foto justo cuando se intenta mirarla.
-     *   - El grano es una textura a pantalla completa componiendose siempre.
-     */
-    if (dm_ceremonia_plena()) {
-        wp_enqueue_style('visnex-inmersivo', $dir . 'inmersivo.css', ['visnex-marca'], $verInm);
-        wp_enqueue_script(
-            'visnex-inmersivo',
-            get_stylesheet_directory_uri() . '/assets/js/inmersivo.js',
-            [],
-            $verInm,
-            true
-        );
-    }
-
-    // La capa de experiencia cierra la cascada: entrada, rejilla viva,
-    // transiciones entre paginas e imanes. Va en TODAS las paginas porque las
-    // transiciones necesitan estar en las dos puntas del salto — si la ficha
-    // no la lleva, la foto sale de la rejilla y no aterriza en ningun sitio.
-    $verExp = file_exists($path . 'experiencia.css')
-        ? (string) filemtime($path . 'experiencia.css')
-        : VISNEX_VERSION;
-    /*
-     * LA CAPA DE EXPERIENCIA — solo en modo pleno.
-     *
-     * La cortina de entrada, los imanes, el descifrado de los antetitulos y el
-     * fondo que cambia de tono.
-     *
-     * La cortina es la peor de las cuatro: retrasa la tienda 1,65 s la primera
-     * vez. Es exactamente el gesto de un anuncio -hacerte esperar antes de
-     * ensenarte algo- y en una tienda cada decima antes del escaparate es gente
-     * que se va.
-     *
-     * La dependencia pasa a 'visnex-marca': en modo justa, 'visnex-inmersivo'
-     * ya no existe, y una hoja que depende de otra que no se encolo NO SE
-     * IMPRIME. Es un fallo silencioso de los peores: no hay error, solo estilos
-     * que faltan.
-     */
-    if (dm_ceremonia_plena()) {
-    wp_enqueue_style('visnex-experiencia', $dir . 'experiencia.css', ['visnex-marca'], $verExp);
-
-    $jsExp = get_stylesheet_directory() . '/assets/js/experiencia.js';
-    wp_enqueue_script(
-        'visnex-experiencia',
-        get_stylesheet_directory_uri() . '/assets/js/experiencia.js',
-        [],
-        file_exists($jsExp) ? (string) filemtime($jsExp) : VISNEX_VERSION,
-        true
-    );
-    }
-
-    // EL HERO EN WEBGL, RETIRADO.
-    //
-    // Habia aqui una capa que convertia las dos fotos del hero en una
-    // superficie deformable: el raton pintaba un campo de velocidad en una
-    // textura y cada pixel se desplazaba siguiendolo. Tecnicamente funcionaba
-    // -medido: 13% de los pixeles desplazados- pero al cliente no le gustaba,
-    // y en un logo o en un hero eso es el unico dato que decide.
-    //
-    // El codigo no se borra (assets/js/tejido.js y assets/css/tejido.css
-    // siguen en el repo) por si alguna pieza se recupera mas adelante, pero no
-    // se carga. Un archivo que no se encola no cuesta nada.
+    // Las capas inmersiva (cursor, grano, carriles) y de experiencia (cortina
+    // de entrada, imanes, tono de fondo) y el hero en WebGL estaban apagadas
+    // y se retiraron en la limpieza del 2026-10-01. Siguen en el historial de
+    // git (commit 5bd1d13) por si alguna pieza se recupera.
 }, 99);
 
 /**
@@ -580,8 +512,6 @@ require_once get_stylesheet_directory() . '/inc/marca.php';
 require_once get_stylesheet_directory() . '/inc/cabecera.php';
 require_once get_stylesheet_directory() . '/inc/ficha-producto.php';
 require_once get_stylesheet_directory() . '/inc/hero-cine.php';
-require_once get_stylesheet_directory() . '/inc/experiencia.php';
-require_once get_stylesheet_directory() . '/inc/figura.php';
 require_once get_stylesheet_directory() . '/inc/recorrido.php';
 require_once get_stylesheet_directory() . '/inc/bolsa.php';
 require_once get_stylesheet_directory() . '/inc/memoria.php';
