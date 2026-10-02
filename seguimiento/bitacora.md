@@ -561,3 +561,69 @@ ejecutaría sin que nadie lo pida.
 | Densidad recordada | sí, sin salto al recargar |
 | Transición de foto | `vn-foto-93` en tarjeta y ficha |
 | Animaciones vivas | 31 |
+
+---
+
+## 2026-10-01 — Limpieza del repo: secretos, artefactos y código muerto
+
+**Contexto:** el dueño aprobó "limpia todo lo que más se pueda sin romper la solución".
+Insumo: la auditoría `respaldos-shark/analisis-2026-10-01/01-limpieza.md` (listas A/B/C)
+y la sección D9 de `03-microservicios.md`. Antes de borrar cualquier respaldo se comprobó
+su copia (sha256) en `respaldos-shark/wordpress-visnex-2026-10-01/`.
+
+**Resultado en disco:** de **3,1 GB a 38 MB** (casi todo era `node_modules`, `.next` y
+`target/`, que se regeneran: `cd frontend && yarn install` y `cd backend && mvn clean package`).
+
+### Seguridad
+- Fuera del árbol todas las contraseñas y claves por defecto: `application.properties` de
+  5 servicios, `AuditServiceApplication`, `AppConfig`, `docker-compose.wp.yml`,
+  `frontend/Dockerfile`, `punto-de-retoma/LEEME.md` y dos análisis (literales redactados).
+  Spring usa `${VAR}` sin default; compose, `${VAR:?mensaje}`.
+- `docker-compose.wp.yml` ahora usa `WORDPRESS_DB_USER/PASSWORD` (los nombres del compose
+  principal, ya presentes en el `.env` de la raíz con los mismos valores efectivos).
+- Variables nuevas que pasa `docker-compose.yml`: `SECRET_CONNEXION`, `SECRET_USER`,
+  `SECRET_KEY`, `TEMPORAL_PASSWORD`, `MAIL_USERNAME`, `MAIL_PASSWORD`. Plantilla en
+  `backend/.env.example`. **Hay que darles valor en `backend/.env`.**
+- `auth-service/MailConfig` tenía usuario y contraseña SMTP escritos a fuego: ahora
+  `spring.mail.*` desde el entorno.
+- La clave AES y la contraseña del admin salen del árbol (comentarios Java, nombre de clave
+  de localStorage del frontend, constantes sin uso, `e2e-test.sh`, que ahora pide
+  `VN_AES_KEY` y `VN_ADMIN_PASSWORD`).
+- **Sigue en el historial de git** (repo público): hay que **rotar** la contraseña de MySQL
+  (el `.env` de la raíz usa justo los valores que eran públicos), el SMTP, la clave AES
+  (`SECRET_CONNEXION`), la contraseña del admin y el JWT, y después purgar el historial.
+
+### Lo retirado
+- Compose de abril (`infra`, `services`, `frontend`): duplicados con secretos públicos.
+  CLAUDE.md "Comandos" al día.
+- `backend/frontend/` huérfano, módulo `visnex-common` (nadie lo importaba).
+- Respaldos sueltos de `seguimiento/` y `wordpress/wp-content/uploads` (copia verificada en
+  respaldos-shark; el LEEME del punto de retoma explica cómo restaurar desde allí).
+- Copias no montadas de plugins/temas de terceros, `languages`, cachés de WordPress.
+- Tema: hero WebGL (`tejido.*`), capas inmersiva/experiencia, figura vestida, 4 SVG sin
+  uso, `recargar-php.sh`. El modo `'plena'` sigue para editorial y recorrido; lo demás vive
+  en el commit `5bd1d13`.
+- Marca: lienzo montado v1, capturas de prueba, iteraciones del monograma.
+- Documentos superados → `seguimiento/archivo/`; tabla de CLAUDE.md corregida.
+- Backend: dependencias sin uso en los 8 servicios (correo triplicado, FTP/SSH, webflux,
+  openfeign sin clientes, jsr310, validation, servo, librerías de test sin tests).
+- Frontend: `middleware.ts` muerto, 74 archivos sin importar y 57 dependencias.
+
+### Validación
+- `mvn clean package` de todo el backend: verde, 86 tests de commerce, 0 fallos. El jar del
+  gateway arranca en local sin servo.
+- Frontend desde cero: `yarn install --frozen-lockfile` + `yarn build` verde (25 rutas,
+  las mismas); `tsc` 49 errores (antes 56, todos preexistentes); `yarn lint` los mismos
+  24 problemas de antes.
+- `php -l` en los 28 PHP de `wp-content`: 0 fallos; ninguna función `dm_/vn_/visnex_`
+  llamada queda sin definir.
+
+### Pendiente (no se tocó, a propósito)
+- Rotar secretos y purgar el historial (arriba).
+- `http-basic-auth.php` (mu-plugin) autentica con las claves de Woo en cualquier petición,
+  sin exigir HTTPS: revisar antes de publicar.
+- La contraseña del usuario de servicio del frontend (`API_PASS_SERVICE`) se incrusta en el
+  JS del navegador por diseño (`next.config` → `env`): arreglarlo exige mover el login de
+  servicio al servidor.
+- ModelMapper sigue junto a MapStruct en administration y auth (migrarlo es código).
+- `docker-compose.wp.yml` y `docker-compose.yml` siguen sin alinear del todo (B2).
